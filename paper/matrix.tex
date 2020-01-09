@@ -1,0 +1,765 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amsfonts, amsthm, amssymb, latexsym, mathrsfs, pifont,
+tabu, enumerate}
+\usepackage[cm]{fullpage}
+\usepackage{theoremref}
+\usepackage[ruled, linesnumbered]{algorithm2e}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{defi}[thm]{Definition}
+\newenvironment{de}{\begin{defi}\rm}{\end{defi}}
+\newcommand{\proofref}[1]{\noindent {\emph{Proof of Theorem}~\ref{#1}.\ }}
+\newcommand{\defn}[1]{\textbf{\textit{#1}}}
+\numberwithin{equation}{section}
+
+% Lists
+\def\labelenumi{\theenumi}
+\def\theenumi{(\roman{enumi})}
+
+% Macros
+\newcommand{\id}{\mbox{\rm id}}
+\newcommand{\set}[2]{\ensuremath{\{#1 : #2 \}}}
+\newcommand{\genset}[1]{\ensuremath{\langle\: #1 \:\rangle}}
+\renewcommand{\to}{\longrightarrow}
+
+
+% For Algorithms
+\SetKwProg{Fn}{Function}{}{}
+\SetKwFunction{FZeroIfNotSubset}{ZeroIfNotSubset}
+\SetKwFunction{FRemoveDuplicateRows}{RemoveDuplicateRows}
+\SetKwComment{Comment}{}{}
+\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+\DontPrintSemicolon
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\B}{\mathbb{B}}
+\newcommand{\Bn}{M_n(\B)}
+\newcommand{\Bm}[1]{M_{m}(\B)}
+\renewcommand{\L}{\mathscr{L}}
+\newcommand{\R}{\mathscr{R}}
+\newcommand{\D}{\mathscr{D}}
+\newcommand{\J}{\mathscr{J}}
+\renewcommand{\H}{\mathscr{H}}
+
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+\usepackage[backend=biber, bibencoding=utf8]{biblatex}
+\bibliography{matrix}
+
+\title{Boolean matrix semigroups}
+\author{James D. Mitchell and Finlay Smith}
+\date{\today}
+\begin{document}
+\maketitle
+
+\addtocounter{section}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The purpose of this document is to describe the problems we are working on
+related to the monoid of all $n\times n$ boolean matrices.
+
+On any semigroup $S$, there are some key equivalence relations. These are known
+as Green's relations, and are defined in terms of principal ideals as follows.
+Let $S$ be any semigroup and let $s, t \in S$. Then
+\begin{align*}
+  s \L t &\text{ if and only if } S^1 s = S^1 t \\
+  s \R t &\text{ if and only if } s S^1 = t S^1 \\
+  s \J t &\text{ if and only if } S^1 s S^1 = S^1 t S^1.
+\end{align*}
+Finally, we define Green's $\H$-relation as the intersection of $\L$ and $\R$.
+We write $X_s$ for the Green's $\mathcal{X}$-class of $s$, where
+$\mathcal{X} \in \{\L, \R, \J, \H\}$.
+There is a natural partial order on certain Green's classes
+\begin{align*}
+  R_s \leq R_t &\text{ if and only if } sS^1 \subseteq tS^1 \\
+  L_s \leq L_t &\text{ if and only if } S^1s \subseteq S^1t \\
+  J_s \leq J_t &\text{ if and only if } S^1 s S^1 \subseteq S^1 t S^1.
+\end{align*}
+Further background on Green's relations can be found in~\cite{Howie1995aa}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
+\begin{align*}
+  0 + 1 = 1 + 0 &= 1 + 1 = 1 \\
+  0 + 0 &= 0
+\end{align*}
+and multiplication defined as usual for the real numbers $0$ and $1$.  The
+addition and multiplication of elements of $\B$ naturally extends to row and
+column vectors of equal length with entries in $\B$.  The main object of study
+in this document is the collection $\Bn$ of $n\times n$ matrices with entries
+in $\B$. Under the usual multiplication of matrices, using addition and
+multiplication in $\B$, the set $\Bn$ forms a monoid; call the \defn{full
+boolean matrix monoid}.  The group of units of $\Bn$ is isomorphic to the
+symmetric group $S_n$.
+
+If $A \in \Bn$, then the \defn{row space} $R(A)$ of $A$ is the set of 
+all finite sums of the rows of $A$.  If the rows of $A\in \Bn$ are viewed as
+the characteristic function of a subset of $\{1, \ldots, n\}$, then summing two
+rows is the same as taking the union of the corresponding subsets.  The
+\defn{row basis} $r(A)$ of $A\in \Bn$ is the set of rows of $A$ that cannot be
+written as a sum of other rows of $A$. The \defn{column space}
+$C(A)$ and \defn{column basis} $c(A)$ of a boolean matrix $\Bn$ are defined
+dually. It is straightforward to verify that if $A \in \Bn$, then $r(A)$ is the
+unique minimal generating set for $R(A)$, and $c(A)$ is the unique minimal
+generating set for $C(A)$. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The importance of the row and column bases in the study of $\Bn$ arises due to
+the following well-known results.
+
+\begin{prop} 
+  \thlabel{prop-principal}
+  Let $A, B \in \Bn$. Then the following hold:
+  \begin{enumerate}[\rm (i)]
+
+    \item
+      If $R(A) \subseteq R(B)$, then $A \in \Bn B$.  Similarly, if $C(A)
+      \subseteq C(B)$, then $A \in B \Bn$.
+
+    \item 
+      $R(AB) \subseteq R(B)$ and $C(AB) \subseteq C(B)$.
+  \end{enumerate}
+\end{prop}
+\begin{proof}
+  \noindent \textbf{(i).}
+  If $R(A) \subseteq R(B)$, then every row of $A$ can be expressed as a sum of
+  rows of $B$. Define $X$ by $X = [x_{ij}]$ where $x_{ij}$ is $1$ whenever the
+  $j$th row of $B$ is contained in the $i$th row of $A$. Then $A = XB \in \Bn
+  B$.  The other case is dual.
+  \bigskip
+
+  \noindent \textbf{(ii).}
+  Suppose that $A = [\alpha_{ij}]$ and $B = [\beta_{ij}]$. If 
+  $AB = [\gamma_{ij}]$, then 
+  \[
+  \gamma_{ij} = \alpha_{i1} \beta_{1j} + \alpha_{i2}\beta_{2j} 
+                + \cdots + \alpha_{in}\beta_{nj}
+              = \sum_{k = 1} ^ {n} \alpha_{ik}\beta_{kj}.
+  \]
+  It follows that the $i$th row of $AB$ is 
+  \[
+  (\gamma_{i1}, \gamma_{i2}, \ldots, \gamma_{in})
+   =  \left (\sum_{k = 1} ^ {n} \alpha_{ik}\beta_{k1},
+     \sum_{k = 1} ^ {n} \alpha_{ik}\beta_{k2},
+     \ldots, 
+     \sum_{k = 1} ^ {n} \alpha_{ik}\beta_{kn}\right) \\
+   % & = & (\alpha_{i1}\beta_{11} + \alpha_{i2}\beta{21} + \cdots +
+   %  \alpha_{in}\beta{n1},
+   %  \alpha_{i1}\beta_{12} + \alpha_{i2}\beta{22} + \cdots +
+   %  \alpha_{in}\beta{n2},
+   %  \ldots,
+   %  \alpha_{i1}\beta_{1n} + \alpha_{i2}\beta{2n} + \cdots +
+   %  \alpha_{in}\beta{nn}) \\
+   % & = & 
+   % (\alpha_{i1}\beta_{11}, \alpha_{i1}\beta_{12}, 
+   % \ldots, \alpha_{i1}\beta_{1n})
+   % + 
+   % (\alpha_{i2}\beta_{21}, \alpha_{i2}\beta_{22}, 
+   % \ldots, \alpha_{i2}\beta_{2n})
+   % + \cdots +
+   % (\alpha_{in}\beta_{n1}, \alpha_{in}\beta_{n2}, 
+   % \ldots, \alpha_{in}\beta_{nn}) \\
+    =
+    \sum_{k = 1} ^ {n} 
+    \alpha_{ik}
+    (\beta_{k1}, \beta_{k2}, \ldots, \beta_{kn}).
+  \]
+  Thus the $i$th row of $AB$ is a sum of rows of $B$, and so $R(AB) \subseteq
+  R(B)$. 
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{prop} 
+  \thlabel{lem:BMatGreensRowColumnBases}
+  Let $A, B \in \Bn$. Then the following are equivalent:
+  \begin{enumerate}[\rm (i)]
+    \item 
+      $A \L B$;
+
+    \item 
+      $R(A) = R(B)$;
+
+    \item 
+      $r(A) = r(B)$.
+  \end{enumerate}
+  An analogous statement holds for Green's $\R$-relation using column spaces
+  and bases. 
+\end{prop}
+\begin{proof}
+  Parts (ii) and (iii) are equivalent since a row space is uniquely determined
+  by its row basis. It remains to show that (i) and (ii) are
+  equivalent.\bigskip
+
+  \textbf{(i) $\Rightarrow$ (ii).} 
+  If $A \L B$, then there are 
+  $X, Y \in \Bn$ such that $XA = B$ and $YB = A$. Then $R(B) = R(XA) \subseteq
+  R(A)$ and $R(A) = R(YB) \subseteq R(B)$ by
+  Proposition~\ref{prop-principal}(ii).
+  \bigskip
+
+  \textbf{(ii) $\Rightarrow$ (i).} Follows immediately by
+  Proposition~\ref{prop-principal}(i). 
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Minimal generating sets}
+
+One of the problems we are particularly interested in is determining minimal
+generating sets for $\Bn$. Unfortunately it is known that the size of a minimal
+generating set for $\Bn$ grows exponentially with $n$. \\
+(TODO: proof - based on prime characterization).
+
+In contrast, the subsemigroup of $\Bn$ generated by all the regular elements can
+be generated by the four matrices \cite{Roush1977}
+
+\begin{align*}
+  T = \begin{pmatrix}
+    0 & 1 & 0 & 0 & \cdots & 0 \\
+    1 & 0 & 0 & 0 & \cdots & 0 \\
+    0 & 0 & 1 & 0 & \cdots & 0 \\
+    0 & 0 & 0 & 1 & \cdots & 0 \\
+    \vdots  & \vdots & \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & 0 & 0 & \cdots & 1 
+  \end{pmatrix}\text{, }&
+  U = \begin{pmatrix}
+    0 & 1 & 0 & 0 & \cdots & 0 \\
+    0 & 0 & 1 & 0 & \cdots & 0 \\
+    0 & 0 & 0 & 1 & \cdots & 0 \\
+    0 & 0 & 0 & 0 & \cdots & 0 \\
+      &   &   \dots & \dots & \\
+    1 & 0 & 0 & 0 & \cdots & 0 
+  \end{pmatrix},&\\
+  E = \begin{pmatrix}
+    1 & 0 & 0 & 0 & \cdots & 0 \\
+    1 & 1 & 0 & 0 & \cdots & 0 \\
+    0 & 0 & 1 & 0 & \cdots & 0 \\
+    0 & 0 & 0 & 1 & \cdots & 0 \\
+      &   &   \dots & \dots & \\
+    0 & 0 & 0 & 0 & \cdots & 1 
+  \end{pmatrix}\text{, }&
+  F = \begin{pmatrix}
+    0 & 0 & 0 & 0 & \cdots & 0 \\
+    0 & 1 & 0 & 0 & \cdots & 0 \\
+    0 & 0 & 1 & 0 & \cdots & 0 \\
+    0 & 0 & 0 & 1 & \cdots & 0 \\
+      &   &   \dots & \dots & \\
+    0 & 0 & 0 & 0 & \cdots & 1
+  \end{pmatrix}
+\end{align*}
+Note that together $T$ and $U$ generate the symmetric group (the top
+$\J$-class of $\Bn$). 
+
+If $A, B\in \Bn$, then $A$ and $B$ are \defn{similar} if 
+one can be obtained from the other by permuting the rows and/or columns.
+We call any matrix similar to $E$ an \defn{elementary} matrix.
+
+To find minimal generating sets, we need a few more concepts:
+
+\begin{de}[\textbf{Prime matrices.}]
+  A matrix $A \in \Bn$ is called \defn{prime} if $A = BC$ implies $B$ or $C$ is
+  a permutation matrix, and $A$ itself is not a permutation matrix.
+\end{de}
+
+The prime matrices therefore sit directly below the top $\J$-class in the
+partial order of $\J$-classes. There is, however, one more $\J$-class
+immediately below the top: $D_E$. Note that $D_F \leq D_E$. The next results
+show that in fact these are in fact all of the $\J$-classes immediately below
+the top.
+
+TODO: a picture of the top of $\Bn$
+
+Let $\beta_n$ denote the set $\set{R(A)}{A\in \Bn\setminus S_n}$ of all
+possible proper row subspaces of elements of $\Bn$, and let $\B^n$ denote
+the space of all boolean vectors of length $n$. Note that $\B^n$ is the
+row/column space of precisely the permutation matrices.
+
+\begin{thm}[cf. Theorem 5.1 in~\cite{Caen1981}]
+  \thlabel{thm:MaximalRowSpaces}
+  Let $A \in \Bn\setminus S_n$. Then $R(A)$ is maximal with respect to
+  containment in $\beta_n$ if and only if $A$ is prime or elementary.  
+\end{thm}
+\begin{proof}
+  Let $A \in \Bn$ be prime, and suppose that $R(A) \subseteq R(B)$ for some
+  $B \in \Bn \setminus S_n$. Then $A = CB$ for some $C \in \Bn$ by 
+  \thref{lem:GreensRowColumnSpacesLeq}. Now since $A$ is prime, we must have
+  $C \in S_n$, and thus $R(A) = R(CB) = R(B)$, so $R(A)$ is maximal in
+  $\beta_n$. \\
+  Suppose instead that $A$ is elementary, with $R(A) \subseteq R(B)$ for some
+  $B \in \Bn \setminus S_n$. Then $B$ must contain every row of $A$ that
+  contains a single $1$. Now in order for the row $i$ containing two $1$s to be in
+  $R(B)$, we must have either row $i$ or the row consisting of only the $1$ which
+  appears only in row $i$ in $A$. In the first case, $R(A) = R(B)$. In the
+  second, $R(B) = \B^n \notin \beta_n$.\\
+  TODO: finish this
+\end{proof}
+
+\begin{de}[Reduced matrices]
+  A matrix $A \in \Bn$ is \emph{row-reduced} if no row of $A$ can be written as
+  a sum of other rows of $A$. \emph{Column-reduced} is defined dually. We say
+  that $A$ is \emph{reduced} if it is both row-reduced and column-reduced.
+\end{de}
+
+An important result for computation is the following:
+\begin{lemma}[\cite{Plemmons1970}]
+  \thlabel{lem:PermutingReducedMatrices}
+  Let $A, B \in \Bn$ be reduced. Then $A \J B$ if and only $A = \alpha B \beta$
+  for some $\alpha, \beta \in S_n$. 
+\end{lemma}
+
+This result allows us to store single representatives of the $\J$-classes of
+reduced matrices by computing a canonical image under permuting rows and
+columns.
+
+TODO: Use this + Konieczny's EROs to detect D relation?
+
+\begin{de}[Trim matrices]
+  A matrix $A \in \Bn$ is \emph{row-trim} if no non-zero row of $A$ is contained in
+  another row. \emph{Column-trim} is defined dually. We say that $A$ is
+  \emph{trim} if it is both row-trim and column-trim.
+\end{de}
+
+The importance of trim matrices lies in the following facts:
+\begin{lemma}[\cite{Konieczny2011}]
+  \thlabel{lem:PrimeMatricesAreTrim}
+  Every prime matrix is trim.
+\end{lemma}
+\begin{proof}
+  Let $A \in \Bn$ be prime. Suppose some non-zero row $k$ of $A$ is contained in
+  a row $l$ of $A$. Define $X = [x_{ij}]$ where $x_{ij}$ is $1$ if and only if
+  $i = j$ or $i = l, j = k$. Then $XA = A$, but $X, A \in \Bn \setminus S_n$, a
+  contradiction. A dual argument shows that no non-zero column of $A$ is
+  contained in another column.
+\end{proof}
+
+\begin{lemma}
+  \thlabel{lem:TrimMatricesAreReduced}
+  Every trim matrix is reduced.
+\end{lemma}
+\begin{proof}
+  Since no row [column] of a reduced matrix is contained in another row
+  [column], no row [column] can be expressed as a sum of other rows [columns].
+\end{proof}
+
+
+We can now find minimal generating sets, using the following result:
+\begin{thm}[Devadze's Theorem \cite{Konieczny2011}]
+  \thlabel{thm:Devadze}
+  A minimal generating set for $\Bn$ is given by $\{T, U, E, F\} \cup P$
+  where $P$ is a set of representatives of the prime $\J$-classes of $\Bn$.
+\end{thm}
+
+A possible algorithm for computing minimal generating sets is the following:
+
+\begin{itemize}
+  \item
+    Enumerate the trim boolean matrices using a backtrack search, storing 
+    canonical representatives under row/column permutations in some set $S$
+  \item 
+    Compute $R = \set{R(A\alpha)}{A \in (S\setminus S_n) \cup \{E\}, \alpha \in S_n}$
+  \item 
+    Representatives of the prime $D$-classes are then those $A \in S\setminus S_n$ 
+    with row space maximal in $R$.
+\end{itemize}
+
+\begin{proof}
+  By \thref{lem:PrimeMatricesAreTrim} and \thref{lem:PermutingReducedMatrices},
+  $S$ contains a single canonical representative of each prime $\J$-class.
+  Now we can obtain a representative of every prime $L$-class by considering the
+  products $A\alpha$ for $A \in S, \alpha \in S_n$ (note that there will be
+  duplicate reps and non-prime reps), by \thref{lem:TrimMatricesAreReduced} and
+  \thref{lem:PermutingReducedMatrices}, noting that multiplying on the left by a
+  permutation matrix does not change the $L$-class.
+  Similarly representatives of every elementary $L$-class can be obtained as the
+  products $E\alpha$ for $\alpha \in S_n$, since the elementary matrices are
+  defined as those which are permutationally equivalent to $E$.
+  By \thref{thm:MaximalRowSpaces}, $R$ must therefore contain the maximal
+  elements of $\beta_n$. Hence those elements of $S \setminus S_n$ which have
+  row-space maximal in $R$ are precisely the prime representatives. 
+\end{proof}
+
+We can improve the algorithm by using the following result
+to restrict the matrices we need to consider:
+
+\begin{prop}[\cite{Breen1997}]
+  \thlabel{prop:StandardFormProperties}
+  In every $\J$-class of $\Bn$ there is a matrix $A$ in \emph{standard form} with the following properties:
+  \begin{itemize}
+  \item{$A$ is reduced,}
+  \item{all non-zero rows [columns] of $A$ are at the top [left],}
+  \item{considering the non-zero rows [columns] of $A$ as binary numbers, they
+        form a strictly increasing sequence,}
+  \item{all ones in the first non-zero row [column] of $A$ are on the right
+        [bottom],}
+  \item{no non-zero row has fewer ones than the first row,}
+  \end{itemize}
+\end{prop}
+
+Each of these properties is an attempt to minimise the value of the matrix in its $\J$-class when considered as a binary number.
+Unfortunately, having these properties is not enough to guarantee that the matrix is minimal, so standard form does not give a canonical form for matrices.
+TODO: example
+
+Using this simple algorithm minimal generating sets for $n \leq 7$ have been obtained.
+Some numbers are contained in Figure~\ref{figure-table-1}.
+
+For $n=8$ this is no longer sufficient. In this case it is necessary to
+prefilter the matrices before comparing the row spaces. The most obvious way
+to do this is check containment of each row space in all the column permutations
+of some set of the largest row spaces; this is actually fairly effective.
+Another technique is based on the following lemma:
+
+\begin{lemma}
+  \thlabel{lem:ExtendingPrimeMatrices}
+  Let $A$ be a prime matrix in $M_{n-1}(\B)$. Extend $A$ to a matrix $B \in \Bn$
+  by adding a row of zeros at the bottom and a column of zeros on the right,
+  then setting $B_{n,n} = 1$. Then $B$ is prime in $\Bn$.
+\end{lemma}
+TODO: tidy up this proof
+\begin{proof}
+  We will show that $R(B)$ is maximal in $\beta_n$, by showing that if 
+  $R(C) \in \beta_n$ contains $R(B)$, then $r(B) = r(C)$.
+  Let $C$ be such a matrix.
+  The last row of $B$ must also be in $C$ since it is a minimal in $\B^{n}$. 
+  Now $R(A)$ has a unique basis of $n-1$ rows which must be contained in both $B$ and
+  $C$, so we have $r(B) = r(C)$.
+\end{proof}
+
+For $n=8$ prefiltering by some of the large row spaces and extended prime
+matrices is enough to make the minimal generating set algorithm reasonable.
+An improvement is based on the following ideas:
+
+\begin{defi}
+  Let $v, w \in \B^n$. We say that $v \leq w$ if $v_i = 1 \implies w_i = 1$ for all $i$.
+\end{defi}
+
+\begin{defi}
+  Let $A \in \Bn$. The \emph{graph} of $R(A)$ is the directed graph with vertices $R(A)$ and an edge from $v$ to $w$ if $v \leq w$. The graph of $C(A)$ is defined analogously. 
+\end{defi}
+
+\begin{thm}[Zaretskii's theorem]
+  \thlabel{thm:Zaretskii}
+  Let $A, B \in \Bn$. Then $A \leq_{\J} B$ if and only if there exists 
+  $f: R(A) \to R(B)$ such that for all $v, w \in R(A)$, $f(v) \leq f(w) \iff
+  v \leq w$.
+\end{thm}
+
+In other words, $A \leq_{\J} B$ iff there exists a homomorphic embedding of the 
+graph of $R(A)$ into the graph of $R(B)$ which respects edges and non-edges. \\
+
+In our case, we can put restrictions on the homomorphic embeddings. We will instead
+look for homomorphic embeddings between certain augmented graphs.
+
+\begin{defi}
+  Let $A \in \Bn$. The \emph{augmented graph of $R(A)$} is the disjoint union of the graph of $R(A)$ with the empty graph on the vertices $\{c_i \: : \: 1 \leq i \leq n\}$, with an edge from $v \in R(A)$ to $c_i$ if $v_i = 1$. The \emph{augmented graph of $r(A)$} is defined analogously.
+\end{defi}
+
+\begin{lemma}
+  \thlabel{lem:EmbeddingGraphs}
+  Let $S$ be a set of representatives of trim matrices, and let $A \in S$. Then $A$ is not prime or elementary if and only if for some $B \in S\setminus \{A\}$ there exists an embedding $\phi$ from the augmented graph of $r(A)$ into the augmented graph of $R(B)$ which permutes $\{ c_i : 1 \leq i \leq n \}$ and respects non-adjacency.
+\end{lemma}
+\begin{proof}
+  Let $A$ not be prime or elementary; then by comments above $R(A)$ is contained in the row space of some column permutation $\alpha$ of a $B \in S \setminus \{A\}$. Then the map that extends $\phi : c_i \to c_{i\alpha^{-1}}$ has the required properties. Conversely if such a map $\phi : r(A) \to R(B)$ exists it induces a column permutation of $B$ which contains $A$. 
+\end{proof}
+
+Note that such an embedding $\phi$ must also map a vector containing $i$ ones to another containing $i$ ones to preserve adjacency and non-adjacency with the set $\{ c_i : 1 \leq i \leq n \}$.
+
+We can therefore use the following improved algorithm.
+\begin{itemize}
+  \item
+    Enumerate the trim boolean matrices using a backtrack search, storing 
+    canonical representatives under row/column permutations in some set $S$
+  \item 
+    Compute the augmented graphs of $r(A)$ and $R(A)$ for each $A \in S$
+  \item 
+    For each pair $A, B$ of digraphs, if there is a $\phi$ as in \thref{lem:EmbeddingGraphs} discard $A$.
+  \item
+    The remaining matrices are then representatives of the prime matrices
+\end{itemize}
+
+The principle improvements in this algorithm are
+\begin{itemize}
+  \item 
+    Efficient digraph homomorphism finding code can be used (e.g. Digraphs)
+  \item
+    No more data has to be computed, unlike the previous algorithm where new row spaces had to be produced for each column permutation
+  \item
+    Information about the graphs can be reused (in particular their automorphism group). However, this is not as useful as it might seem since the automorphism group of prime row spaces seems to be almost always trivial.
+\end{itemize}
+
+Some heuristics which seem to significantly improve the embedding search are:
+
+\begin{itemize}
+  \item
+    Order the lattice digraphs by size and try to embed in the biggest digraphs
+    first
+  \item
+    Force the embeddings to map the minimum element (zero vector) in the first
+    digraph to the minimum element in the second digraph
+\end{itemize}
+
+\section{Number of $\J$-classes}
+At present the best we can do is a backtrack search on the matrices with the
+properties of \thref{prop:StandardFormProperties}.
+We've got up to $n = 7$, Breen has managed $n = 8$~\cite{Breen2001}.
+For completeness the algorithm used is as follows:
+
+\begin{algorithm}
+  \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+  \DontPrintSemicolon
+  \SetKwFunction{FDive}{dive}
+
+  \Input{A natural number $n$}
+  \Output{A set of canonical representatives of the $\J$-classes of $\Bn$}
+  mats $\leftarrow$ [] \;
+  zrow $\leftarrow$ a list containing $n$ zeros \;
+  mat $\leftarrow$ $n$ copies of zrow \;
+  orb $\leftarrow$ [0] \;
+  \Fn{\FDive{$k$}} {
+    \If{$k = 1$}{
+      \For{each first non-empty row $i < n$} {
+        \For{each number of ones $j$ in the first non-empty row} {
+          mat[$i$] $\leftarrow [0, 0, \dots, 1_1, 1_2, \dots, 1_j]$ \;
+          orb $\leftarrow$ the closure of orb with mat[$i$] under union \;
+          Forbid any lower rows from being in orb \;
+          Forbid any lower rows from having less ones than mat[$i$] \;
+          \FDive{$i + 1$} \;
+          Reset orb \;
+          Unforbid everything \;
+        }
+      }
+    }
+    \If{$2 \leq k \leq n - 1$}{
+      \For{each non-forbidden row $R$ with greater numerical value than mat[$k - 1$]} {
+        mat[$k$] $\leftarrow R$ \;
+        orb $\leftarrow$ the closure of orb with mat[$k$] under union \;
+        Forbid any lower rows from being in orb \;
+        \FDive{$k + 1$} \;
+        Reset orb to before its closure with mat[$k$] \;
+        Unforbid everything forbidden after mat[$k$] was set \;
+      }
+    }
+    \If{$k = n$}{
+      \For{each non-forbidden row $R$ with greater numerical value than mat[$k - 1$]} {
+        mat[$k$] $\leftarrow R$ \;
+        \If{mat is column-reduced} {
+          Calculate the canonical representative of mat under row/column permutations using \emph{bliss} and add it to mats if new }
+      }
+    }
+    \Return
+  }
+  \Return{\FDive{1}}
+  \caption{Calculating canonical representatives}\label{alg:RepsBacktrack}
+\end{algorithm}
+
+This algorithm has the advantage of being easily implemented and highly-optimisable, but major improvements can be made. The following algorithm essentially tries to canonicalise the matrices during the backtracking to reduce the search space.
+
+\begin{lemma}
+  \thlabel{lem:StandardFormStabilisers}
+  In every $\J$-class of $\Bn$, there is a matrix which has all the properties of \thref{prop:StandardFormProperties} and also has the property that for any row $k > 2$, for each row $l < k$ the orbit of row $k$ under the set stabiliser of rows $1 \dots l - 1$ does not contain a row with numerical value less than the numerical value of row $l$.
+\end{lemma}
+
+\begin{proof}
+  Let $A$ be a matrix having the properties in \thref{prop:StandardFormProperties}. Suppose that for some rows $k > 3$ and $l < k$, there was a row $R$ in the orbit of row $k$ under the set stabiliser of rows $1 \dots l - 1$ where the numerical value of $R$ is less than the numerical value of row $l$. Then we can apply row and column permutations to produce a matrix $A'$ with numerical value less than that of $A$. Now $A'$ may not have some of the properties of
+  \thref{prop:StandardFormProperties} but if so, by the proof of that proposition we can produce $A''$ having each of those properties and with smaller numerical value than $A'$. Since we cannot have an infinite descent of numerical values, repeating this process must at some point result in a matrix with all the properties we want.
+\end{proof}
+
+\begin{algorithm}
+  \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+  \DontPrintSemicolon
+  \SetKwFunction{FDive}{dive}
+
+  \Input{A natural number $n$}
+  \Output{A set of canonical representatives of the $\J$-classes of $\Bn$}
+  mats $\leftarrow$ [] \;
+  zrow $\leftarrow$ a list containing $n$ zeros \;
+  mat $\leftarrow$ $n$ copies of zrow \;
+  orb $\leftarrow$ [0] \;
+  stabs $\leftarrow$ [] \;
+  reps $\leftarrow$ [] \;
+  \Fn{\FDive{$k$}} {
+    \If{$k = 1$}{
+      \For{each first non-empty row $i < n$} {
+        \For{each number of ones $j$ in the first non-empty row} {
+          mat[$i$] $\leftarrow [0, 0, \dots, 1_1, 1_2, \dots, 1_j]$ \;
+          orb $\leftarrow$ the closure of orb with mat[$i$] under union \;
+          stabs[$i$] $\leftarrow$ the set stabiliser of mat[$i$] in $S_n$ \;
+          reps[$i + 1$] $\leftarrow$ the minimal representatives of rows with at least $j$ ones in stabs[$i$] \;
+          \FDive{$i + 1$} \;
+          Reset orb \;
+          Reset stabs
+          Reset reps
+          Unforbid everything \;
+        }
+      }
+    }
+    \If{$2 \leq k \leq n - 1$}{
+      \For{each $R$ in reps[$k$] which is not forbidden} {
+        mat[$k$] $\leftarrow R$ \;
+        orb $\leftarrow$ the closure of orb with mat[$k$] under union \;
+        stabs[$k$] $\leftarrow$ the set stabiliser of mat[$k$] in stabs[$k-1$] \;
+        Forbid any lower rows from being in orb \;
+        Forbid any rows in the orbits of the rows less than mat[$k$] in stabs[$k-1$] \;
+        reps[$k + 1$] $\leftarrow$ the minimal representatives of rows greater than mat[$k$] with at least $j$ ones that are not forbidden \;
+        \FDive{$k + 1$} \;
+        Reset orb to before its closure with mat[$k$] \;
+        Unforbid everything forbidden after mat[$k$] was set \;
+      }
+    }
+    \If{$k = n$}{
+      \For{each $R$ in reps[$k$] which is not forbidden} {
+        mat[$k$] $\leftarrow R$ \;
+        \If{mat is column-reduced} {
+          Calculate the canonical representative of mat under row/column permutations using \emph{bliss} and add it to mats if new}
+      }
+    }
+    \Return
+  }
+  \Return{\FDive{1}}
+  \caption{Calculating canonical representatives using stabilisers}\label{alg:RepsStabBacktrack}
+\end{algorithm}
+
+The major improvement of Algorithm \ref{alg:RepsStabBacktrack} is that the stabiliser condition reduces the search tree by a substantial amount and avoids a lot of the expensive canonicalisation.
+Experiments in GAP show that it is considerably faster than Algorithm \ref{alg:RepsBacktrack} but it is not yet implemented in C++ for a fair comparison.
+It is also important to note that \thref{lem:StandardFormStabilisers} does not guarantee us the minimal matrix from a $\J$-class, so we still have to canonicalise each matrix we produce. For example, the following matrix satisfies the properties of \thref{lem:StandardFormStabilisers} but if rows $2$ and $3$ are swapped with rows $4$ and $5$ then appropriate column permutations made, a matrix satisfying the properties but with lower numeric value is produced.
+
+\[ 
+  \begin{pmatrix}
+    0 & 0 & 0 & 0 & 1 & 1 \\
+    0 & 0 & 1 & 1 & 0 & 1 \\
+    0 & 1 & 1 & 1 & 1 & 0 \\
+    1 & 1 & 0 & 0 & 0 & 1 \\
+    1 & 1 & 1 & 0 & 0 & 1 \\
+    1 & 1 & 1 & 0 & 1 & 0
+  \end{pmatrix}
+\]
+
+\section{A different approach to testing primality}
+Suppose we have a set of representatives of trim matrices in $\Bn$ and wish to filter them to obtain the prime matrices. Any approach that is based on pairwise comparison of the matrices is unlikely to scale as well as one which treats matrices individually.\\
+
+\begin{defi}
+  A matrix $A \in \Bn$ is \emph{fully indecomposable} if it contains no $k \times (n - k)$ submatrix (not necessarily contiguous) of zeroes for any $1 \leq k \leq n- 1$.
+\end{defi}
+
+The interest of fully indecomposable matrices lies in the following result
+\begin{prop}
+  \thlabel{prop:PrimeFullyIndecomposable}
+  A prime matrix is either fully indecomposable or the direct sum of a fully indecomposable prime and an identity matrix, and every direct sum of a prime matrix with an identity matrix is prime.
+\end{prop}
+TODO: ref
+
+So we only have to look for fully indecomposable primes. The following result gives a way of determining whether a fully indecomposable representative is prime without reference to other representatives.
+
+\begin{defi}
+  A $J$-submatrix of $A \in \Bn$ is a submatrix of $A$ which contains only $1$s.
+\end{defi}
+
+\begin{defi}
+  The \emph{Schein rank} of a matrix $A \in \Bn$ is the smallest number of $J$-submatrices which cover $A$.\\
+  Equivalently, it is the smallest $k$ such that $A$ can be written as a product of two matrices of dimension $n \times k$ and $k \times n$. 
+\end{defi}
+Note that the Schein rank of any matrix is at most $n$, and the Schein rank of a prime matrix is $n$.
+
+\subsection*{Computing Schein rank}
+It is known that computing the Schein rank of a matrix is an $NP$-complete problem (TODO: ref). However, this does not mean that we cannot practically determine whether a matrix has full Schein rank. A sketch of an algorithm to do so is given.
+
+\begin{algorithm}
+  \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+  \DontPrintSemicolon
+
+  \Input{A boolean matrix $A$}
+  \Output{A boolean representing whether $A$ has full Schein rank}
+  Find the maximal $J$-submatrices of $A$ using a clique-finding algorithm \; 
+  Backtrack search for a covering of $A$ using at most $n - 1$ maximal $J$-submatrices \;
+  \Return{whether such a covering is found} \;
+  \caption{Determining whether a matrix has full Schein rank}\label{alg:HasFullScheinRank}
+\end{algorithm}
+
+Of course this algorithm is exponential in the worst case (when the matrix does have full Schein rank) but does seem to be practical. \\
+It would be interesting to know what heuristics to apply during the backtrack search to choose the next option. An obvious choice is to greedily pick the maximal $J$-submatrix which covers the most new ones, but this may not be the right choice.
+
+\begin{prop}
+  \thlabel{prop:FullyIndecomposablePrimes}
+  A fully indecomposable matrix $A$ is prime if and only if every $A'$ obtained by removing ones from a $J$-submatrix of $A$ has full Schein rank.
+\end{prop}
+
+Of course it is sufficient to remove ones from each maximal $J$-submatrix of the fully-indecomposable matrix.\\
+Unfortunately, there may be very many $A'$ to consider for a given $A$, and in each case we have to carry out Algorithm \ref{alg:HasFullScheinRank}. It is important to note that removing ones from a maximal $J$-submatrix can result in a new matrix with dramatically different maximal $J$-submatrices. \\
+It would be therefore be useful to be able to reuse information about $A$ in Algorithm $\ref{alg:HasFullScheinRank}$. The following is one such result in that direction.
+
+\begin{lemma}
+  \thlabel{lem:CoveringOneRemovedOne}
+  Let $A \in \Bn$ be fully indecomposable with full Schein rank. Let $A'$ be obtained by removing a single one from a maximal $J$-submatrix of $A$. Suppose $A'$ has a covering by $n-1$ maximal submatrices of $A'$. Then each $J$-submatrix in the cover must be a maximal $J$-submatrix of $A$. 
+\end{lemma}
+\begin{proof}
+  Suppose not. Then in the cover $C$ there is some $J$-submatrix $J_i$ that admits extending by the removed one and taking the closure to form a $J$-submatrix $J_i'$ of $A$ containing the removed one. Then $C \setminus \{J_i\} \cup \{J_i'\}$ is a cover of $A$ using $n-1$ $J$-submatrices, a contradiction.
+\end{proof}
+The situation on removing multiple ones is far more complicated. \\
+An alternative strategy is to start with maximal $J$-submatrices and build prime matrices from these, but we have no results in this direction.
+
+\section{Height and width}
+Another problem that has been considered is finding the longest chain in the
+partial order of $\J$-classes for $\Bn$ (the \defn{height} of $\Bn$. 
+See \cite{Breen2001}. We currently do not have the methods implemented to determine whether a matrix covers another.
+A related problem is to find the largest anti-chain in the partial order
+(the \defn{width}).
+
+
+% TODO: reference which number come from where, include bounds, idempotents?,
+% numbers of trim, reduced, etc?, max. anti-chain?,
+% make this thing fit!
+
+\begin{figure}
+  \label{figure-table-1}
+  \centering
+  \begin{tabu} to \textwidth {X[0.3]|X[r1.5]|X[2]|X[2]|X[2]|X[2]}
+  $n$ & $|D(\Bn)|$ \cite{Breen1997}\cite{Breen2001}
+  & Lower bound for height : $F_{n+3} - 2$
+  & Height of $\Bn$\cite{Breen1997}
+  & Upper bound for height : $2^{n-1} + (n-1)$
+  & Size of minimal generating set of $\Bn$ \\ 
+  \hline
+1   & 2  \cmark                & 1   \cmark  & 1  \cmark   & 1   \cmark  & 2   \cmark     \\
+2   & 3  \cmark                & 3   \cmark  & 3  \cmark   & 3   \cmark  & 3   \cmark    \\
+3   & 11  \cmark               & 6   \cmark  & 6  \cmark   & 6   \cmark  & 5   \cmark   \\
+4   & 60  \cmark               & 11  \cmark  & 11  \cmark  & 11  \cmark  & 7    \cmark     \\
+5   & 877  \cmark              & 19  \cmark  & 19  \xmark  & 20  \cmark  & 13   \cmark    \\
+6   & 42\ 944  \cmark          & 32  \cmark  & 32  \xmark  & 37  \cmark  & 68  \cmark    \\
+7   & 7\ 339\ 704  \cmark      & 53  \cmark  & 53  \xmark  & 70  \cmark  & 2143 \cmark  \\
+8   & 4\ 256\ 203\ 214  \xmark & 87  \cmark  &  ?          & 135 \cmark  &  495\ 115
+\end{tabu} \\
+\vspace{1cm}
+
+\begin{tabu} to \textwidth {X[0.3]|X[2]|X[2]|X[2]|X[2]}
+  & Number of trim matrices in $\Bn$
+  & Number of prime matrices in $\Bn$
+  & Number of reduced matrices in $\Bn$
+  & Number of idempotents in $\Bn$ \\
+  \hline
+1   &  2   \cmark       & 0 \cmark            & 2 \cmark            &  1 \cmark  \\
+2   &  7   \cmark       & 0 \cmark            & 11 \cmark           &  11 \cmark  \\
+3   &  40   \cmark      & 6 \cmark            & 220 \cmark          &  123 \cmark  \\
+4   &  593  \cmark     & 264 \cmark           & 20\ 273 \cmark      &  2\ 360 \cmark  \\
+5   &  81\ 946  \cmark & 32\ 640 \cmark       & 9\ 023\ 546 \cmark  &  73\ 023 \cmark \\
+6   &  ?                & 16\ 173\ 360 \cmark &           ?         &  ?    \\
+7   &  ?                & 48\ 583\ 513\ 440 \cmark &         ?           &  ?   \\
+8   &  ?                & ?                   &     ?               &  ?             
+\end{tabu}                                       
+  \caption{Checkmarks denote things we have computed.}
+\end{figure}
+
+\subsection*{Automorphism groups}
+It seems that for most prime matrices, the automorphism group of $R(A)$ is trivial. This consequence of this is that the number of prime matrices in $\Bn$ is roughly $(n!)^2$ times the number of prime $\J$-classes.
+
+\printbibliography
+\end{document} 
