@@ -1,5 +1,6 @@
 all: 
 	./rebuild.sh
 
-clean:
+clean:  
+	rm -f d_enum
 	rm -rf libsemigroups
