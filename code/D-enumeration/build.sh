@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-git clone --branch v1.0.3 --depth=1 https://github.com/libsemigroups/libsemigroups 
+git clone --branch v1.0.3 --depth=1 https://github.com/libsemigroups/libsemigroups
 cd libsemigroups/extern
-curl -L -O https://github.com/fmtlib/fmt/releases/download/5.3.0/fmt-5.3.0.zip
-tar -xzf fmt-5.3.0.zip && rm -f fmt-5.3.0.zip
-curl -L -O https://github.com/hivert/HPCombi/archive/v0.0.5.zip
-tar -xzf v0.0.5.zip && rm -f v0.0.5.zip && cd ..
+curl -L -O https://github.com/fmtlib/fmt/archive/5.3.0.tar.gz
+tar -xzf 5.3.0.tar.gz && rm -f 5.3.0.tar.gz
+curl -L -O https://github.com/hivert/HPCombi/archive/v0.0.5.tar.gz
+tar -xzf v0.0.5.tar.gz && rm -f v0.0.5.tar.gz && cd ..
 mv extern/HPCombi-0.0.5 extern/HPCombi
 cp ../Makefile.am .
 ./autogen.sh && ./configure
