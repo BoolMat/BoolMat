@@ -36,7 +36,7 @@ namespace libsemigroups {
          HPCombi::BMat8(0x8040201008040201)};
   std::vector<HPCombi::BMat8> const BMAT8_ELEMENTARY
       = {HPCombi::BMat8(0x0000000000000000),
-         HPCombi::BMat8(0x0000000000000001),
+         HPCombi::BMat8(0xc000000000000000),
          HPCombi::BMat8(0xc040000000000000),
          HPCombi::BMat8(0xc040200000000000),
          HPCombi::BMat8(0xc040201000000000),
@@ -449,6 +449,7 @@ namespace libsemigroups {
       // TODO evil copying
       if (_filterers.size() == 0) {
         _filterers = bmat_enum;
+        _filterers.push_back(BMAT8_ELEMENTARY[_dim]);
       }
 
       std::vector<std::vector<std::bitset<256>>> spaces(
@@ -469,7 +470,7 @@ namespace libsemigroups {
         HPCombi::BMat8   bm     = bmat_enum[i];
         std::bitset<256> bitset = _bit_func(bm);
         bool             found  = false;
-        if (bitset.count() == 1 << _dim) {
+        if (bitset.count() == (1 << _dim)) {
           continue;
         }
         for (size_t i = (1 << _dim) - 1; i > bitset.count(); --i) {
@@ -623,14 +624,14 @@ namespace libsemigroups {
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "006", "filter 5", "[quick]") {
-    Filterer<5> f("bmat_enum_trim_5.txt", "bmat_gens_test_5.txt", {}, true);
+    Filterer<5> f("bmat_enum_trim_5.txt", "bmat_filtered_5.txt", {}, true);
     f.run();
     std::vector<HPCombi::BMat8> filtered = f.reps();
-    REQUIRE(filtered.size() == 10);
+    REQUIRE(filtered.size() == 9);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "007", "filter 6", "[quick]") {
-    Filterer<6> f("bmat_enum_trim_6.txt", "bmat_gens_test_6.txt", {}, true);
+    Filterer<6> f("bmat_enum_trim_6.txt", "bmat_filtered_6.txt", {}, true);
     f.run();
     std::vector<HPCombi::BMat8> filtered = f.reps();
     REQUIRE(filtered.size() == 65);
@@ -638,10 +639,10 @@ namespace libsemigroups {
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "008", "filter 7", "[extreme]") {
     auto        rg = ReportGuard();
-    Filterer<7> f("bmat_trim_enum_7.txt", "bmat_gens_test_7.txt", {}, true);
+    Filterer<7> f("bmat_trim_enum_7.txt", "bmat_filtered_7.txt", {}, true);
     f.run();
     std::vector<HPCombi::BMat8> filtered = f.reps();
-    REQUIRE(filtered.size() == 2142);
+    REQUIRE(filtered.size() == 2139);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -666,12 +667,12 @@ namespace libsemigroups {
                       {0, 0, 0, 0, 1, 0, 0, 0},
                       {0, 0, 0, 0, 0, 1, 0, 0},
                       {0, 0, 0, 0, 0, 0, 1, 0},
-                      {1, 0, 0, 0, 0, 0, 0, 1}});
+                      {0, 0, 0, 0, 0, 0, 0, 1}});
 
     Filterer<8> filterer(
         "bmat_trim_enum_8.txt", "bmat_trim_8_filterered_1.txt", {E}, true);
     filterer.run();
-    REQUIRE(filterer.size() == 17117115);
+    REQUIRE(filterer.size() == 16761162);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -679,19 +680,30 @@ namespace libsemigroups {
                           "filter 8 by extended 7 gens - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       bmat7_gens.push_back(HPCombi::BMat8(std::stoul(line) | 1));
     }
     f.close();
+    
+    HPCombi::BMat8 F({{1, 0, 0, 0, 0, 0, 0, 0},
+                      {0, 1, 0, 0, 0, 0, 0, 0},
+                      {0, 0, 1, 0, 0, 0, 0, 0},
+                      {0, 0, 0, 1, 0, 0, 0, 0},
+                      {0, 0, 0, 0, 1, 0, 0, 0},
+                      {0, 0, 0, 0, 0, 1, 0, 0},
+                      {0, 0, 0, 0, 0, 0, 1, 0},
+                      {0, 0, 0, 0, 0, 0, 0, 0}});
+  
+    bmat7_gens.push_back(F);
 
     Filterer<8> filterer("bmat_trim_8_filterered_1.txt",
                          "bmat_trim_8_filterered_2.txt",
                          bmat7_gens,
                          false);
     filterer.run();
-    REQUIRE(filterer.size() == 15334021);
+    REQUIRE(filterer.size() == 15336159);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -699,7 +711,7 @@ namespace libsemigroups {
                           "filter 8 by special extended 7 gens - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -714,7 +726,7 @@ namespace libsemigroups {
                          bmat7_gens,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 2923382);
+    REQUIRE(filterer.size() == 2925520);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -722,7 +734,7 @@ namespace libsemigroups {
                           "filter 8 by special extended 7 gens - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -738,15 +750,15 @@ namespace libsemigroups {
                          bmat7_gens,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 1661260);
+    REQUIRE(filterer.size() == 2066807);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
-                          "555,",
+                          "555",
                           "filter 8 by special extended 7 gens - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -762,7 +774,7 @@ namespace libsemigroups {
                          bmat7_gens,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 1206208);
+    REQUIRE(filterer.size() == 1437821);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -770,7 +782,7 @@ namespace libsemigroups {
                           "filter 8 by special extended 7 gens - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -786,7 +798,7 @@ namespace libsemigroups {
                          bmat7_gens,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 974417);
+    REQUIRE(filterer.size() == 1121872);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -794,7 +806,7 @@ namespace libsemigroups {
                           "filter 8 by special extended 7 gens - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -810,7 +822,7 @@ namespace libsemigroups {
                          bmat7_gens,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 851123);
+    REQUIRE(filterer.size() == 968568);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -818,7 +830,7 @@ namespace libsemigroups {
                           "filter 8 by special extended 7 gens - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -834,7 +846,7 @@ namespace libsemigroups {
                          bmat7_gens,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 793961);
+    REQUIRE(filterer.size() == 900863);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -842,7 +854,7 @@ namespace libsemigroups {
                           "filter 8 by extended 7 gens columns - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -856,7 +868,7 @@ namespace libsemigroups {
                          false,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 786570);
+    REQUIRE(filterer.size() == 892502);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -864,7 +876,7 @@ namespace libsemigroups {
                           "filter 8 by extended 7 gens columns - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -875,13 +887,13 @@ namespace libsemigroups {
     }
     f.close();
 
-    Filterer<8> filterer("bmat_trim_9_filterered_9.txt",
+    Filterer<8> filterer("bmat_trim_8_filterered_9.txt",
                          "bmat_trim_8_filterered_10.txt",
                          bmat7_gens,
                          true,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 520113);
+    REQUIRE(filterer.size() == 570132);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -889,7 +901,7 @@ namespace libsemigroups {
                           "filter 8 by extended 7 gens columns - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line) | 1));
@@ -906,7 +918,7 @@ namespace libsemigroups {
                          true,
                          true);
     filterer.run();
-    REQUIRE(filterer.size() == 484949);
+    REQUIRE(filterer.size() == 523556);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -914,16 +926,19 @@ namespace libsemigroups {
                           "filter 8 by simple 7 gens columns - by Filterer",
                           "[extreme][filter8]") {
     std::vector<HPCombi::BMat8> bmat7_gens(0);
-    std::ifstream               f("bmat_gens_7.txt");
+    std::ifstream               f("bmat_filtered_7.txt");
     std::string                 line;
+
     while (std::getline(f, line)) {
       HPCombi::BMat8 bm(HPCombi::BMat8(std::stoul(line)));
       size_t         count = col_space_bitset(bm).count();
-      if (count == 120 || count == 132 || count == 144 || count == 160) {
+      if (count >= 60) {
         bmat7_gens.push_back(bm);
       }
     }
     f.close();
+    
+    std::cout << "processing with " << bmat7_gens.size();
 
     Filterer<8> filterer("bmat_trim_8_filterered_11.txt",
                          "bmat_trim_8_filterered_12.txt",
@@ -933,10 +948,41 @@ namespace libsemigroups {
     filterer.run();
     REQUIRE(filterer.size() == 472207);
   }
-
+  
   ///////////////////////////////////////////////////////////////////////
   // END FILTERING B8
   ///////////////////////////////////////////////////////////////////////
+  
+  ///////////////////////////////////////////////////////////////////////
+  // OUTPUT ROW SPACES
+  ///////////////////////////////////////////////////////////////////////
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "571",
+                          "bmat8 row space digraphs 8",
+                          "[standard]") {
+    std::vector<HPCombi::BMat8> bmat_enum;
+    std::ifstream               f("bmat_full_filtered_8.txt");
+    std::string                 line;
+    while (std::getline(f, line)) {
+      bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
+    }
+    f.close();
+
+    std::ofstream o;
+    o.open("row_space_numbers_8.txt", std::ios::out | std::ios::trunc);
+    for (auto it = bmat_enum.cbegin(); it < bmat_enum.cend(); it++) {
+      std::vector<uint8_t> row_space = row_space_vector(*it);
+      o << "[";
+      for (size_t i = 0; i < row_space.size() - 1; ++i) {
+        o << row_space[i] << ", "; 
+      }
+      o << row_space.back() << "]\n"; 
+    }
+    o.close();
+  }
+
+  ////////////////////////////////////////////////////////////////////
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "129",
@@ -1113,6 +1159,7 @@ namespace libsemigroups {
     o << "];;" << std::endl;
     o.close();
   }
+  
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "135",
