@@ -1,6 +1,5 @@
 all: 
-	./rebuild.sh
+	sh/build.sh
 
 clean:  
-	rm -f  test_bmat8_enum 
-	rm -rf libsemigroups
+	rm -rf build

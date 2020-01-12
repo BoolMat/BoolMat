@@ -597,15 +597,44 @@ namespace libsemigroups {
                           "004",
                           "enumerate trim B6",
                           "[standard][enumerate]") {
+    std::cout << "=> Finding minimal generating set for n = 6 ...\n";
     std::ofstream  o;
-    auto           rg = ReportGuard();
+    auto           rg = ReportGuard(false);
     BMatEnumerator enumerator(6, true);
     REQUIRE(enumerator.reps().size() == 394);
-    o.open("bmat_enum_trim_6.txt", std::ios::out | std::ios::trunc);
+    std::cout << "=> found " << enumerator.reps().size()
+             << " trim matrices\n";
+
+    o.open("build/output/bmat_enum_trim_6.txt", std::ios::out | std::ios::trunc);
     for (HPCombi::BMat8 i : enumerator.reps()) {
       o << i.to_int() << "\n";
     }
     o.close();
+    std::cout << "=> writing file build/output/bmat_enum_trim_6.txt\n";
+
+    std::cout << "=> filtering trim matrices ...\n";
+    Filterer<6> f("build/output/bmat_enum_trim_6.txt",
+                  "build/output/bmat_filtered_6.txt", {}, true);
+    f.run();
+    std::vector<HPCombi::BMat8> filtered = f.reps();
+    REQUIRE(f.reps().size() == 64);
+    std::ofstream ofs;
+    ofs.open("build/output/bmat_filtered_6.txt",
+             std::ofstream::out | std::ofstream::app);
+    ofs << BMAT8_ELEMENTARY[6].to_int() << "\n";
+    ofs << BMAT8_ONES[5].to_int() << "\n";
+    ofs << BMat8({{0, 1}, {1, 0}}).to_int() << "\n";
+    ofs << BMat8({{0, 1, 0, 0, 0, 0},
+                  {0, 0, 1, 0, 0, 0},
+                  {0, 0, 0, 1, 0, 0},
+                  {0, 0, 0, 0, 1, 0},
+                  {0, 0, 0, 0, 0, 1},
+                  {1, 0, 0, 0, 0, 0}})
+               .to_int() << "\n";
+    ofs.close();
+    std::cout << "=> min. generating set has size " << f.reps().size() + 4
+              << "\n";
+    std::cout << "=> writing file build/output/bmat_filtered_6.txt\n";
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -631,10 +660,6 @@ namespace libsemigroups {
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "007", "filter 6", "[quick]") {
-    Filterer<6> f("bmat_enum_trim_6.txt", "bmat_filtered_6.txt", {}, true);
-    f.run();
-    std::vector<HPCombi::BMat8> filtered = f.reps();
-    REQUIRE(filtered.size() == 65);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "008", "filter 7", "[extreme]") {
@@ -686,7 +711,7 @@ namespace libsemigroups {
       bmat7_gens.push_back(HPCombi::BMat8(std::stoul(line) | 1));
     }
     f.close();
-    
+
     HPCombi::BMat8 F({{1, 0, 0, 0, 0, 0, 0, 0},
                       {0, 1, 0, 0, 0, 0, 0, 0},
                       {0, 0, 1, 0, 0, 0, 0, 0},
@@ -695,7 +720,7 @@ namespace libsemigroups {
                       {0, 0, 0, 0, 0, 1, 0, 0},
                       {0, 0, 0, 0, 0, 0, 1, 0},
                       {0, 0, 0, 0, 0, 0, 0, 0}});
-  
+
     bmat7_gens.push_back(F);
 
     Filterer<8> filterer("bmat_trim_8_filterered_1.txt",
@@ -937,7 +962,7 @@ namespace libsemigroups {
       }
     }
     f.close();
-    
+
     std::cout << "processing with " << bmat7_gens.size();
 
     Filterer<8> filterer("bmat_trim_8_filterered_11.txt",
@@ -948,11 +973,11 @@ namespace libsemigroups {
     filterer.run();
     REQUIRE(filterer.size() == 472207);
   }
-  
+
   ///////////////////////////////////////////////////////////////////////
   // END FILTERING B8
   ///////////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////////
   // OUTPUT ROW SPACES
   ///////////////////////////////////////////////////////////////////////
@@ -975,9 +1000,9 @@ namespace libsemigroups {
       std::vector<uint8_t> row_space = row_space_vector(*it);
       o << "[";
       for (size_t i = 0; i < row_space.size() - 1; ++i) {
-        o << row_space[i] << ", "; 
+        o << row_space[i] << ", ";
       }
-      o << row_space.back() << "]\n"; 
+      o << row_space.back() << "]\n";
     }
     o.close();
   }
@@ -1159,7 +1184,7 @@ namespace libsemigroups {
     o << "];;" << std::endl;
     o.close();
   }
-  
+
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "135",
