@@ -9,6 +9,7 @@ curl -L -O https://github.com/hivert/HPCombi/archive/v0.0.5.tar.gz
 tar -xzf v0.0.5.tar.gz && rm -f v0.0.5.tar.gz
 curl -L -O http://www.tcs.hut.fi/Software/bliss/bliss-0.73.zip
 unzip bliss-0.73.zip && rm -f bliss-0.73.zip && cd ..
+sed -i '' -e '62d' extern/bliss-0.73/bliss.cc
 
 mv extern/HPCombi-0.0.5 extern/HPCombi
 
