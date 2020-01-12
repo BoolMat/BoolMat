@@ -1,6 +1,6 @@
 all: 
-	./rebuild.sh
+	sh/build.sh
 
 clean:  
-	rm -f d_enum
-	rm -rf libsemigroups
+	rm -rf build
+	rm -rf bin
