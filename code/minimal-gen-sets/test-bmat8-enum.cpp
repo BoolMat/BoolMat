@@ -222,13 +222,13 @@ namespace libsemigroups {
 
   bool is_fully_indecomposable(HPCombi::BMat8 bm, size_t dim) {
     std::vector<uint8_t> rows = bm.rows();
-    for (size_t x = 1; x < (1 << dim - 1); ++x) {
+    for (size_t x = 1; x < (1 << (dim - 1)); ++x) {
       uint8_t res   = 0;
       size_t  count = nr_ones(x);
       for (size_t i = 0; i < dim; ++i) {
         res = ((x >> i) & 1) ? res | rows[i] : res;
       }
-      if (nr_ones(res) < count + 1) {
+      if (static_cast<size_t>(nr_ones(res)) < count + 1) {
         return false;
       }
     }
@@ -1229,10 +1229,10 @@ namespace libsemigroups {
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "160", "print matrices", "[quick]") {
-    std::cout << HPCombi::BMat8(13853107707017691136) << std::endl;
+    std::cout << HPCombi::BMat8(13853107707017691136ull) << std::endl;
     std::cout << HPCombi::BMat8(4620710844303409152) << std::endl;
     std::cout << HPCombi::BMat8(4647750068672397312) << std::endl;
-    std::cout << HPCombi::BMat8(9241421688590303232) << std::endl;
+    std::cout << HPCombi::BMat8(9241421688590303232ull) << std::endl;
 
     std::cout << BMAT8_ELEMENTARY[6].to_int() << std::endl;
     std::cout << BMAT8_ONES[5].to_int() << std::endl;
