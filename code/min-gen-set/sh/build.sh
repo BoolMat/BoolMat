@@ -4,9 +4,9 @@ set -e
 # This script is used to build the things needed to run the run.sh script.
 
 if [ ! -d  build ]; then
-  mkdir -p build/output build/output
+  mkdir -p build/output
   cd build
-  git clone --branch v1.0.3 --depth=1 https://github.com/libsemigroups/libsemigroups
+  git clone --branch enum --depth=1 https://github.com/james-d-mitchell/libsemigroups
   cd libsemigroups/extern
   curl -L -O https://github.com/fmtlib/fmt/archive/5.3.0.tar.gz
   tar -xzf 5.3.0.tar.gz && rm -f 5.3.0.tar.gz

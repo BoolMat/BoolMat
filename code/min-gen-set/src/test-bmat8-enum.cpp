@@ -24,49 +24,6 @@ namespace libsemigroups {
 
   bliss::Stats stats;
 
-  std::vector<HPCombi::BMat8> const BMAT8_ONES
-      = {HPCombi::BMat8(0x0000000000000000),
-         HPCombi::BMat8(0x8000000000000000),
-         HPCombi::BMat8(0x8040000000000000),
-         HPCombi::BMat8(0x8040200000000000),
-         HPCombi::BMat8(0x8040201000000000),
-         HPCombi::BMat8(0x8040201008000000),
-         HPCombi::BMat8(0x8040201008040000),
-         HPCombi::BMat8(0x8040201008040200),
-         HPCombi::BMat8(0x8040201008040201)};
-  std::vector<HPCombi::BMat8> const BMAT8_ELEMENTARY
-      = {HPCombi::BMat8(0x0000000000000000),
-         HPCombi::BMat8(0xc000000000000000),
-         HPCombi::BMat8(0xc040000000000000),
-         HPCombi::BMat8(0xc040200000000000),
-         HPCombi::BMat8(0xc040201000000000),
-         HPCombi::BMat8(0xc040201008000000),
-         HPCombi::BMat8(0xc040201008040000),
-         HPCombi::BMat8(0xc040201008040200),
-         HPCombi::BMat8(0xc040201008040201)};
-
-  HPCombi::BMat8 BMat8_from_rows(std::vector<uint8_t> const& rows) {
-    LIBSEMIGROUPS_ASSERT(rows.size() <= 8);
-    LIBSEMIGROUPS_ASSERT(0 < rows.size());
-    size_t out = 0;
-    for (size_t i = 0; i < rows.size(); ++i) {
-      out = (out << 8) | rows[i];
-    }
-    out = out << 8 * (8 - rows.size());
-    return HPCombi::BMat8(out);
-  }
-
-  template <size_t N>
-  HPCombi::BMat8
-  BMat8_from_perm(typename ::libsemigroups::PermHelper<N>::type x) {
-    LIBSEMIGROUPS_ASSERT(N <= 8);
-    std::vector<uint8_t> rows;
-    for (size_t i = 0; i < N; ++i) {
-      rows.push_back(1 << (7 - x[i]));
-    }
-    return BMat8_from_rows(rows);
-  }
-
   bliss_digraph bliss_digraph_from_BMat8(HPCombi::BMat8 bm, size_t dim = 8) {
     bliss_digraph out = bliss_digraph(2 * dim);
     size_t        x   = bm.to_int();
@@ -309,7 +266,8 @@ namespace libsemigroups {
               }
             }
             _rows[k]          = row;
-            HPCombi::BMat8 bm = BMat8_from_rows(_rows);
+            auto bm = bmat8_helpers::make<HPCombi::BMat8>(_rows.cbegin(),
+                                                          _rows.cend());
             // move the matrix to the right place
             bm = HPCombi::BMat8(bm.to_int() << (8 - _n));
             if ((_trim && is_col_trim(bm, _n))
@@ -321,7 +279,7 @@ namespace libsemigroups {
               }
             }
           }
-        next_loop_last_row:;
+        next_loop_last_row:
           // uint8_t overflow!!!
           if (row == _max) {
             break;
@@ -330,7 +288,8 @@ namespace libsemigroups {
         if (report()) {
           REPORT_DEFAULT("found %d reps so far, currently on %s \n",
                          _out.size(),
-                         detail::to_string(BMat8_from_rows(_rows)));
+                         detail::to_string(bmat8_helpers::make<HPCombi::BMat8>(
+                             _rows.cbegin(), _rows.cend())));
         }
         _rows[k] = 0;
       }
@@ -443,13 +402,15 @@ namespace libsemigroups {
 
       std::vector<HPCombi::BMat8> S_bmats;
       for (Perm p : S) {
-        S_bmats.push_back(BMat8_from_perm<_dim>(p));
+        S_bmats.push_back(
+            bmat8_helpers::make<_dim, typename PermHelper<_dim>::type,
+                                HPCombi::BMat8>(p));
       }
 
       // TODO evil copying
       if (_filterers.size() == 0) {
         _filterers = bmat_enum;
-        _filterers.push_back(BMAT8_ELEMENTARY[_dim]);
+        _filterers.push_back(bmat8_helpers::elementary<HPCombi::BMat8>(_dim));
       }
 
       std::vector<std::vector<std::bitset<256>>> spaces(
@@ -621,8 +582,8 @@ namespace libsemigroups {
     std::ofstream ofs;
     ofs.open("build/output/bmat_filtered_6.txt",
              std::ofstream::out | std::ofstream::app);
-    ofs << BMAT8_ELEMENTARY[6].to_int() << "\n";
-    ofs << BMAT8_ONES[5].to_int() << "\n";
+    ofs << bmat8_helpers::elementary<HPCombi::BMat8>(6).to_int() << "\n";
+    ofs << bmat8_helpers::one<HPCombi::BMat8>(5).to_int() << "\n";
     ofs << BMat8({{0, 1}, {1, 0}}).to_int() << "\n";
     ofs << BMat8({{0, 1, 0, 0, 0, 0},
                   {0, 0, 1, 0, 0, 0},
@@ -1306,8 +1267,8 @@ namespace libsemigroups {
     std::cout << HPCombi::BMat8(4647750068672397312) << std::endl;
     std::cout << HPCombi::BMat8(9241421688590303232ull) << std::endl;
 
-    std::cout << BMAT8_ELEMENTARY[6].to_int() << std::endl;
-    std::cout << BMAT8_ONES[5].to_int() << std::endl;
+    std::cout << bmat8_helpers::elementary(6).to_int() << std::endl;
+    std::cout << bmat8_helpers::one(5).to_int() << std::endl;
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "170", "prime extensions", "[quick]") {
@@ -1363,13 +1324,6 @@ namespace libsemigroups {
     }
   }
 
-  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "200", "print elem", "[quick]") {
-    for (size_t i = 0; i < 9; ++i) {
-      std::cout << std::hex << BMAT8_ELEMENTARY[i].to_int() << std::endl
-                << std::dec;
-    }
-  }
-
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "300",
                           "count fully indecomposable",
@@ -1418,4 +1372,4 @@ namespace libsemigroups {
     std::cout << +count << " filtered fully indecomposable trim reps of dim 8"
               << std::endl;
   }
-}  // namespace libsemigroups
+  } // namespace libsemigroups
