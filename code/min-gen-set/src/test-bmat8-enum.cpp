@@ -39,11 +39,11 @@ namespace libsemigroups {
     return out;
   }
 
-  void bliss_hook_function(void*, const unsigned int, const unsigned int*) {}
+  void bliss_hook_function(void *, const unsigned int, const unsigned int *) {}
 
   HPCombi::BMat8 permuted_BMat8(HPCombi::BMat8      bm,
                                 size_t              dim,
-                                const unsigned int* perm) {
+                                const unsigned int *perm) {
     HPCombi::epu8 row_perm;
     HPCombi::epu8 col_perm;
     for (size_t i = 0; i < dim; ++i) {
@@ -72,7 +72,8 @@ namespace libsemigroups {
     return is_row_reduced(bm.transpose());
   }
 
-  std::bitset<256> row_space_bitset(HPCombi::BMat8 bm) {
+  std::pair<std::bitset<256>, std::vector<uint8_t>>
+  row_space_impl(HPCombi::BMat8 bm) {
     std::bitset<256>     lookup;
     std::vector<uint8_t> row_vec = bm.row_space_basis().rows();
     auto                 last = std::remove(row_vec.begin(), row_vec.end(), 0);
@@ -91,31 +92,16 @@ namespace libsemigroups {
         }
       }
     }
-    return lookup;
+    return std::make_pair(lookup, row_space);
+  }
+
+  std::bitset<256> row_space_bitset(HPCombi::BMat8 bm) {
+    return row_space_impl(bm).first;
   }
 
   std::vector<uint8_t> row_space_vector(HPCombi::BMat8 bm) {
-    std::bitset<256>     lookup;
-    std::vector<uint8_t> row_vec = bm.row_space_basis().rows();
-    auto                 last = std::remove(row_vec.begin(), row_vec.end(), 0);
-    row_vec.erase(last, row_vec.end());
-    for (uint8_t x : row_vec) {
-      lookup.set(x);
-    }
-    lookup.set(0);
-    std::vector<uint8_t> row_space(row_vec.begin(), row_vec.end());
-    for (size_t i = 0; i < row_space.size(); ++i) {
-      for (uint8_t row : row_vec) {
-        uint8_t x = row_space[i] | row;
-        if (!lookup[x]) {
-          row_space.push_back(x);
-          lookup.set(x);
-        }
-      }
-    }
-    return row_space;
+    return row_space_impl(bm).second;
   }
-
 
   std::bitset<256> col_space_bitset(HPCombi::BMat8 bm) {
     return row_space_bitset(bm.transpose());
@@ -127,6 +113,10 @@ namespace libsemigroups {
 
   HPCombi::BMat8 left_mult(HPCombi::BMat8 pt, HPCombi::BMat8 x) {
     return x * pt;
+  }
+
+  int nr_ones(uint8_t x) {
+    return __builtin_popcount(x);
   }
 
   bool is_row_trim(HPCombi::BMat8 bm, size_t dim = 8) {
@@ -145,20 +135,12 @@ namespace libsemigroups {
     return is_row_trim(bm.transpose(), dim);
   }
 
-  bool is_trim(HPCombi::BMat8 bm, size_t dim = 8) {
-    return is_row_trim(bm, dim) && is_col_trim(bm, dim);
-  }
-
-  int nr_ones(uint8_t x) {
-    return __builtin_popcount(x);
-  }
-
   // given a HPCombi::BMat8 bm of dimension dim, find all the BMat8s of
   // dimension one higher which are extensions of bm with 0s in the new column
   // and maximal row spaces
   // TODO: obvious optimisations
   std::vector<HPCombi::BMat8> simple_prime_extensions(HPCombi::BMat8 bm,
-                                                      size_t         dim) {
+                                                      size_t const   dim) {
     std::vector<uint8_t>        rows = row_space_vector(bm);
     std::vector<HPCombi::BMat8> extensions(0);
 
@@ -193,7 +175,7 @@ namespace libsemigroups {
     return true;
   }
 
-  class BMatEnumerator : public ::libsemigroups::Runner {
+  class BMatEnumerator : public libsemigroups::Runner {
    public:
     BMatEnumerator(size_t dim, bool trim)
         : _n(dim),
@@ -266,8 +248,8 @@ namespace libsemigroups {
                 }
               }
             }
-            _rows[k]          = row;
-            auto bm = bmat8_helpers::make<HPCombi::BMat8>(_rows.cbegin(),
+            _rows[k] = row;
+            auto bm  = bmat8_helpers::make<HPCombi::BMat8>(_rows.cbegin(),
                                                           _rows.cend());
             // move the matrix to the right place
             bm = HPCombi::BMat8(bm.to_int() << (8 - _n));
@@ -298,7 +280,7 @@ namespace libsemigroups {
 
    public:
     void run_impl() {
-      for (bool& x : _row_seen) {
+      for (bool &x : _row_seen) {
         x = false;
       }
       _row_seen[0] = true;
@@ -331,7 +313,7 @@ namespace libsemigroups {
       return _finished;
     }
 
-    const std::vector<HPCombi::BMat8>& reps() {
+    const std::vector<HPCombi::BMat8> &reps() {
       if (!started()) {
         run();
       }
@@ -403,9 +385,9 @@ namespace libsemigroups {
 
       std::vector<HPCombi::BMat8> S_bmats;
       for (Perm p : S) {
-        S_bmats.push_back(
-            bmat8_helpers::make<_dim, typename PermHelper<_dim>::type,
-                                HPCombi::BMat8>(p));
+        S_bmats.push_back(bmat8_helpers::make<_dim,
+                                              typename PermHelper<_dim>::type,
+                                              HPCombi::BMat8>(p));
       }
 
       // TODO evil copying
@@ -465,7 +447,7 @@ namespace libsemigroups {
       report_why_we_stopped();
     }
 
-    const std::vector<HPCombi::BMat8>& reps() {
+    const std::vector<HPCombi::BMat8> &reps() {
       if (!started()) {
         run();
       }
@@ -498,13 +480,13 @@ namespace libsemigroups {
                           "001",
                           "test bliss canonicalisation",
                           "[quick][bliss]") {
-    auto           rg = ReportGuard(false);
+    auto           rg  = ReportGuard(false);
     HPCombi::BMat8 x   = HPCombi::BMat8({{0, 0, 0}, {0, 0, 1}, {0, 1, 1}});
     HPCombi::BMat8 y   = HPCombi::BMat8({{0, 0, 0}, {0, 0, 1}, {1, 0, 1}});
     bliss_digraph  dgx = bliss_digraph_from_BMat8(x, 3);
     bliss_digraph  dgy = bliss_digraph_from_BMat8(y, 3);
 
-    dgx.write_dot("dgx.dot");
+    // dgx.write_dot("dgx.dot");
 
     bliss_digraph dgx2 = bliss_digraph(6);
     dgx2.change_color(3, 1);
@@ -528,14 +510,13 @@ namespace libsemigroups {
                           "002",
                           "enumerate B4",
                           "[quick][enumerate]") {
-
     auto           rg = ReportGuard(false);
     BMatEnumerator enumerator(4, false);
     enumerator.report_every(std::chrono::nanoseconds(1));
     REQUIRE(enumerator.reps().size() == 60);
 
     std::ofstream o;
-    o.open("bmat_enum_4.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/bmat_enum_4.txt", std::ios::out | std::ios::trunc);
     for (HPCombi::BMat8 i : enumerator.reps()) {
       o << i.to_int() << "\n";
     }
@@ -550,7 +531,8 @@ namespace libsemigroups {
     auto           rg = ReportGuard();
     BMatEnumerator enumerator(5, true);
     REQUIRE(enumerator.reps().size() == 32);
-    o.open("bmat_enum_trim_5.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/bmat_enum_trim_5.txt",
+           std::ios::out | std::ios::trunc);
     for (HPCombi::BMat8 i : enumerator.reps()) {
       o << i.to_int() << "\n";
     }
@@ -566,10 +548,10 @@ namespace libsemigroups {
     auto           rg = ReportGuard(false);
     BMatEnumerator enumerator(6, true);
     REQUIRE(enumerator.reps().size() == 394);
-    std::cout << "=> found " << enumerator.reps().size()
-             << " trim matrices\n";
+    std::cout << "=> found " << enumerator.reps().size() << " trim matrices\n";
 
-    o.open("build/output/bmat_enum_trim_6.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/bmat_enum_trim_6.txt",
+           std::ios::out | std::ios::trunc);
     for (HPCombi::BMat8 i : enumerator.reps()) {
       o << i.to_int() << "\n";
     }
@@ -578,7 +560,9 @@ namespace libsemigroups {
 
     std::cout << "=> filtering trim matrices ...\n";
     Filterer<6> f("build/output/bmat_enum_trim_6.txt",
-                  "build/output/bmat_filtered_6.txt", {}, true);
+                  "build/output/bmat_filtered_6.txt",
+                  {},
+                  true);
     f.run();
     std::vector<HPCombi::BMat8> filtered = f.reps();
     REQUIRE(f.reps().size() == 64);
@@ -594,7 +578,8 @@ namespace libsemigroups {
                   {0, 0, 0, 0, 1, 0},
                   {0, 0, 0, 0, 0, 1},
                   {1, 0, 0, 0, 0, 0}})
-               .to_int() << "\n";
+               .to_int()
+        << "\n";
     ofs.close();
     std::cout << "=> min. generating set has size " << f.reps().size() + 4
               << "\n";
@@ -608,7 +593,8 @@ namespace libsemigroups {
     std::ofstream  o;
     auto           rg = ReportGuard();
     BMatEnumerator enumerator_8_trim(8, true);
-    o.open("bmat_trim_enum_8.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/bmat_trim_enum_8.txt",
+           std::ios::out | std::ios::trunc);
     for (HPCombi::BMat8 i : enumerator_8_trim.reps()) {
       o << i.to_int() << "\n";
     }
@@ -617,18 +603,23 @@ namespace libsemigroups {
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "006", "filter 5", "[quick]") {
-    Filterer<5> f("bmat_enum_trim_5.txt", "bmat_filtered_5.txt", {}, true);
+    Filterer<5> f("build/output/bmat_enum_trim_5.txt",
+                  "build/output/bmat_filtered_5.txt",
+                  {},
+                  true);
     f.run();
     std::vector<HPCombi::BMat8> filtered = f.reps();
     REQUIRE(filtered.size() == 9);
   }
 
-  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "007", "filter 6", "[quick]") {
-  }
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "007", "filter 6", "[quick]") {}
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "008", "filter 7", "[extreme]") {
     auto        rg = ReportGuard();
-    Filterer<7> f("bmat_trim_enum_7.txt", "bmat_filtered_7.txt", {}, true);
+    Filterer<7> f("build/output/bmat_trim_enum_7.txt",
+                  "build/output/bmat_filtered_7.txt",
+                  {},
+                  true);
     f.run();
     std::vector<HPCombi::BMat8> filtered = f.reps();
     REQUIRE(filtered.size() == 2139);
@@ -1033,7 +1024,6 @@ namespace libsemigroups {
         o << +x << ", ";
       }
       o << "0}" << std::endl;
-      ;
     }
     o.close();
   }
@@ -1051,7 +1041,8 @@ namespace libsemigroups {
     f.close();
 
     std::ofstream o;
-    o.open("row_spaces_digraphs_5.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/row_spaces_digraphs_5.txt",
+           std::ios::out | std::ios::trunc);
     o << "row_digraphs_5 := [" << std::endl;
     for (auto it = bmat_enum.cbegin(); it < bmat_enum.cend(); it++) {
       std::vector<uint8_t> row_space = row_space_vector(*it);
@@ -1088,7 +1079,8 @@ namespace libsemigroups {
     f.close();
 
     std::ofstream o;
-    o.open("row_spaces_digraphs_6.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/row_spaces_digraphs_6.txt",
+           std::ios::out | std::ios::trunc);
     o << "row_digraphs_6 := [" << std::endl;
     for (auto it = bmat_enum.cbegin(); it < bmat_enum.cend(); it++) {
       std::vector<uint8_t> row_space = row_space_vector(*it);
@@ -1125,7 +1117,8 @@ namespace libsemigroups {
     f.close();
 
     std::ofstream o;
-    o.open("row_spaces_digraphs_7.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/row_spaces_digraphs_7.txt",
+           std::ios::out | std::ios::trunc);
     o << "row_digraphs_7 := [" << std::endl;
     for (auto it = bmat_enum.cbegin(); it < bmat_enum.cend(); it++) {
       std::vector<uint8_t> row_space = row_space_vector(*it);
@@ -1149,7 +1142,6 @@ namespace libsemigroups {
     o.close();
   }
 
-
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "135",
                           "bmat8 primes row space digraphs 5",
@@ -1163,7 +1155,8 @@ namespace libsemigroups {
     f.close();
 
     std::ofstream o;
-    o.open("row_spaces_digraphs_primes_5.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/row_spaces_digraphs_primes_5.txt",
+           std::ios::out | std::ios::trunc);
     o << "row_digraphs_primes_5 := [" << std::endl;
     for (auto it = bmat_enum.cbegin(); it < bmat_enum.cend(); it++) {
       std::vector<uint8_t> row_space = row_space_vector(*it);
@@ -1200,7 +1193,8 @@ namespace libsemigroups {
     f.close();
 
     std::ofstream o;
-    o.open("row_spaces_digraphs_primes_6.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/row_spaces_digraphs_primes_6.txt",
+           std::ios::out | std::ios::trunc);
     o << "row_digraphs_primes_6 := [" << std::endl;
     for (auto it = bmat_enum.cbegin(); it < bmat_enum.cend(); it++) {
       std::vector<uint8_t> row_space = row_space_vector(*it);
@@ -1237,7 +1231,8 @@ namespace libsemigroups {
     f.close();
 
     std::ofstream o;
-    o.open("row_spaces_digraphs_primes_7.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/row_spaces_digraphs_primes_7.txt",
+           std::ios::out | std::ios::trunc);
     o << "row_digraphs_primes_7 := [" << std::endl;
     for (auto it = bmat_enum.cbegin(); it < bmat_enum.cend(); it++) {
       if (it - bmat_enum.cbegin() < 10) {
@@ -1283,7 +1278,7 @@ namespace libsemigroups {
     }
     f.close();
     HPCombi::BMat8 x = bmat_enum[1021];
-    for (HPCombi::BMat8& bm : simple_prime_extensions(x, 7)) {
+    for (HPCombi::BMat8 &bm : simple_prime_extensions(x, 7)) {
       std::cout << bm << std::endl;
     }
   }
@@ -1297,7 +1292,7 @@ namespace libsemigroups {
     std::ifstream               f("bmat_gens_7.txt");
     std::string                 line;
     std::ofstream               o;
-    o.open("bmat8_filterers.txt", std::ios::out | std::ios::trunc);
+    o.open("build/output/bmat8_filterers.txt", std::ios::out | std::ios::trunc);
     while (std::getline(f, line)) {
       o << HPCombi::BMat8(std::stoul(line) | 1).to_int() << "\n";
     }
@@ -1375,4 +1370,4 @@ namespace libsemigroups {
     std::cout << +count << " filtered fully indecomposable trim reps of dim 8"
               << std::endl;
   }
-  } // namespace libsemigroups
+}  // namespace libsemigroups
