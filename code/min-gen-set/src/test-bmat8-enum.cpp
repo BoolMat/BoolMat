@@ -94,18 +94,6 @@ namespace libsemigroups {
     return lookup;
   }
 
-  std::bitset<256> col_space_bitset(HPCombi::BMat8 bm) {
-    return row_space_bitset(bm.transpose());
-  }
-
-  HPCombi::BMat8 right_mult(HPCombi::BMat8 pt, HPCombi::BMat8 x) {
-    return pt * x;
-  }
-
-  HPCombi::BMat8 left_mult(HPCombi::BMat8 pt, HPCombi::BMat8 x) {
-    return x * pt;
-  }
-
   std::vector<uint8_t> row_space_vector(HPCombi::BMat8 bm) {
     std::bitset<256>     lookup;
     std::vector<uint8_t> row_vec = bm.row_space_basis().rows();
@@ -126,6 +114,19 @@ namespace libsemigroups {
       }
     }
     return row_space;
+  }
+
+
+  std::bitset<256> col_space_bitset(HPCombi::BMat8 bm) {
+    return row_space_bitset(bm.transpose());
+  }
+
+  HPCombi::BMat8 right_mult(HPCombi::BMat8 pt, HPCombi::BMat8 x) {
+    return pt * x;
+  }
+
+  HPCombi::BMat8 left_mult(HPCombi::BMat8 pt, HPCombi::BMat8 x) {
+    return x * pt;
   }
 
   bool is_row_trim(HPCombi::BMat8 bm, size_t dim = 8) {
@@ -497,6 +498,7 @@ namespace libsemigroups {
                           "001",
                           "test bliss canonicalisation",
                           "[quick][bliss]") {
+    auto           rg = ReportGuard(false);
     HPCombi::BMat8 x   = HPCombi::BMat8({{0, 0, 0}, {0, 0, 1}, {0, 1, 1}});
     HPCombi::BMat8 y   = HPCombi::BMat8({{0, 0, 0}, {0, 0, 1}, {1, 0, 1}});
     bliss_digraph  dgx = bliss_digraph_from_BMat8(x, 3);
@@ -526,12 +528,13 @@ namespace libsemigroups {
                           "002",
                           "enumerate B4",
                           "[quick][enumerate]") {
-    std::ofstream o;
 
-    auto           rg = ReportGuard();
+    auto           rg = ReportGuard(false);
     BMatEnumerator enumerator(4, false);
     enumerator.report_every(std::chrono::nanoseconds(1));
     REQUIRE(enumerator.reps().size() == 60);
+
+    std::ofstream o;
     o.open("bmat_enum_4.txt", std::ios::out | std::ios::trunc);
     for (HPCombi::BMat8 i : enumerator.reps()) {
       o << i.to_int() << "\n";
@@ -1261,17 +1264,17 @@ namespace libsemigroups {
     o.close();
   }
 
-  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "160", "print matrices", "[quick]") {
-    std::cout << HPCombi::BMat8(13853107707017691136ull) << std::endl;
-    std::cout << HPCombi::BMat8(4620710844303409152) << std::endl;
-    std::cout << HPCombi::BMat8(4647750068672397312) << std::endl;
-    std::cout << HPCombi::BMat8(9241421688590303232ull) << std::endl;
+  // LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "160", "print matrices", "[quick]") {
+  //   std::cout << HPCombi::BMat8(13853107707017691136ull) << std::endl;
+  //   std::cout << HPCombi::BMat8(4620710844303409152) << std::endl;
+  //   std::cout << HPCombi::BMat8(4647750068672397312) << std::endl;
+  //   std::cout << HPCombi::BMat8(9241421688590303232ull) << std::endl;
 
-    std::cout << bmat8_helpers::elementary(6).to_int() << std::endl;
-    std::cout << bmat8_helpers::one(5).to_int() << std::endl;
-  }
+  //   std::cout << bmat8_helpers::elementary(6).to_int() << std::endl;
+  //   std::cout << bmat8_helpers::one(5).to_int() << std::endl;
+  // }
 
-  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "170", "prime extensions", "[quick]") {
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "170", "prime extensions", "[fails]") {
     std::vector<HPCombi::BMat8> bmat_enum;
     std::ifstream               f("bmat_gens_7.txt");
     std::string                 line;
@@ -1327,7 +1330,7 @@ namespace libsemigroups {
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "300",
                           "count fully indecomposable",
-                          "[quick]") {
+                          "[fails]") {
     std::vector<HPCombi::BMat8> bmat8_enum;
     std::ifstream               f("bmat_trim_enum_8.txt");
     std::string                 line;
@@ -1354,7 +1357,7 @@ namespace libsemigroups {
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "301",
                           "count fully indecomposable",
-                          "[quick]") {
+                          "[fails]") {
     std::vector<HPCombi::BMat8> bmat8_enum;
     std::ifstream               f("bmat_filtered_8_17.txt");
     std::string                 line;
