@@ -4,9 +4,11 @@ all:
 test: all
 	build/libsemigroups/test_bmat8_enum "[quick]"
 
+4: 
+	@sh/run.sh 4
+
 5: 
 	@sh/run.sh 5
-	
 
 6: 
 	@sh/run.sh 6
