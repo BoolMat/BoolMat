@@ -15,7 +15,6 @@
 #include "runner.hpp"
 #include "string.hpp"
 #include "timer.hpp"
-#include "transf.hpp"
 
 #include "../extern/bliss-0.73/graph.hh"
 
@@ -476,6 +475,80 @@ namespace libsemigroups {
     bool                                                          _finished;
   };
 
+  ////////////////////////////////////////////////////////////////////////
+  // The next test cases perform the actual computations
+  ////////////////////////////////////////////////////////////////////////
+
+  template <size_t n>
+  void minimal_generating_set() {
+    static_assert(n != 0, "the parameter n must not be 0");
+    std::ofstream  o;
+    auto           rg = ReportGuard();
+    BMatEnumerator enumerator(n, true);
+    // REQUIRE(enumerator.reps().size() == 32);
+    std::cout << "-- found " << enumerator.reps().size() << " trim matrices\n";
+    std::string tf = "build/output/bmat_enum_trim_";
+    tf += detail::to_string(n);
+    tf += ".txt";
+    o.open(tf, std::ios::out | std::ios::trunc);
+    for (HPCombi::BMat8 i : enumerator.reps()) {
+      o << i.to_int() << "\n";
+    }
+    o.close();
+
+    std::cout << "-- writing file: " << tf << "\n";
+    std::cout << "-- filtering trim matrices ...\n";
+    std::string ff = "build/output/bmat_filtered_";
+    ff += detail::to_string(n);
+    ff += ".txt";
+    Filterer<n> f(tf, ff, {}, true);
+    f.run();
+    std::vector<HPCombi::BMat8> filtered = f.reps();
+    std::cout << "-- min. generating set has size " << f.reps().size() + 4
+              << "\n";
+    // REQUIRE(f.reps().size() == 9);
+    std::cout << "-- writing file " << ff << "\n";
+    std::ofstream ofs;
+    ofs.open(ff, std::ofstream::out | std::ofstream::app);
+    ofs << bmat8_helpers::elementary<HPCombi::BMat8>(n).to_int() << "\n";
+    ofs << bmat8_helpers::one<HPCombi::BMat8>(n - 1).to_int() << "\n";
+    using Perm = typename PermHelper<n>::type;
+    ofs << bmat8_helpers::make<n>(Perm({1, 0})) << "\n";
+    HPCombi::epu8 cycle;
+    cycle[0] = 1;
+    for (uint8_t i = 2; i < n; ++i) {
+      cycle[i - 1] = i;
+    }
+    cycle[n - 1] = 0;
+    ofs << bmat8_helpers::make<n>(Perm(cycle)) << "\n";
+    ofs.close();
+  }
+
+    LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+        "5",
+        "enumerate minimal generating set for n = 5",
+        "[standard][enumerate]") {
+      minimal_generating_set<5>();
+    }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "6",
+                          "enumerate minimal generating set for n = 6",
+                          "[standard][enumerate]") {
+      minimal_generating_set<6>();
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "7",
+                          "enumerate minimal generating set for n = 7",
+                          "[standard][enumerate]") {
+      minimal_generating_set<7>();
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+  // The next test cases are just tests that things work properly
+  ////////////////////////////////////////////////////////////////////////
+
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "001",
                           "test bliss canonicalisation",
@@ -539,52 +612,6 @@ namespace libsemigroups {
     o.close();
   }
 
-  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
-                          "004",
-                          "enumerate trim B6",
-                          "[standard][enumerate]") {
-    std::cout << "=> Finding minimal generating set for n = 6 ...\n";
-    std::ofstream  o;
-    auto           rg = ReportGuard(false);
-    BMatEnumerator enumerator(6, true);
-    REQUIRE(enumerator.reps().size() == 394);
-    std::cout << "=> found " << enumerator.reps().size() << " trim matrices\n";
-
-    o.open("build/output/bmat_enum_trim_6.txt",
-           std::ios::out | std::ios::trunc);
-    for (HPCombi::BMat8 i : enumerator.reps()) {
-      o << i.to_int() << "\n";
-    }
-    o.close();
-    std::cout << "=> writing file build/output/bmat_enum_trim_6.txt\n";
-
-    std::cout << "=> filtering trim matrices ...\n";
-    Filterer<6> f("build/output/bmat_enum_trim_6.txt",
-                  "build/output/bmat_filtered_6.txt",
-                  {},
-                  true);
-    f.run();
-    std::vector<HPCombi::BMat8> filtered = f.reps();
-    REQUIRE(f.reps().size() == 64);
-    std::ofstream ofs;
-    ofs.open("build/output/bmat_filtered_6.txt",
-             std::ofstream::out | std::ofstream::app);
-    ofs << bmat8_helpers::elementary<HPCombi::BMat8>(6).to_int() << "\n";
-    ofs << bmat8_helpers::one<HPCombi::BMat8>(5).to_int() << "\n";
-    ofs << BMat8({{0, 1}, {1, 0}}).to_int() << "\n";
-    ofs << BMat8({{0, 1, 0, 0, 0, 0},
-                  {0, 0, 1, 0, 0, 0},
-                  {0, 0, 0, 1, 0, 0},
-                  {0, 0, 0, 0, 1, 0},
-                  {0, 0, 0, 0, 0, 1},
-                  {1, 0, 0, 0, 0, 0}})
-               .to_int()
-        << "\n";
-    ofs.close();
-    std::cout << "=> min. generating set has size " << f.reps().size() + 4
-              << "\n";
-    std::cout << "=> writing file build/output/bmat_filtered_6.txt\n";
-  }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "800",
