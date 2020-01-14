@@ -476,7 +476,54 @@ namespace libsemigroups {
   };
 
   ////////////////////////////////////////////////////////////////////////
-  // The next test cases perform the actual computations
+  // JDM helper functions
+  ////////////////////////////////////////////////////////////////////////
+
+  std::vector<HPCombi::BMat8> read_bmat_file(std::string const &fn) {
+    std::vector<HPCombi::BMat8> out;
+    std::ifstream               f(fn);
+    std::string                 line;
+    while (std::getline(f, line)) {
+      out.push_back(HPCombi::BMat8(std::stoul(line)));
+    }
+    f.close();
+    return out;
+  }
+
+  void write_bmat_file(std::string const &                fn,
+                       std::vector<HPCombi::BMat8> const &vec) {
+    std::ofstream f(fn, std::ios::out | std::ios::trunc);
+    for (auto x : vec) {
+      f << x.to_int() << "\n";
+    }
+    f.close();
+  }
+
+  void append_bmat_file(std::string const &                fn,
+                       HPCombi::BMat8 x) {
+    std::ofstream f(fn, std::ios::out | std::ios::app);
+    f << x.to_int() << "\n";
+    f.close();
+  }
+
+  HPCombi::BMat8 cycle(size_t n) {
+    using Perm = HPCombi::Perm16;
+    HPCombi::epu8 cycl;
+    cycl[0] = 1;
+    for (uint8_t i = 2; i < n; ++i) {
+      cycl[i - 1] = i;
+    }
+    cycl[n - 1] = 0;
+    return bmat8_helpers::make<Perm, HPCombi::BMat8>(Perm(cycl), n);
+  }
+
+  HPCombi::BMat8 transposition(size_t n) {
+    using Perm = HPCombi::Perm16;
+    return bmat8_helpers::make<Perm, HPCombi::BMat8>(Perm({1, 0}), n);
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+  // The function actually performing the calculation
   ////////////////////////////////////////////////////////////////////////
 
   template <size_t n>
@@ -487,62 +534,46 @@ namespace libsemigroups {
     BMatEnumerator enumerator(n, true);
     // REQUIRE(enumerator.reps().size() == 32);
     std::cout << "-- found " << enumerator.reps().size() << " trim matrices\n";
-    std::string tf = "build/output/bmat_enum_trim_";
-    tf += detail::to_string(n);
-    tf += ".txt";
-    o.open(tf, std::ios::out | std::ios::trunc);
-    for (HPCombi::BMat8 i : enumerator.reps()) {
-      o << i.to_int() << "\n";
-    }
-    o.close();
+    std::string tf
+        = "build/output/bmat_enum_trim_" + detail::to_string(n) + ".txt";
+    write_bmat_file(tf, enumerator.reps());
 
     std::cout << "-- writing file: " << tf << "\n";
     std::cout << "-- filtering trim matrices ...\n";
-    std::string ff = "build/output/bmat_filtered_";
-    ff += detail::to_string(n);
-    ff += ".txt";
+    std::string ff
+        = "build/output/bmat_filtered_" + detail::to_string(n) + ".txt";
     Filterer<n> f(tf, ff, {}, true);
     f.run();
-    std::vector<HPCombi::BMat8> filtered = f.reps();
+
     std::cout << "-- min. generating set has size " << f.reps().size() + 4
               << "\n";
-    // REQUIRE(f.reps().size() == 9);
     std::cout << "-- writing file " << ff << "\n";
-    std::ofstream ofs;
-    ofs.open(ff, std::ofstream::out | std::ofstream::app);
-    ofs << bmat8_helpers::elementary<HPCombi::BMat8>(n).to_int() << "\n";
-    ofs << bmat8_helpers::one<HPCombi::BMat8>(n - 1).to_int() << "\n";
-    using Perm = typename PermHelper<n>::type;
-    ofs << bmat8_helpers::make<n>(Perm({1, 0})) << "\n";
-    HPCombi::epu8 cycle;
-    cycle[0] = 1;
-    for (uint8_t i = 2; i < n; ++i) {
-      cycle[i - 1] = i;
-    }
-    cycle[n - 1] = 0;
-    ofs << bmat8_helpers::make<n>(Perm(cycle)) << "\n";
-    ofs.close();
+
+    append_bmat_file(ff, bmat8_helpers::elementary<HPCombi::BMat8>(n));
+    append_bmat_file(ff, bmat8_helpers::one<HPCombi::BMat8>(n - 1));
+    append_bmat_file(ff, transposition(n));
+    append_bmat_file(ff, cycle(n));
   }
 
-    LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
-        "5",
-        "enumerate minimal generating set for n = 5",
-        "[standard][enumerate]") {
-      minimal_generating_set<5>();
-    }
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "5",
+                          "enumerate minimal generating set for n = 5",
+                          "[standard][enumerate]") {
+    minimal_generating_set<5>();
+  }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "6",
                           "enumerate minimal generating set for n = 6",
                           "[standard][enumerate]") {
-      minimal_generating_set<6>();
+    minimal_generating_set<6>();
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "7",
                           "enumerate minimal generating set for n = 7",
                           "[standard][enumerate]") {
-      minimal_generating_set<7>();
+    minimal_generating_set<7>();
   }
 
   ////////////////////////////////////////////////////////////////////////
@@ -611,7 +642,6 @@ namespace libsemigroups {
     }
     o.close();
   }
-
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "800",
