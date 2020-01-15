@@ -59,7 +59,7 @@ fi
 bold "* rebuilding C++ code *********************************************************"
 sh/build.sh
 
-if [[ "$1" =~ ^4$ || "$1" =~ ^5$ || "$1" =~ ^6$ || "$1" =~ ^7$ ]] ; then
+if [[ "$1" =~ ^3$ ||  "$1" =~ ^4$ || "$1" =~ ^5$ || "$1" =~ ^6$ || "$1" =~ ^7$ ]] ; then
   time run $1
 else
   bold "error: expected a value between 4 and 7 (inclusive), got $1"
