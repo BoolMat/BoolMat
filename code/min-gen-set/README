@@ -1,0 +1,10 @@
+This directory contains everything required to compute a minimal generating
+set for the monoid of n x n boolean matrices. An internet connection is
+required (since several resources are downloaded), but it should be as simple
+as typing:
+
+  make 4 
+
+which will compute a minimal generating set for the 4 x 4 boolean matrices.
+Other valid inputs are 3, 4, 5, 6, 7, and 8, although this last one will take a
+long time to run. 
