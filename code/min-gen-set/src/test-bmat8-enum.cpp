@@ -120,10 +120,11 @@ namespace libsemigroups {
   }
 
   bool is_row_trim(HPCombi::BMat8 bm, size_t dim = 8) {
-    std::vector<uint8_t> rows = bm.rows();
+    static std::array<uint8_t, 8> r;
+    bm.rows(r);
     for (size_t i = 0; i < dim; ++i) {
       for (size_t j = 0; j < dim; ++j) {
-        if (rows[i] && (i != j) && ((rows[i] | rows[j]) == rows[j])) {
+        if (r[i] && (i != j) && ((r[i] | r[j]) == r[j])) {
           return false;
         }
       }
@@ -507,29 +508,12 @@ namespace libsemigroups {
     f.close();
   }
 
-  HPCombi::BMat8 cycle(size_t n) {
-    using Perm = HPCombi::Perm16;
-    HPCombi::epu8 cycl;
-    cycl[0] = 1;
-    for (uint8_t i = 2; i < n; ++i) {
-      cycl[i - 1] = i;
-    }
-    cycl[n - 1] = 0;
-    return bmat8_helpers::make<Perm, HPCombi::BMat8>(Perm(cycl), n);
-  }
-
-  HPCombi::BMat8 transposition(size_t n) {
-    using Perm = HPCombi::Perm16;
-    return bmat8_helpers::make<Perm, HPCombi::BMat8>(Perm({1, 0}), n);
-  }
-
   ////////////////////////////////////////////////////////////////////////
   // The function actually performing the calculation
   ////////////////////////////////////////////////////////////////////////
 
-  template <size_t n>
-  void minimal_generating_set() {
-    static_assert(n != 0, "the parameter n must not be 0");
+  std::vector<HPCombi::BMat8> trim_bmats(size_t n) {
+    detail::Timer t;
     auto           rg = ReportGuard();
     BMatEnumerator enumerator(n, true);
     std::string tf
@@ -538,10 +522,15 @@ namespace libsemigroups {
     append_bmat_file(tf, bmat8_helpers::elementary<HPCombi::BMat8>(n));
     std::cout << enumerator.reps().size() + 1 << " trim matrices written to:";
     std::cout << "    " << tf << "\n";
-
     std::vector<HPCombi::BMat8> reps = enumerator.reps();
     reps.push_back(bmat8_helpers::elementary<HPCombi::BMat8>(n));
+    std::cout << "elapsed time = " <<  t << std::endl;
+    return reps;
+  }
 
+  void minimal_generating_set(size_t n) {
+    auto           rg = ReportGuard();
+    std::vector<HPCombi::BMat8> reps = trim_bmats(n);
     std::string rsn
         = "build/output/row_space_numbers_" + detail::to_string(n) + ".txt";
     std::ofstream o(rsn, std::ios::out | std::ios::trunc);
@@ -556,57 +545,51 @@ namespace libsemigroups {
     o.close();
     std::cout << reps.size() << " row spaces written to:";
     std::cout << "       " << rsn << "\n";
-
-    // std::cout << "-- filtering trim matrices ...\n";
-    // std::string ff
-    //     = "build/output/bmat_filtered_" + detail::to_string(n) + ".txt";
-    // Filterer<n> f(tf, ff, {}, true);
-    // f.run();
-
-    // std::cout << "-- min. generating set has size " << f.reps().size() + 4
-    //           << "\n";
-    // std::cout << "-- writing file " << ff << "\n";
-
-    // append_bmat_file(ff, bmat8_helpers::elementary<HPCombi::BMat8>(n));
-    // append_bmat_file(ff, bmat8_helpers::one<HPCombi::BMat8>(n - 1));
-    // append_bmat_file(ff, transposition(n));
-    // append_bmat_file(ff, cycle(n));
   }
+
+  ////////////////////////////////////////////////////////////////////////
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "3",
                           "enumerate minimal generating set for n = 3",
                           "[standard][enumerate]") {
-    minimal_generating_set<3>();
+    minimal_generating_set(3);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "4",
                           "enumerate minimal generating set for n = 4",
                           "[standard][enumerate]") {
-    minimal_generating_set<4>();
+    minimal_generating_set(4);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "5",
                           "enumerate minimal generating set for n = 5",
                           "[standard][enumerate]") {
-    minimal_generating_set<5>();
+    minimal_generating_set(5);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "6",
                           "enumerate minimal generating set for n = 6",
                           "[standard][enumerate]") {
-    minimal_generating_set<6>();
+    minimal_generating_set(6);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "7",
                           "enumerate minimal generating set for n = 7",
                           "[standard][enumerate]") {
-    minimal_generating_set<7>();
+    minimal_generating_set(7);
   }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "8",
+                          "enumerate minimal generating set for n = 8",
+                          "[standard][enumerate]") {
+    auto reps = trim_bmats(8);
+  }
+
 
   /////////////////////////////////////////////////////////////////////////////
   //

@@ -19,5 +19,8 @@ test: all
 7: 
 	@sh/run.sh 7
 
+8: 
+	@sh/run.sh 8
+
 clean:  
 	rm -rf build
