@@ -1,3 +1,5 @@
 1) Make a docker container for all of this.
 2) Fix n = 8
 3) Remove old code and clean up
+4) check if removing edges from the augmented graphs has any influence on the
+   performance.
