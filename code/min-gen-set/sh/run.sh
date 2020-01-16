@@ -33,7 +33,7 @@ GAP_COMMANDS
       FilterByHomomorphisms($1, 
                             "build/output/digraphs_$1.d6.gz", 
                             "build/output/max_digraphs_$1_$rem.d6.gz", 
-                            7, 
+                            $2, 
                             $rem);;
       QUIT;
 GAP_COMMANDS
