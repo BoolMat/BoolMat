@@ -27,7 +27,7 @@ GAP_COMMANDS
   nr=$(cat build/output/digraphs_$1.d6.gz | gzip -d | wc -l)
   xbold $nr "augmented digraphs written to: build/output/digraphs_$1.d6.gz ********"
   bold "* using GAP to find maximal row spaces ****************************************"
-  for rem in 1 2 3 4 5 6 7; do
+  for ((rem=1;i<=$2;i++)); do
       ($GAP_SH << GAP_COMMANDS
       LoadPackage("semigroups");;
       Read("src/gap.g");;
@@ -48,19 +48,27 @@ GAP_COMMANDS
   xbold $((nr+3)) "min. gen. set written to:    build/output/bmat-gens-$1.gz ************"
 }
 
-if [[ $# -ne 1 ]]; then
-  bold "error: expected 1 argument, got $#!"
+if [[ $# -gt 2 || $# -lt 1 ]]; then
+  bold "error: expected 1 or 2 argument, got $#!"
   exit 1
 elif ! [[ "$1" =~ ^[1-9]$ ]] ; then
-  bold "error: expected an integer, $1 is not an integer!"
+  bold "error: expected an integer as first arg, $1 is not an integer!"
   exit 1
+elif [[ $# -eq 2 && "$2" =~ ^[1-9]\+$ ]] ; then
+  bold "error: expected an integer as second arg, $2 is not an integer!"
+  exit 1
+fi
+if [[ $# -eq 1 ]] ; then
+  nr_cores=1
+else
+  nr_cores=$2
 fi
 
 bold "* rebuilding C++ code *********************************************************"
 sh/build.sh
 
 if [[ "$1" =~ ^[3-8]$ ]]; then
-  time run $1
+  time run $1 $nr_cores
 else
   bold "error: expected a value between 4 and 7 (inclusive), got $1"
 fi

@@ -17,10 +17,10 @@ test: all
 	@sh/run.sh 6
 
 7: 
-	@sh/run.sh 7
+	@sh/run.sh 7 8
 
 8: 
-	@sh/run.sh 8
+	@sh/run.sh 8 
 
 clean:  
 	rm -rf build
