@@ -4,13 +4,10 @@
 
 AM_CXXFLAGS =  -I$(abs_top_srcdir)
 AM_CXXFLAGS += -I$(abs_top_srcdir)/include
-AM_CXXFLAGS += -I$(abs_top_srcdir)/extern/HPCombi/include
-AM_CXXFLAGS += -I$(abs_top_srcdir)/extern/HPCombi/include/fallback
-AM_CXXFLAGS += -I$(abs_top_srcdir)/extern/sparsehash-c11
-AM_CXXFLAGS += -I$(abs_top_srcdir)/extern/fmt-5.3.0/include
-AM_CXXFLAGS += -mavx -flax-vector-conversions
-AM_CXXFLAGS += -std=gnu++11 -g -O3 -march=native -Wall -Wextra
+AM_CXXFLAGS += -I$(abs_top_srcdir)/extern
+AM_CXXFLAGS += -std=gnu++11 -g -O3 -Wall -Wextra
 AM_CXXFLAGS += $(WARNING_CXXFLAGS)
+AM_CXXFLAGS += $(FMT_CFLAGS)
 
 AM_LDFLAGS  =  -no-undefined -lpthread
 
@@ -90,24 +87,27 @@ pkginclude_HEADERS += include/types.hpp
 pkginclude_HEADERS += include/uf.hpp
 
 if LIBSEMIGROUPS_HPCOMBI
-pkginclude_HEADERS += extern/HPCombi/include/bmat8.hpp
-pkginclude_HEADERS += extern/HPCombi/include/bmat8_impl.hpp
-pkginclude_HEADERS += extern/HPCombi/include/epu.hpp
-pkginclude_HEADERS += extern/HPCombi/include/epu_impl.hpp
-pkginclude_HEADERS += extern/HPCombi/include/fallback/gcdlcm.hpp
-pkginclude_HEADERS += extern/HPCombi/include/fallback/seq.hpp
-pkginclude_HEADERS += extern/HPCombi/include/hpcombi.hpp
-pkginclude_HEADERS += extern/HPCombi/include/perm16.hpp
-pkginclude_HEADERS += extern/HPCombi/include/perm16_impl.hpp
-pkginclude_HEADERS += extern/HPCombi/include/perm_generic.hpp
-pkginclude_HEADERS += extern/HPCombi/include/perm_generic_impl.hpp
-pkginclude_HEADERS += extern/HPCombi/include/power.hpp
-pkginclude_HEADERS += extern/HPCombi/include/testtools.hpp
-pkginclude_HEADERS += extern/HPCombi/include/vect16.hpp
-pkginclude_HEADERS += extern/HPCombi/include/vect_generic.hpp
+hpcombiincludedir = $(includedir)/libsemigroups/HPCombi/include
+hpcombiinclude_HEADERS =  extern/HPCombi/include/bmat8.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/bmat8_impl.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/epu.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/epu_impl.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/hpcombi.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/perm16.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/perm16_impl.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/perm_generic.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/perm_generic_impl.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/power.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/testtools.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/vect16.hpp
+hpcombiinclude_HEADERS += extern/HPCombi/include/vect_generic.hpp
+
+hpcombifallbackincludedir = $(includedir)/libsemigroups/HPCombi/include/fallback
+hpcombifallbackinclude_HEADERS =  extern/HPCombi/include/fallback/gcdlcm.hpp
+hpcombifallbackinclude_HEADERS += extern/HPCombi/include/fallback/seq.hpp
 endif
 
-fmtincludedir = $(includedir)/fmt
+fmtincludedir = $(includedir)/libsemigroups/fmt
 fmtinclude_HEADERS =  extern/fmt-5.3.0/include/fmt/chrono.h  
 fmtinclude_HEADERS += extern/fmt-5.3.0/include/fmt/color.h  
 fmtinclude_HEADERS += extern/fmt-5.3.0/include/fmt/core.h  
@@ -156,6 +156,9 @@ libsemigroups_la_SOURCES += extern/bliss-0.73/utils.cc
 libsemigroups_la_CPPFLAGS = $(AM_CPPFLAGS) 
 libsemigroups_la_CXXFLAGS = $(AM_CXXFLAGS)
 
+## See https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
+libsemigroups_la_LDFLAGS = -version-info 1:0:0
+
 ## Extra files for the distribution
 
 EXTRA_DIST =  .clang-format
@@ -169,8 +172,9 @@ EXTRA_DIST += etc/make-doc-yml.sh
 EXTRA_DIST += etc/make-format.sh
 EXTRA_DIST += etc/make-lint.sh
 EXTRA_DIST += extern/fmt-5.3.0
-EXTRA_DIST += extern/HPCombi/
+EXTRA_DIST += extern/HPCombi
 EXTRA_DIST += extern/.HPCombi_VERSION
+EXTRA_DIST += extern/.FMT_VERSION
 EXTRA_DIST += src/kbe-impl.hpp 
 EXTRA_DIST += src/knuth-bendix-impl.hpp 
 EXTRA_DIST += tests/catch.hpp
@@ -229,7 +233,6 @@ LDADD = libsemigroups.la
 ## takes a serious amount of time.
 
 test_all_SOURCES =  tests/fpsemi-examples.cpp
-test_all_SOURCES += tests/test-bmat8-enum.cpp
 test_all_SOURCES += tests/test-action.cpp
 test_all_SOURCES += tests/test-blocks.cpp
 test_all_SOURCES += tests/test-bmat8.cpp

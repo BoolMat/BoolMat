@@ -13,7 +13,6 @@ GAPROOT="$HOME/gap/"
 GAP_SH="$GAPROOT/bin/gap.sh -b -A -m 512m -T -q"
 
 run() {
-  bold "* running C++ code ************************************************************"
   build/libsemigroups/test_bmat8_enum "[$1]"
   bold "* using GAP to convert row space numbers to digraphs **************************"
   $GAP_SH << GAP_COMMANDS
@@ -64,7 +63,6 @@ else
   nr_cores=$2
 fi
 
-bold "* rebuilding C++ code *********************************************************"
 sh/build.sh
 
 if [[ "$1" =~ ^[3-8]$ ]]; then

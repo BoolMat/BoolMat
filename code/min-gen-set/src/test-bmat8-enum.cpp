@@ -513,7 +513,6 @@ namespace libsemigroups {
   ////////////////////////////////////////////////////////////////////////
 
   std::vector<HPCombi::BMat8> trim_bmats(size_t n) {
-    detail::Timer t;
     auto           rg = ReportGuard();
     BMatEnumerator enumerator(n, true);
     std::string tf
@@ -524,7 +523,6 @@ namespace libsemigroups {
     std::cout << "    " << tf << "\n";
     std::vector<HPCombi::BMat8> reps = enumerator.reps();
     reps.push_back(bmat8_helpers::elementary<HPCombi::BMat8>(n));
-    std::cout << "elapsed time = " <<  t << std::endl;
     return reps;
   }
 
