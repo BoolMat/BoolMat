@@ -9,8 +9,7 @@ xbold() {
     printf "\033[1m* %07d %s \033[0m\n" "$1" "$2"
 }
 
-GAPROOT="$HOME/gap/"
-GAP_SH="$GAPROOT/bin/gap.sh -b -A -m 512m -T -q"
+GAP_SH="gap -b -A -m 512m -T -q"
 
 run() {
   build/libsemigroups/test_bmat8_enum "[$1]"
