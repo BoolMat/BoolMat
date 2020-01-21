@@ -46,5 +46,5 @@ if [ ! -d  build ]; then
 fi
 
 bold "* making C++ code *************************************************************"
-cp src/test-bmat8-enum.cpp build/libsemigroups/tests
+rsync --progress -r -u src/test-bmat8-enum.cpp build/libsemigroups/tests
 cd build/libsemigroups && make test_bmat8_enum -j8 && cd ../..
