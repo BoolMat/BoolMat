@@ -26,7 +26,7 @@ GAP_COMMANDS
   nr=$(cat build/output/digraphs_$1.d6.gz | gzip -d | wc -l)
   xbold $nr "augmented digraphs written to: build/output/digraphs_$1.d6.gz ********"
   bold "* using GAP to find maximal row spaces ****************************************"
-  for ((rem=1;i<=$2;i++)); do
+  for ((rem=1;rem<=$2;rem++)); do
       ($GAP_SH << GAP_COMMANDS
       LoadPackage("semigroups");;
       Read("src/gap.g");;

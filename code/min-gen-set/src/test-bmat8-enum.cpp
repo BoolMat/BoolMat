@@ -19,12 +19,13 @@
 #include "../extern/bliss-0.73/graph.hh"
 
 namespace libsemigroups {
-  typedef bliss::Digraph bliss_digraph;
+  typedef bliss_digraphs::Digraph bliss_digraph;
 
-  bliss::Stats stats;
+  bliss_digraphs::Stats stats;
 
-  bliss_digraph bliss_digraph_from_BMat8(HPCombi::BMat8 bm, size_t dim = 8) {
-    bliss_digraph out = bliss_digraph(2 * dim);
+  bliss_digraph& bliss_digraph_from_BMat8(HPCombi::BMat8 bm, size_t dim = 8) {
+    static bliss_digraph out = bliss_digraph(2 * dim);
+    out.clear();
     size_t        x   = bm.to_int();
     for (size_t i = 0; i < dim; ++i) {
       out.change_color(i, 0);
@@ -40,9 +41,10 @@ namespace libsemigroups {
 
   void bliss_hook_function(void *, const unsigned int, const unsigned int *) {}
 
-  HPCombi::BMat8 permuted_BMat8(HPCombi::BMat8      bm,
-                                size_t              dim,
-                                const unsigned int *perm) {
+  HPCombi::BMat8
+  permuted_BMat8(HPCombi::BMat8                                   bm,
+                 size_t                                           dim,
+                 bliss_digraphs::uint_pointer_to_const_substitute perm) {
     HPCombi::epu8 row_perm;
     HPCombi::epu8 col_perm;
     for (size_t i = 0; i < dim; ++i) {
@@ -121,7 +123,8 @@ namespace libsemigroups {
 
   bool is_row_trim(HPCombi::BMat8 bm, size_t dim = 8) {
     static std::array<uint8_t, 8> r;
-    bm.rows(r);
+    r.fill(0);
+    r = bm.row_array();
     for (size_t i = 0; i < dim; ++i) {
       for (size_t j = 0; j < dim; ++j) {
         if (r[i] && (i != j) && ((r[i] | r[j]) == r[j])) {

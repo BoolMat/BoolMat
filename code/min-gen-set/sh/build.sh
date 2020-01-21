@@ -27,11 +27,11 @@ if [ ! -d  build ]; then
 
   bold "* cloning HPCombi *************************************************************"
   git clone --branch bmat8 https://github.com/james-d-mitchell/HPCombi.git
-  cd HPCombi && git checkout 3189cc4 && cd ..
+  cd HPCombi && git checkout 4ba8fef && cd ..
 
   bold "* cloning bliss ***************************************************************"
   git clone --branch master https://github.com/james-d-mitchell/bliss
-  cd bliss && git checkout 05bf42a && cd ..
+  cd bliss && git checkout df8f056 && cd ..
   mv bliss bliss-0.73 && cd ..
 
   bold "* copying files from src/ to build/ *******************************************"

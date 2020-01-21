@@ -3,3 +3,4 @@
 3) Remove old code and clean up
 4) check if removing edges from the augmented graphs has any influence on the
    performance.
+5) check if there isn't a way to make bliss allocate less memory.
