@@ -60,7 +60,7 @@ namespace libsemigroups {
   }
 
   HPCombi::BMat8 canonical_BMat8(HPCombi::BMat8 bm, size_t dim) {
-    bliss_digraph dg = bliss_digraph_from_BMat8(bm, dim);
+    bliss_digraph& dg = bliss_digraph_from_BMat8(bm, dim);
     return permuted_BMat8(
         bm, dim, dg.canonical_form(stats, &bliss_hook_function, nullptr));
   }
