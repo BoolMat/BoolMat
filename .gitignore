@@ -1,2 +1,7 @@
 code/D-enumeration/build
 code/min-gen-set/build
+*.bbl
+*.bcf
+*.blg
+*.pdf
+*.xml

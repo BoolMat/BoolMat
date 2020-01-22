@@ -45,6 +45,8 @@ tabu, enumerate}
 \newcommand{\D}{\mathscr{D}}
 \newcommand{\J}{\mathscr{J}}
 \renewcommand{\H}{\mathscr{H}}
+\newcommand{\N}{\mathbb{N}}
+
 
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
@@ -52,19 +54,132 @@ tabu, enumerate}
 \usepackage[backend=biber, bibencoding=utf8]{biblatex}
 \bibliography{matrix}
 
-\title{Boolean matrix semigroups}
-\author{James D. Mitchell and Finlay Smith}
+\title{Minimal generating sets for the monoid of all boolean matrices}
+\author{F. Hivert, J. D. Mitchell, and F. L. Smith}
 \date{\today}
 \begin{document}
+
 \maketitle
 
-\addtocounter{section}{1}
+\begin{abstract}
+  TODO
+\end{abstract}
+
+\section{Introduction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The purpose of this document is to describe the problems we are working on
-related to the monoid of all $n\times n$ boolean matrices.
+The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
+\begin{align*}
+  0 + 1 = 1 + 0 &= 1 + 1 = 1 \\
+  0 + 0 &= 0
+\end{align*}
+and multiplication defined as usual for the real numbers $0$ and $1$.  The
+addition and multiplication of elements of $\B$ naturally extends to row and
+column vectors of equal length with entries in $\B$.  The main object of study
+in this document is the collection $\Bn$ of $n\times n$ matrices with entries
+in $\B$. Under the usual multiplication of matrices, using addition and
+multiplication in $\B$, the set $\Bn$ forms a monoid; call the \defn{full
+boolean matrix monoid}. The monoid $\Bn$ is classical in the literature of
+semigroup theory being among the first monoids to be studied; see, for example,
+\cite{}. The monoids $\Bn$, $n\in \N$, have been extensively studies in the
+literature, by many authors, and a great deal is known about it structure and
+properties. For example, if $G$ is a finite group, then there exists an $n\in
+\N$ such that $G$ occurs as a maximal subgroup of $\Bn$; the probability that a
+random product of matrices in $\Bn$ equals the universal matrix:
+\begin{equation*} 
+  \begin{pmatrix}
+  1 & 1 & \cdots & 1\\
+  1 & 1 & \cdots & 1\\ 
+  \vdots & \vdots & \ddots & \vdots\\
+  1 & 1 & \cdots & 1\\ 
+\end{pmatrix} 
+\end{equation*} 
+tends to $1$ as $n\to \infty$; the minimal size of a generating set for $\Bn$
+grows exponentially with $n$ (see~Theorem~\ref{}); Devadze~\cite{Devadze1968aa} and
+Konieczny~\cite{} characterise minimum cardinality generating sets for $\Bn$; 
+more.
+
+Despite its venerable status, many aspects of the monoids $\Bn$ are still
+shrouded in mystery. The purpose of this article is to cast some light on the
+problems of determining:
+
+\begin{enumerate}[(1)]
+  \item \label{enum-min-gen-set}
+    the minimum cardinality $\mathbf{d}(\Bn)$ of a generating set for $\Bn$;
+  \item \label{enum-J-order}
+    the number $\mathbf{j}(\Bn)$ of $\J$-classes in $\Bn$, the height and width of the partial
+    order of $\J$-classes; and
+  \item \label{enum-special} 
+    the numbers of certain special types of elements of $\Bn$; such
+    as the number of idempotents and the numbers of trim, prime, and reduced
+    matrices in $\Bn$, respectively.
+\end{enumerate}
+% The time and space complexity of determining any of these value is exponential
+% in $n$. 
+It seems unlikely that an explicit formula for any of these numbers exists.
+In this paper we describe algorithms for computing the numbers listed,
+and the output of our implementation~\cite{} of these algorithms. The latter
+are summarised in Figure~\ref{figure-table-1}.
+
+\begin{figure}
+  \label{figure-table-1}
+  \centering
+  \begin{tabular}{l|r|r}
+    $n$ & $\mathbf{d}(\Bn)$ &   \\
+    \hline
+    1 & 2          & - \\ 
+    2 & 3          & - \\ 
+    3 & 5          & - \\ 
+    4 & 7          & - \\
+    5 & 13         & ? \\
+    6 & 68         & ? \\ 
+    7 & 2\ 143     & \cmark \\
+    8 & 495\ 115   & \cmark \\
+    9 & ?          & ?
+  \end{tabular}
+%     $|D(\Bn)|$ \cite{Breen1997}\cite{Breen2001}
+%   & Lower bound for height : $F_{n+3} - 2$
+%   & Height of $\Bn$\cite{Breen1997}
+%   & Upper bound for height : $2^{n-1} + (n-1)$
+%   & Size of minimal generating set of $\Bn$ \\ 
+%  2  \cmark                & 1   \cmark  & 1  \cmark   & 1   \cmark      \\
+%  3  \cmark                & 3   \cmark  & 3  \cmark   & 3   \cmark     \\
+%  11  \cmark               & 6   \cmark  & 6  \cmark   & 6   \cmark    \\
+%  60  \cmark               & 11  \cmark  & 11  \cmark  & 11  \cmark       \\
+%  877  \cmark              & 19  \cmark  & 19  \xmark  & 20  \cmark      \\
+%  42\ 944  \cmark          & 32  \cmark  & 32  \xmark  & 37  \cmark     \\
+%  7\ 339\ 704  \cmark      & 53  \cmark  & 53  \xmark  & 70  \cmark    \\
+%  4\ 256\ 203\ 214  \xmark & 87  \cmark  &  ?          & 135 \cmark  
+\vspace{1cm}
+
+% \begin{tabu} to \textwidth {X[0.3]|X[2]|X[2]|X[2]|X[2]}
+%   & Number of trim matrices in $\Bn$
+%   & Number of prime matrices in $\Bn$
+%   & Number of reduced matrices in $\Bn$
+%   & Number of idempotents in $\Bn$ \\
+%   \hline
+% 1   &  2   \cmark       & 0 \cmark            & 2 \cmark            &  1 \cmark  \\
+% 2   &  7   \cmark       & 0 \cmark            & 11 \cmark           &  11 \cmark  \\
+% 3   &  40   \cmark      & 6 \cmark            & 220 \cmark          &  123 \cmark  \\
+% 4   &  593  \cmark     & 264 \cmark           & 20\ 273 \cmark      &  2\ 360 \cmark  \\
+% 5   &  81\ 946  \cmark & 32\ 640 \cmark       & 9\ 023\ 546 \cmark  &  73\ 023 \cmark \\
+% 6   &  ?                & 16\ 173\ 360 \cmark &           ?         &  ?    \\
+% 7   &  ?                & 48\ 583\ 513\ 440 \cmark &         ?           &  ?   \\
+% 8   &  ?                & ?                   &     ?               &  ?             
+\end{tabu}                                       
+  \caption{The minimum size $d(\Bn)$ of a generating set for the monoid
+  consisting of all $n \times n$ Boolean matrices matrices where: 
+  ``-'' indicates a value that can be computed by hand or brute force;
+  ``\cmark'' indicates that the value was first found here;
+  ``?'' indicates that the value is unknown.}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Preliminaries}
+\label{section-preliminaries}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 On any semigroup $S$, there are some key equivalence relations. These are known
 as Green's relations, and are defined in terms of principal ideals as follows.
@@ -87,18 +202,8 @@ Further background on Green's relations can be found in~\cite{Howie1995aa}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
-\begin{align*}
-  0 + 1 = 1 + 0 &= 1 + 1 = 1 \\
-  0 + 0 &= 0
-\end{align*}
-and multiplication defined as usual for the real numbers $0$ and $1$.  The
-addition and multiplication of elements of $\B$ naturally extends to row and
-column vectors of equal length with entries in $\B$.  The main object of study
-in this document is the collection $\Bn$ of $n\times n$ matrices with entries
-in $\B$. Under the usual multiplication of matrices, using addition and
-multiplication in $\B$, the set $\Bn$ forms a monoid; call the \defn{full
-boolean matrix monoid}.  The group of units of $\Bn$ is isomorphic to the
+The group of units of $\Bn$ is isomorphic to the
+
 symmetric group $S_n$.
 
 If $A \in \Bn$, then the \defn{row space} $R(A)$ of $A$ is the set of 
@@ -719,44 +824,6 @@ A related problem is to find the largest anti-chain in the partial order
 % numbers of trim, reduced, etc?, max. anti-chain?,
 % make this thing fit!
 
-\begin{figure}
-  \label{figure-table-1}
-  \centering
-  \begin{tabu} to \textwidth {X[0.3]|X[r1.5]|X[2]|X[2]|X[2]|X[2]}
-  $n$ & $|D(\Bn)|$ \cite{Breen1997}\cite{Breen2001}
-  & Lower bound for height : $F_{n+3} - 2$
-  & Height of $\Bn$\cite{Breen1997}
-  & Upper bound for height : $2^{n-1} + (n-1)$
-  & Size of minimal generating set of $\Bn$ \\ 
-  \hline
-1   & 2  \cmark                & 1   \cmark  & 1  \cmark   & 1   \cmark  & 2   \cmark     \\
-2   & 3  \cmark                & 3   \cmark  & 3  \cmark   & 3   \cmark  & 3   \cmark    \\
-3   & 11  \cmark               & 6   \cmark  & 6  \cmark   & 6   \cmark  & 5   \cmark   \\
-4   & 60  \cmark               & 11  \cmark  & 11  \cmark  & 11  \cmark  & 7    \cmark     \\
-5   & 877  \cmark              & 19  \cmark  & 19  \xmark  & 20  \cmark  & 13   \cmark    \\
-6   & 42\ 944  \cmark          & 32  \cmark  & 32  \xmark  & 37  \cmark  & 68  \cmark    \\
-7   & 7\ 339\ 704  \cmark      & 53  \cmark  & 53  \xmark  & 70  \cmark  & 2143 \cmark  \\
-8   & 4\ 256\ 203\ 214  \xmark & 87  \cmark  &  ?          & 135 \cmark  &  495\ 115
-\end{tabu} \\
-\vspace{1cm}
-
-\begin{tabu} to \textwidth {X[0.3]|X[2]|X[2]|X[2]|X[2]}
-  & Number of trim matrices in $\Bn$
-  & Number of prime matrices in $\Bn$
-  & Number of reduced matrices in $\Bn$
-  & Number of idempotents in $\Bn$ \\
-  \hline
-1   &  2   \cmark       & 0 \cmark            & 2 \cmark            &  1 \cmark  \\
-2   &  7   \cmark       & 0 \cmark            & 11 \cmark           &  11 \cmark  \\
-3   &  40   \cmark      & 6 \cmark            & 220 \cmark          &  123 \cmark  \\
-4   &  593  \cmark     & 264 \cmark           & 20\ 273 \cmark      &  2\ 360 \cmark  \\
-5   &  81\ 946  \cmark & 32\ 640 \cmark       & 9\ 023\ 546 \cmark  &  73\ 023 \cmark \\
-6   &  ?                & 16\ 173\ 360 \cmark &           ?         &  ?    \\
-7   &  ?                & 48\ 583\ 513\ 440 \cmark &         ?           &  ?   \\
-8   &  ?                & ?                   &     ?               &  ?             
-\end{tabu}                                       
-  \caption{Checkmarks denote things we have computed.}
-\end{figure}
 
 \subsection*{Automorphism groups}
 It seems that for most prime matrices, the automorphism group of $R(A)$ is trivial. This consequence of this is that the number of prime matrices in $\Bn$ is roughly $(n!)^2$ times the number of prime $\J$-classes.
