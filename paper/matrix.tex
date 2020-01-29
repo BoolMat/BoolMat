@@ -675,7 +675,7 @@ This algorithm has the advantage of being easily implemented and highly-optimisa
 \end{lemma}
 
 \begin{proof}
-  Let $A$ be a matrix having the properties in \thref{prop:StandardFormProperties}. Suppose that for some rows $k > 3$ and $l < k$, there was a row $R$ in the orbit of row $k$ under the set stabiliser of rows $1 \dots l - 1$ where the numerical value of $R$ is less than the numerical value of row $l$. Then we can apply row and column permutations to produce a matrix $A'$ with numerical value less than that of $A$. Now $A'$ may not have some of the properties of
+  Let $A$ be a matrix having the properties in \thref{prop:StandardFormProperties}. Suppose that for some rows $k > 2$ and $l < k$, there was a row $R$ in the orbit of row $k$ under the set stabiliser of rows $1 \dots l - 1$ where the numerical value of $R$ is less than the numerical value of row $l$. Then we can apply row and column permutations to produce a matrix $A'$ with numerical value less than that of $A$. Now $A'$ may not have some of the properties of
   \thref{prop:StandardFormProperties} but if so, by the proof of that proposition we can produce $A''$ having each of those properties and with smaller numerical value than $A'$. Since we cannot have an infinite descent of numerical values, repeating this process must at some point result in a matrix with all the properties we want.
 \end{proof}
 
@@ -749,68 +749,12 @@ It is also important to note that \thref{lem:StandardFormStabilisers} does not g
   \end{pmatrix}
 \]
 
-\section{A different approach to testing primality}
-Suppose we have a set of representatives of trim matrices in $\Bn$ and wish to filter them to obtain the prime matrices. Any approach that is based on pairwise comparison of the matrices is unlikely to scale as well as one which treats matrices individually.\\
-
-\begin{defi}
-  A matrix $A \in \Bn$ is \emph{fully indecomposable} if it contains no $k \times (n - k)$ submatrix (not necessarily contiguous) of zeroes for any $1 \leq k \leq n- 1$.
-\end{defi}
-
-The interest of fully indecomposable matrices lies in the following result
-\begin{prop}
-  \thlabel{prop:PrimeFullyIndecomposable}
-  A prime matrix is either fully indecomposable or the direct sum of a fully indecomposable prime and an identity matrix, and every direct sum of a prime matrix with an identity matrix is prime.
-\end{prop}
-TODO: ref
-
-So we only have to look for fully indecomposable primes. The following result gives a way of determining whether a fully indecomposable representative is prime without reference to other representatives.
-
-\begin{defi}
-  A $J$-submatrix of $A \in \Bn$ is a submatrix of $A$ which contains only $1$s.
-\end{defi}
-
-\begin{defi}
-  The \emph{Schein rank} of a matrix $A \in \Bn$ is the smallest number of $J$-submatrices which cover $A$.\\
-  Equivalently, it is the smallest $k$ such that $A$ can be written as a product of two matrices of dimension $n \times k$ and $k \times n$. 
-\end{defi}
-Note that the Schein rank of any matrix is at most $n$, and the Schein rank of a prime matrix is $n$.
-
-\subsection*{Computing Schein rank}
-It is known that computing the Schein rank of a matrix is an $NP$-complete problem (TODO: ref). However, this does not mean that we cannot practically determine whether a matrix has full Schein rank. A sketch of an algorithm to do so is given.
-
-\begin{algorithm}
-  \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
-  \DontPrintSemicolon
-
-  \Input{A boolean matrix $A$}
-  \Output{A boolean representing whether $A$ has full Schein rank}
-  Find the maximal $J$-submatrices of $A$ using a clique-finding algorithm \; 
-  Backtrack search for a covering of $A$ using at most $n - 1$ maximal $J$-submatrices \;
-  \Return{whether such a covering is found} \;
-  \caption{Determining whether a matrix has full Schein rank}\label{alg:HasFullScheinRank}
-\end{algorithm}
-
-Of course this algorithm is exponential in the worst case (when the matrix does have full Schein rank) but does seem to be practical. \\
-It would be interesting to know what heuristics to apply during the backtrack search to choose the next option. An obvious choice is to greedily pick the maximal $J$-submatrix which covers the most new ones, but this may not be the right choice.
-
-\begin{prop}
-  \thlabel{prop:FullyIndecomposablePrimes}
-  A fully indecomposable matrix $A$ is prime if and only if every $A'$ obtained by removing ones from a $J$-submatrix of $A$ has full Schein rank.
-\end{prop}
-
-Of course it is sufficient to remove ones from each maximal $J$-submatrix of the fully-indecomposable matrix.\\
-Unfortunately, there may be very many $A'$ to consider for a given $A$, and in each case we have to carry out Algorithm \ref{alg:HasFullScheinRank}. It is important to note that removing ones from a maximal $J$-submatrix can result in a new matrix with dramatically different maximal $J$-submatrices. \\
-It would be therefore be useful to be able to reuse information about $A$ in Algorithm $\ref{alg:HasFullScheinRank}$. The following is one such result in that direction.
-
-\begin{lemma}
-  \thlabel{lem:CoveringOneRemovedOne}
-  Let $A \in \Bn$ be fully indecomposable with full Schein rank. Let $A'$ be obtained by removing a single one from a maximal $J$-submatrix of $A$. Suppose $A'$ has a covering by $n-1$ maximal submatrices of $A'$. Then each $J$-submatrix in the cover must be a maximal $J$-submatrix of $A$. 
-\end{lemma}
-\begin{proof}
-  Suppose not. Then in the cover $C$ there is some $J$-submatrix $J_i$ that admits extending by the removed one and taking the closure to form a $J$-submatrix $J_i'$ of $A$ containing the removed one. Then $C \setminus \{J_i\} \cup \{J_i'\}$ is a cover of $A$ using $n-1$ $J$-submatrices, a contradiction.
-\end{proof}
-The situation on removing multiple ones is far more complicated. \\
-An alternative strategy is to start with maximal $J$-submatrices and build prime matrices from these, but we have no results in this direction.
+We also present a more complex algorithm that avoids canonicalisation, which may
+be expensive. The idea behind this algorithm is in some sense to perform the
+canonicalisation procedure during the backtrack search, thus avoiding ever
+canonicalising two distinct $\J$-related matrices. This is achieved by storing
+a stabiliser \emph{digraph} in place of the chain of stabilisers produced in
+\ref{alg:RepsStabBacktrack}.
 
 \section{Height and width}
 Another problem that has been considered is finding the longest chain in the
