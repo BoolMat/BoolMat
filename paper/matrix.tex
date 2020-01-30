@@ -168,7 +168,7 @@ are summarised in Figure~\ref{figure-table-1}.
 % 6   &  ?                & 16\ 173\ 360 \cmark &           ?         &  ?    \\
 % 7   &  ?                & 48\ 583\ 513\ 440 \cmark &         ?           &  ?   \\
 % 8   &  ?                & ?                   &     ?               &  ?             
-\end{tabu}                                       
+%\end{tabu}                                       
   \caption{The minimum size $d(\Bn)$ of a generating set for the monoid
   consisting of all $n \times n$ Boolean matrices matrices where: 
   ``-'' indicates a value that can be computed by hand or brute force;
@@ -669,6 +669,24 @@ For completeness the algorithm used is as follows:
 
 This algorithm has the advantage of being easily implemented and highly-optimisable, but major improvements can be made. The following algorithm essentially tries to canonicalise the matrices during the backtracking to reduce the search space.
 
+\begin{defi}
+  Given vector $v \in \B^n$ and permutation $p \in S_n$, the \emph{action on
+  sets} of $p$ on $v$, denoted by $v \cdot p$, is given by the boolean
+  vector containing a $1$ in position $(i)p$ if and only if component $i$ of $v$
+  is $1$.
+\end{defi}
+The name \emph{action on sets} simply arises from considering a vector $v \in
+\B^n$ as a characteristic function on $\{1 \ldots n \}$. 
+There are also two actions of $S_n$ on $\Bn$, given by permuting the rows and
+columns of the matrix. A row permutation is equivalent acting on the columns as
+sets, and vice versa. These are the only actions we consider of $\S_n$ on
+$\Bn$, so we will often omit the name of the action in the following.
+
+\begin{defi}
+  The \emph{set stabilizer} of a set $V \subseteq \B^n$ is the pointwise
+  stabilizer of all of $V$ under the action on sets. 
+\end{defi}
+
 \begin{lemma}
   \thlabel{lem:StandardFormStabilisers}
   In every $\J$-class of $\Bn$, there is a matrix which has all the properties of \thref{prop:StandardFormProperties} and also has the property that for any row $k > 2$, for each row $l < k$ the orbit of row $k$ under the set stabiliser of rows $1 \dots l - 1$ does not contain a row with numerical value less than the numerical value of row $l$.
@@ -752,9 +770,60 @@ It is also important to note that \thref{lem:StandardFormStabilisers} does not g
 We also present a more complex algorithm that avoids canonicalisation, which may
 be expensive. The idea behind this algorithm is in some sense to perform the
 canonicalisation procedure during the backtrack search, thus avoiding ever
-canonicalising two distinct $\J$-related matrices. This is achieved by storing
-a stabiliser \emph{digraph} in place of the chain of stabilisers produced in
-\ref{alg:RepsStabBacktrack}.
+canonicalising two distinct $\J$-related matrices. This is achieved by storing a
+stabiliser \emph{digraph} in place of the chain of stabilisers produced in
+\ref{alg:RepsStabBacktrack}, and so we will call it the \emph{stabiliser digraph
+algorithm}. We will first give an overview of the algorithm, and then
+present it in greater detail.\\
+
+The \emph{stabilizer digraph algorithm} is a backtrack enumeration to generate
+representatives. It is a refinement of \ref{alg:RepsStabBacktrack}, with the
+same input $n$ and output $\J$-class representatives, and as such the same
+partial solutions are enumerated and the same restrictions imposed. We also
+start with a digraph $\Gamma$ containing a \emph{root} node and \emph{terminal}
+node. When a row $r_i$ is added, add a node to $\Gamma$ with label $(i, i, \id,
+0)$ and, for all previous rows $r_k$:
+\begin{enumerate}
+  \item if there exists $p \in S_n$ such that $r_i \cdot p = r_k$, then
+    \begin{enumerate}
+      \item for each coset $aG$ of the stabilizer of $G = \text{stabs}[k]$ in
+        $H$, the stabilizer of $r_k$ in $S_n$, add a new node to $\Gamma$ with
+        label $(k, i, pa, 0)$ \\
+      \item for each coset $bK$ of the stabilizer of $G = \text{stabs}[i]$ in
+        $L$, the stabilizer of $r_i$ in $S_n$, add a new node to $\Gamma$ with
+        label $(i, k, p ^ -1 b, 0)$
+    \end{enumerate}
+  \item if there exists $p in \S_n$ such that $r_j \cdot p < r_l$, where $(j, l)
+    \in \{(i, k), (k, i)\}$, then for each coset $cU$ of the stabilizer of $\{r_1
+      \ldots r_{l - 1}, r_j \cdot p \}$ in $V$, the stabilizer of $r_j \cdot p$
+    in $S_n$, add a new node to $\Gamma$ with label $(l, j, pc, 1)$.
+\end{enumerate}
+We also add an edge from a node $v$ to a node $w$ whenever:
+\begin{enumerate}
+  \item $v$ and $w$ have labels $(a, b, p, c) (a + 1, d, q, e)$ respectively,
+    and $p^{-1} q \in \text{stabs}[a]$ \\
+  \item $v$ is the root node, $m$ is the position of the first non-zero row, and
+    $w$ with $m$ in the first component of the label.
+  \item $v$ is the terminal node and the fourth component of $w$ is $1$.
+\end{enumerate}
+
+We can use this graph to detect that a partial solution cannot be extended and
+trigger backtracking: if there exists a path from the root node to the terminal
+node where the second components of the labels on each other node are distinct,
+then the partial solution cannot be extended to a minimal representative in a
+$\J$-class and we should backtrack (including removing the new nodes added to
+$\Gamma$ at this step of the backtrack enumeration).
+
+\begin{thm}
+  This algorithm works.
+\end{thm}
+\begin{proof}
+  TODO, not that hard?
+\end{proof}
+
+TODO: explicit algorithm.
+
+
 
 \section{Height and width}
 Another problem that has been considered is finding the longest chain in the
