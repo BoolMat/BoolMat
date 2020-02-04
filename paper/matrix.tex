@@ -697,6 +697,9 @@ $\Bn$, so we will often omit the name of the action in the following.
   \thref{prop:StandardFormProperties} but if so, by the proof of that proposition we can produce $A''$ having each of those properties and with smaller numerical value than $A'$. Since we cannot have an infinite descent of numerical values, repeating this process must at some point result in a matrix with all the properties we want.
 \end{proof}
 
+TODO: refactor this algorithm to be a more standard backtrack (e.g. no need for
+forbidden)?
+
 \begin{algorithm}
   \SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
   \DontPrintSemicolon
@@ -771,29 +774,30 @@ We also present a more complex algorithm that avoids canonicalisation, which may
 be expensive. The idea behind this algorithm is in some sense to perform the
 canonicalisation procedure during the backtrack search, thus avoiding ever
 canonicalising two distinct $\J$-related matrices. This is achieved by storing a
-stabiliser \emph{digraph} in place of the chain of stabilisers produced in
-\ref{alg:RepsStabBacktrack}, and so we will call it the \emph{stabiliser digraph
-algorithm}. We will first give an overview of the algorithm, and then
-present it in greater detail.\\
+stabiliser \emph{digraph} as well as the chain of stabilisers produced in
+Algorithm~\ref{alg:RepsStabBacktrack}, and so we will call it the
+\emph{stabiliser digraph algorithm}. We will first give an overview of the
+algorithm, and then present it in greater detail.\\
 
 The \emph{stabilizer digraph algorithm} is a backtrack enumeration to generate
-representatives. It is a refinement of \ref{alg:RepsStabBacktrack}, with the
-same input $n$ and output $\J$-class representatives, and as such the same
-partial solutions are enumerated and the same restrictions imposed. We also
-start with a digraph $\Gamma$ containing a \emph{root} node and \emph{terminal}
-node. When a row $r_i$ is added, add a node to $\Gamma$ with label $(i, i, \id,
-0)$ and, for all previous rows $r_k$:
+representatives. It is a refinement of Algorithm~\ref{alg:RepsStabBacktrack},
+with the same input $n$ and output $\J$-class representatives, and as such the
+partial solutions are enumerated in the same way. We also begin the enumeration
+with a digraph $\Gamma$ containing a \emph{root} node and \emph{terminal} node.
+ When a partial solution is extended with a new row
+$r_i$, we add a new node to
+$\Gamma$ with label $(i, i, \id, 0)$ and, for all previous rows $r_k$:
 \begin{enumerate}
   \item if there exists $p \in S_n$ such that $r_i \cdot p = r_k$, then
     \begin{enumerate}
       \item for each coset $aG$ of the stabilizer of $G = \text{stabs}[k]$ in
         $H$, the stabilizer of $r_k$ in $S_n$, add a new node to $\Gamma$ with
-        label $(k, i, pa, 0)$ \\
+        label $(k, i, pa, 0)$
       \item for each coset $bK$ of the stabilizer of $G = \text{stabs}[i]$ in
         $L$, the stabilizer of $r_i$ in $S_n$, add a new node to $\Gamma$ with
-        label $(i, k, p ^ -1 b, 0)$
+        label $(i, k, p^{-1} b, 0)$
     \end{enumerate}
-  \item if there exists $p in \S_n$ such that $r_j \cdot p < r_l$, where $(j, l)
+  \item if there exists $p \in S_n$ such that $r_j \cdot p < r_l$, where $(j, l)
     \in \{(i, k), (k, i)\}$, then for each coset $cU$ of the stabilizer of $\{r_1
       \ldots r_{l - 1}, r_j \cdot p \}$ in $V$, the stabilizer of $r_j \cdot p$
     in $S_n$, add a new node to $\Gamma$ with label $(l, j, pc, 1)$.
@@ -801,28 +805,43 @@ node. When a row $r_i$ is added, add a node to $\Gamma$ with label $(i, i, \id,
 We also add an edge from a node $v$ to a node $w$ whenever:
 \begin{enumerate}
   \item $v$ and $w$ have labels $(a, b, p, c) (a + 1, d, q, e)$ respectively,
-    and $p^{-1} q \in \text{stabs}[a]$ \\
-  \item $v$ is the root node, $m$ is the position of the first non-zero row, and
-    $w$ with $m$ in the first component of the label.
+    and $p^{-1} q \in \text{stabs}[a]$;
+  \item $v$ is the root node and $w$ has $m$, the position of the first non-zero
+    row in the partial solution, in the first component of the label;
   \item $v$ is the terminal node and the fourth component of $w$ is $1$.
 \end{enumerate}
 
-We can use this graph to detect that a partial solution cannot be extended and
-trigger backtracking: if there exists a path from the root node to the terminal
-node where the second components of the labels on each other node are distinct,
-then the partial solution cannot be extended to a minimal representative in a
-$\J$-class and we should backtrack (including removing the new nodes added to
-$\Gamma$ at this step of the backtrack enumeration).
+We use $\Gamma$ to detect that a partial solution cannot be extended and trigger
+backtracking: if there exists a path in $\Gamma$ from the root node to the
+terminal node where the second components of the labels on the other nodes in
+the path are distinct, then the partial solution cannot be extended to a minimal
+representative in a $\J$-class and we should backtrack (including removing the
+new nodes added to $\Gamma$ at this step of the backtrack enumeration).
 
+%\begin{remark}
+Algorithm~\ref{} rejects a partial solution whenever
+Algorithm~\ref{alg:RepsStabBacktrack} would. The chain of stabilizers in
+Algorithm~\ref{alg:RepsStabBacktrack} corresponds to a path in $\Gamma$ where
+vertex $i$ of the path has label $(i, i, \id, 0)$.
+%\end{remark}
+
+TODO: explicit algorithm.
+
+TODO: this proof is easier to write down if the stabiliser algorithm is
+expressed in a more standard backtrack form
 \begin{thm}
   This algorithm works.
 \end{thm}
 \begin{proof}
-  TODO, not that hard?
+  Let $A \in \Bn$ be a reduced matrix which is minimal in its $\J$-class. We
+  will first show that $A$ is in the output of Algorithm~\ref{}; i.e.\ that none
+  of the partial solutions consisting of the first $i$ rows of $A$, for some $1
+  \leq i \leq n$, are rejected. TODO: finish 
 \end{proof}
 
-TODO: explicit algorithm.
 
+TODO: discuss tradeoff of extra work at nodes / pruning early - maybe adjust the
+work at each level?
 
 
 \section{Height and width}
