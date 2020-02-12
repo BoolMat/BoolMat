@@ -38,6 +38,28 @@ namespace libsemigroups {
     }
     return out;
   }
+  
+  bliss_digraph& bliss_locked_digraph_from_BMat8(HPCombi::BMat8 bm, size_t dim = 8) {
+    static bliss_digraph out = bliss_digraph(3 * dim);
+    out.clear();
+    size_t        x   = bm.to_int();
+    for (size_t i = 0; i < dim; ++i) {
+      out.change_color(i, 0);
+      out.change_color(dim + i, 1);
+      out.change_color(2 * dim + i, 2);
+      out.add_edge(i, 2 * dim + i);
+      out.add_edge(2 * dim + i, i);
+      out.add_edge(dim + i, 2 * dim + i);
+      out.add_edge(2 * dim + i, dim + i);
+      for (size_t j = 0; j < dim; ++j) {
+        if ((x >> (63 - 8 * i - j)) & 1) {
+          out.add_edge(i, dim + j);
+        }
+      }
+    }
+    out.write_dot("../output/aaaaa.dot");
+    return out;
+  }
 
   void bliss_hook_function(void *, const unsigned int, const unsigned int *) {}
 
@@ -59,9 +81,30 @@ namespace libsemigroups {
     return bm.row_permuted(row_perm).col_permuted(col_perm);
   }
 
+  HPCombi::BMat8
+  locked_permuted_BMat8(HPCombi::BMat8                                   bm,
+                        size_t                                           dim,
+                        bliss_digraphs::uint_pointer_to_const_substitute perm) {
+    HPCombi::epu8 row_perm;
+    for (size_t i = 0; i < dim; ++i) {
+      row_perm[perm[i]] = i;
+    }
+    for (size_t i = dim; i < 8; ++i) {
+      row_perm[i] = i;
+    }
+
+    return bm.row_permuted(row_perm).col_permuted(row_perm);
+  }
+
   HPCombi::BMat8 canonical_BMat8(HPCombi::BMat8 bm, size_t dim) {
-    bliss_digraph& dg = bliss_digraph_from_BMat8(bm, dim);
+    bliss_digraph &dg = bliss_digraph_from_BMat8(bm, dim);
     return permuted_BMat8(
+        bm, dim, dg.canonical_form(stats, &bliss_hook_function, nullptr));
+  }
+
+  HPCombi::BMat8 canonical_locked_BMat8(HPCombi::BMat8 bm, size_t dim) {
+    bliss_digraph &dg = bliss_locked_digraph_from_BMat8(bm, dim);
+    return locked_permuted_BMat8(
         bm, dim, dg.canonical_form(stats, &bliss_hook_function, nullptr));
   }
 
@@ -177,6 +220,36 @@ namespace libsemigroups {
       }
     }
     return true;
+  }
+
+
+
+  HPCombi::BMat8 reflect_vertically(HPCombi::BMat8 bm, size_t const dim) {
+    static std::array<uint8_t, 256> const uint8_reflects
+        = {0,   128, 64,  192, 32,  160, 96,  224, 16,  144, 80,  208, 48,  176,
+           112, 240, 8,   136, 72,  200, 40,  168, 104, 232, 24,  152, 88,  216,
+           56,  184, 120, 248, 4,   132, 68,  196, 36,  164, 100, 228, 20,  148,
+           84,  212, 52,  180, 116, 244, 12,  140, 76,  204, 44,  172, 108, 236,
+           28,  156, 92,  220, 60,  188, 124, 252, 2,   130, 66,  194, 34,  162,
+           98,  226, 18,  146, 82,  210, 50,  178, 114, 242, 10,  138, 74,  202,
+           42,  170, 106, 234, 26,  154, 90,  218, 58,  186, 122, 250, 6,   134,
+           70,  198, 38,  166, 102, 230, 22,  150, 86,  214, 54,  182, 118, 246,
+           14,  142, 78,  206, 46,  174, 110, 238, 30,  158, 94,  222, 62,  190,
+           126, 254, 1,   129, 65,  193, 33,  161, 97,  225, 17,  145, 81,  209,
+           49,  177, 113, 241, 9,   137, 73,  201, 41,  169, 105, 233, 25,  153,
+           89,  217, 57,  185, 121, 249, 5,   133, 69,  197, 37,  165, 101, 229,
+           21,  149, 85,  213, 53,  181, 117, 245, 13,  141, 77,  205, 45,  173,
+           109, 237, 29,  157, 93,  221, 61,  189, 125, 253, 3,   131, 67,  195,
+           35,  163, 99,  227, 19,  147, 83,  211, 51,  179, 115, 243, 11,  139,
+           75,  203, 43,  171, 107, 235, 27,  155, 91,  219, 59,  187, 123, 251,
+           7,   135, 71,  199, 39,  167, 103, 231, 23,  151, 87,  215, 55,  183,
+           119, 247, 15,  143, 79,  207, 47,  175, 111, 239, 31,  159, 95,  223,
+           63,  191, 127, 255};
+    std::vector<uint8_t> rows = bm.rows();
+    for (auto it = rows.begin(); it < rows.end(); ++it) {
+      *it = uint8_reflects[*it] << (8 - dim);
+    }
+    return bmat8_helpers::make<HPCombi::BMat8>(rows.cbegin(), rows.cend());
   }
 
   class BMatEnumerator : public libsemigroups::Runner {
@@ -337,6 +410,84 @@ namespace libsemigroups {
     bool                               _trim;
     bool                               _finished;
   };
+  
+  class BMatReflexiveTrimStraightEnumerator : public libsemigroups::Runner {
+   public:
+    BMatReflexiveTrimStraightEnumerator(size_t dim)
+        : _n(dim),
+          _max((1 << _n) - 1),
+          _rows(8, 0),
+          _out(),
+          _set(),
+          _finished(false) {}
+
+   private:
+    void dive(size_t k) {
+      for (uint8_t row = 1 << k; row < _max; ++row) {
+        _rows[k] = row;
+        if (!(row & (1 << k))) {
+          goto next_loop;
+        }
+        for (size_t i = 0; i < k; ++i) {
+          if ((_rows[i] | row) == row || ((_rows[i] | row) == _rows[i])) {
+            goto next_loop;
+          }
+        }
+        if (k == _n - 1) {
+          auto bm = bmat8_helpers::make<HPCombi::BMat8>(_rows.cbegin(),
+                                                        _rows.cend());
+          // move the matrix to the right place
+          bm = HPCombi::BMat8(bm.to_int() << (8 - _n));
+
+          // flip the matrix so it's actually reflexive
+          bm = reflect_vertically(bm, _n);
+          if (is_col_trim(bm, _n)) {
+            HPCombi::BMat8 canon = canonical_locked_BMat8(bm, _n);
+            if (_set.find(canon) == _set.end()) {
+              _set.insert(canon);
+              _out.push_back(canon);
+            }
+          }
+          if (report()) {
+            REPORT_DEFAULT(
+                "found %d reps so far, currently on %s \n",
+                _out.size(),
+                detail::to_string(bm));
+          }
+        } else {
+          // DIVE
+          dive(k + 1);
+        }
+      next_loop:;
+      }
+    }
+
+   public:
+    void run_impl() {
+      dive(0);
+      _finished = true;
+      report_why_we_stopped();
+    }
+
+    bool finished_impl() const {
+      return _finished;
+    }
+
+    std::vector<HPCombi::BMat8> const& reps() {
+      if (!started()) {
+        run();
+      }
+      return _out;
+    }
+
+   private:
+    size_t                             _n;
+    size_t                             _max;
+    std::vector<uint8_t>               _rows;
+    std::unordered_set<HPCombi::BMat8> _set;
+    std::vector<HPCombi::BMat8>        _out;
+    bool                               _finished;
+  };
 
   template <size_t _dim>
   class Filterer : public ::libsemigroups::Runner {
@@ -480,6 +631,232 @@ namespace libsemigroups {
     bool                                                          _finished;
   };
 
+  std::vector<std::vector<uint8_t>> intersections(HPCombi::BMat8 bm,
+                                                  size_t         dim) {
+    std::vector<std::vector<uint8_t>> out(dim, std::vector<uint8_t>(0));
+    std::vector<uint8_t> rows = bm.rows();
+    std::vector<bool> lookup(256, false);
+    for (size_t i = 1; i < (1 << dim); ++i) {
+      size_t choice = i << (8 - dim);
+      uint8_t res = -1;
+      for (size_t j = 0; (j < dim) && res; ++j) {
+        if ((128 >> j) & choice) {
+          res &= rows[j]; 
+        }
+      }
+      if (!lookup[res]) {
+        lookup[res] = true;
+        for (size_t j = 0; j < dim; ++j) {
+          if ((128 >> j) & res) {
+            out[j].push_back(res);
+          }
+        }
+      }
+    }
+    return out;
+  }
+
+  // Returns a candidate left multiplier bm in the reflexive monoid such that 
+  // bm * x = y 
+  // NOTE: Only a candidate! (but if bm * x != y, no such bm actually
+  // exists)
+  HPCombi::BMat8 left_reflexive_multiplier(HPCombi::BMat8 x,
+                                           HPCombi::BMat8 y,
+                                           size_t         dim) {
+    HPCombi::BMat8       out(0);
+    std::vector<uint8_t> x_rows = x.rows();
+    std::vector<uint8_t> y_rows = y.rows();
+    for (size_t i = 0; i < dim; ++i) {
+      for (size_t j = 0; j < dim; ++j) {
+        if ((x_rows[j] | y_rows[i]) == y_rows[i]) {
+          out.set(i, j, true);
+        }
+      }
+      out.set(i, i, true);
+    }
+    return out;
+  }
+
+  bool increment_tuple(std::vector<uint8_t> &    tup,
+                       const std::vector<size_t> maxes) {
+    for (auto it = tup.rbegin(); it < tup.rend(); ++it) {
+      if (*it < maxes[maxes.size() - 1 - std::distance(tup.rbegin(), it)]) {
+        (*it)++;
+        return true;
+      } else {
+        *it = 0;
+      }
+    }
+    return false;
+  }
+
+  bool is_maximal_reflexive_bmat(HPCombi::BMat8 x, size_t dim) {
+    std::vector<uint8_t> tup(dim, 0);
+    std::vector<std::vector<uint8_t>> intersects = intersections(x, dim);
+    std::vector<size_t> maxes(0);
+    for (auto x : intersects) {
+      maxes.push_back(x.size() - 1);
+    }
+    
+    do {
+      size_t o = 0;
+      for (size_t i = 0; i < dim; ++i) {
+        o |= (static_cast<size_t>(intersects[i][tup[i]]) << ((7 - i) * 8));
+      }
+      HPCombi::BMat8 bm(o);
+      HPCombi::BMat8 mult = left_reflexive_multiplier(bm, x, dim);
+      if (bm != bmat8_helpers::one<HPCombi::BMat8>(dim) && bm != x && mult * bm == x) {
+        return false;
+      }
+    } while (increment_tuple(tup, maxes));
+    return true;
+  }
+  
+  template <size_t _dim>
+  class ReflexiveFilterer : public ::libsemigroups::Runner {
+   public:
+    ReflexiveFilterer(std::string in)
+        : _in(in),
+          _filtered(0),
+          _finished(false) {}
+    void run_impl() {
+      std::vector<HPCombi::BMat8> bmat_enum;
+      std::ifstream               f(_in);
+      std::string                 line;
+      while (std::getline(f, line)) {
+        bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
+      }
+      f.close();
+
+      for (size_t i = 0; i < bmat_enum.size(); ++i) {
+        HPCombi::BMat8 bm = bmat_enum[i];
+        if (is_maximal_reflexive_bmat(bm, _dim)) {
+          _filtered.push_back(bm);
+        }
+        if (report()) {
+          REPORT_DEFAULT("On %d out of %d, keeping %d.\n",
+                         i + 1,
+                         bmat_enum.size(),
+                         _filtered.size());
+        }
+      }
+
+      _finished = true;
+      report_why_we_stopped();
+    }
+
+    const std::vector<HPCombi::BMat8> &reps() {
+      if (!started()) {
+        run();
+      }
+      return _filtered;
+    }
+
+    size_t size() {
+      if (!started()) {
+        run();
+      }
+      return _filtered.size();
+    }
+
+    bool finished_impl() const {
+      return _finished;
+    }
+
+   private:
+    std::string                                                   _in;
+    std::vector<HPCombi::BMat8>                                   _filtered;
+    bool                                                          _finished;
+  };
+  
+  template <size_t _dim>
+  class ReflexiveOrbiter : public ::libsemigroups::Runner {
+   public:
+    ReflexiveOrbiter(std::string in)
+        : _in(in),
+          _out(0),
+          _finished() {}
+    void run_impl() {
+      std::vector<HPCombi::BMat8> bmat_enum;
+      std::ifstream               f(_in);
+      std::string                 line;
+      while (std::getline(f, line)) {
+        bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
+      }
+      f.close();
+      
+      using Perm = typename PermHelper<_dim>::type;
+      HPCombi::epu8 cycle;
+      HPCombi::epu8 transposition;
+      // TODO: fix for tiny perms
+      transposition[0] = 1;
+      transposition[1] = 0;
+      cycle[0]         = 1;
+      for (uint8_t i = 2; i < _dim; ++i) {
+        cycle[i - 1]     = i;
+        transposition[i] = i;
+      }
+      cycle[_dim - 1] = 0;
+
+      std::vector<Perm> S_gens = {Perm(cycle), Perm(transposition)};
+
+      FroidurePin<Perm> S(S_gens);
+      S.run();
+
+      std::vector<HPCombi::BMat8> S_bmats;
+      for (Perm p : S) {
+        S_bmats.push_back(bmat8_helpers::make<_dim,
+                                              typename PermHelper<_dim>::type,
+                                              HPCombi::BMat8>(p));
+      }
+
+      for (size_t i = 0; i < bmat_enum.size(); ++i) {
+        HPCombi::BMat8 bm = bmat_enum[i];
+        for (HPCombi::BMat8 p : S_bmats) {
+          HPCombi::BMat8 x = p * bm * p.transpose();
+          if (_set.find(x) == _set.end()) {
+            _set.insert(x);
+            _out.push_back(x);
+          }
+          
+        }
+        if (report()) {
+          REPORT_DEFAULT("On %d out of %d, keeping %d.\n",
+                         i + 1,
+                         bmat_enum.size(),
+                         _out.size());
+        }
+      }
+
+      _finished = true;
+      report_why_we_stopped();
+    }
+
+    const std::vector<HPCombi::BMat8> &reps() {
+      if (!started()) {
+        run();
+      }
+      return _out;
+    }
+
+    size_t size() {
+      if (!started()) {
+        run();
+      }
+      return _out.size();
+    }
+
+    bool finished_impl() const {
+      return _finished;
+    }
+
+   private:
+    std::string                        _in;
+    std::vector<HPCombi::BMat8>        _out;
+    std::unordered_set<HPCombi::BMat8> _set;
+    bool                               _finished;
+  };
+
   ////////////////////////////////////////////////////////////////////////
   // JDM helper functions
   ////////////////////////////////////////////////////////////////////////
@@ -548,6 +925,36 @@ namespace libsemigroups {
     std::cout << "       " << rsn << "\n";
   }
 
+  template <size_t n>
+  void reflexive_minimal_generating_set() {
+    auto                                rg = ReportGuard();
+    std::string candf = "../output/bmat_reflexive_candidates_"
+                        + detail::to_string(n) + ".txt";
+    std::string filtf = "../output/bmat_reflexive_filtered_"
+                        + detail::to_string(n) + ".txt";
+    std::string gensf = "../output/bmat_reflexive_gens_"
+                        + detail::to_string(n) + ".txt";
+    BMatReflexiveTrimStraightEnumerator enumerator(n);
+    write_bmat_file(candf, enumerator.reps());
+    ReflexiveFilterer<n> filterer(candf);
+    write_bmat_file(filtf, filterer.reps());
+    ReflexiveOrbiter<n> orbiter(filtf);
+    write_bmat_file(gensf, orbiter.reps());
+    for (size_t i = 0; i < n; ++i) {
+      for (size_t j = 0; j < n; ++j) {
+        if (i != j) {
+          HPCombi::BMat8 bm = bmat8_helpers::one<HPCombi::BMat8>(n);
+          bm.set(i, j, true);
+          append_bmat_file(gensf, bm);
+        }
+      }
+    }
+    std::cout << orbiter.size() << std::endl;
+    std::cout << orbiter.size() + (n * n - n)
+              << " generators written to:";
+    std::cout << "    " << gensf << "\n";
+  }
+
   ////////////////////////////////////////////////////////////////////////
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
@@ -585,12 +992,51 @@ namespace libsemigroups {
     minimal_generating_set(7);
   }
 
-  LIBSEMIGROUPS_TEST_CASE("BMat8 enum", "8",
-                          "enumerate minimal generating set for n = 8",
+  /////////////////////////////////////////////////////////////////////////////
+  //
+  // Reflexive BMat8 Generators
+  //
+  /////////////////////////////////////////////////////////////////////////////
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "13",
+                          "enumerate minimal generating set for reflexive "
+                          "boolean mat monoid with n = 3",
                           "[standard][enumerate]") {
-    auto reps = trim_bmats(8);
+    reflexive_minimal_generating_set<3>();
   }
 
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "14",
+                          "enumerate minimal generating set for reflexive "
+                          "boolean mat monoid with n = 4",
+                          "[standard][enumerate]") {
+    reflexive_minimal_generating_set<4>();
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "15",
+                          "enumerate minimal generating set for reflexive "
+                          "boolean mat monoid with n = 5",
+                          "[standard][enumerate]") {
+    reflexive_minimal_generating_set<5>();
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "16",
+                          "enumerate minimal generating set for reflexive "
+                          "boolean mat monoid with n = 6",
+                          "[standard][enumerate]") {
+    reflexive_minimal_generating_set<6>();
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "17",
+                          "enumerate minimal generating set for reflexive "
+                          "boolean mat monoid with n = 7",
+                          "[standard][enumerate]") {
+    reflexive_minimal_generating_set<7>();
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   //
