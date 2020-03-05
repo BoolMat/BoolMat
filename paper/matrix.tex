@@ -39,6 +39,7 @@ tabu, enumerate}
 
 \newcommand{\B}{\mathbb{B}}
 \newcommand{\Bn}{M_n(\B)}
+\newcommand{\Refn}{M_n^{\text{id}}(\B)}
 \newcommand{\Bm}[1]{M_{m}(\B)}
 \renewcommand{\L}{\mathscr{L}}
 \newcommand{\R}{\mathscr{R}}
@@ -856,9 +857,210 @@ A related problem is to find the largest anti-chain in the partial order
 % numbers of trim, reduced, etc?, max. anti-chain?,
 % make this thing fit!
 
-
 \subsection*{Automorphism groups}
 It seems that for most prime matrices, the automorphism group of $R(A)$ is trivial. This consequence of this is that the number of prime matrices in $\Bn$ is roughly $(n!)^2$ times the number of prime $\J$-classes.
 
+\section{Reflexive Boolean Matrices}
+An interesting submonoid of $\Bn$ is the monoid $\Refn$ of reflexive boolean
+matrices, i.e. boolean matrices with $1$s on the main diagonal. Minimal
+generating sets for $\Refn$ are significantly larger than those of $\Bn$; this
+is essentially caused by the following well-known facts.
+
+\begin{lemma}
+  \thlabel{lem:reflexivecontainment}
+  For any $A, B \in \Refn$, we have $A \leq A * B$ and $B \leq A * B$, with
+  respect to containment.
+\end{lemma}
+\begin{proof}
+  Since $A, B$ both contain the identity matrix, the product $A * B$ must
+  contain both every row of $A$ and every column of $B$.
+\end{proof}
+
+\begin{lemma}
+  \thlabel{lem:reflexivejtrivial}
+  $\Refn$ is $\J$-trivial. 
+\end{lemma}
+\begin{proof}
+  If $A \D B$, then $A \leq B$ and $B \leq A$ w.r.t containment. Hence $A = B$.    
+\end{proof}
+
+TODO: figure out where to out the greedy multiplier definitions/lemmas
+
+In order to find a generating set for $\Refn$, we require the following results:
+
+\begin{defi}
+  Given two matrices $A, B \in \Bn$, we say that the \textbf{\textit{greedy
+  left [right] multiplier}} of $A$ w.r.t. $A$ is the matrix $C$ containing a $1$
+  in position $(i, j)$ if and only if $A_j \leq B_i$ [$A^T_i \leq B^T_j$].
+\end{defi}
+
+Given an expression of the form $CA = B$, we will often simply say that
+\textit{$C$ is the greedy multiplier} if $C$ is the greedy left multiplier
+of $A$ w.r.t $B$; the dual is also true.
+
+\begin{lemma}
+  \thlabel{lem:greedymaximal}
+  Given matrices $A, B \in \Bn$, the greedy left multiplier $C$ of $A$ w.r.t $B$
+  is maximal w.r.t  containment in the set $\set{X \in \Bn}{XA = B}$, and the
+  product $CA$ is maximal w.r.t containment amongst products $XA$ contained in
+  $B$.
+\end{lemma}
+\begin{proof}
+  todo, easy
+\end{proof}
+
+\begin{defi}
+  An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if
+  there exist $y, z \in M$ with $x = yz$, and \defn{properly decomposable} if
+  there exist $y, z \in M\setminus\{e, x\}$ such that $x = yz$.
+\end{defi}
+
+\begin{lemma}
+  \thlabel{lem:reflexivegenstrimorelem}
+  If $A$ is a non-trim, non-elementary matrix, then $A$ is properly
+  decomposable.
+\end{lemma}
+\begin{proof}
+Let $A$ be a non-trim, non-elementary matrix. Then $A$ has some row $i$
+contained in some other row $j$. Let $B$ be the matrix obtained by setting entry
+$i$ of row $j$ to be $0$. Then $B < A$ w.r.t containment, and letting $C$ be the
+greedy left multiplier, $A = CB$. Hence $B, C > A$ in the $\J$-order. As $A$ is
+non-elementary, $B$ and $C$ are non-identity matrices; hence $A$ is properly
+decomposable.
+\end{proof}
+
+\begin{lemma}
+  \thlabel{lem:reflexiveelementaryindecomposable}
+  Elementary matrices are properly indecomposable in $\Refn$.
+\end{lemma}
+\begin{proof}
+  Elementary matrices are precisely those matrices in $\Refn$ containing $n + 1$
+  ones. Since non-identity matrices in $\Refn$ have at least $n + 1$ ones, by
+  \thref{lem:reflexivecontainment} elementary matrices are not properly
+  indecomposable.
+\end{proof}
+
+\begin{cor}
+  \thlabel{cor:reflexiveindecomposable}
+  Let $X$ denote the set of matrices in $\Refn$ that are not properly
+  decomposable, $T \subset X$ denote the trim matrices in $X$, and $E$ denote
+  the elementary matrices. Then $X \setminus T = E$. 
+\end{cor}
+
+\begin{lemma}
+  The unique minimal (monoid) generating set for $\Refn$ is $T \cup E$.
+\end{lemma}
+\begin{proof}
+  We first note that $T$ must be contained in any generating set for $\Refn$.
+  Since the elements of $E$ are precisely those reflexive matrices containing
+  $n + 1$ ones, \thref{lem:reflexivecontainment} implies that they are not
+  properly decomposable and hence $E$ must be contained in any generating set.
+
+  Now let $A \in \Refn$; we must show that $A \in \genset{T \cup E}$. If $A \in
+  T \cup E$ then we are done, so suppose not. By
+  \thref{lem:reflexivegenstrimorelem} and the definition of $T$, $A$ must be a
+  properly decomposable matrix; say $A = BC$ for $B, C \in \Refn\setminus\{I,
+  A\}$. By \thref{lem:reflexivejtrivial}, $B$ and $C$ are strictly above $A$ in
+  the $\J$-order of $\Refn$. Now if $B$ or $C$ are not in $T \cup E$, we may
+  again decompose to find elements still higher in the $\J$-order. Since $\Refn$
+  has finite height, we must eventually not be able to properly decompose the
+  elements we have found; by \thref{cor:reflexiveindecomposable} we have then
+  found a decomposition of $A$ as a product of matrices in $T \cup E$.
+\end{proof}
+
+Given a matrix $A \in \Refn$, it is helpful to be able to determine whether $A$
+is properly decomposable. The following lemma suggests a method for doing so.
+
+\begin{lemma}
+  \thlabel{lem:decomposeintersection}
+  A trim matrix $A \in \Refn$ can be decomposed as $A = BC$, $B, C \in
+  \Refn\setminus\{I, A\}$, if and only if $A = B'C'$ where $C'$ is the matrix
+  whose $i$th row $C_i$ is the intersection 
+  \[ C_i = \cap_{K_i} A_i \]
+  where $K_i$ is the positions of the $1$s in the $i$th column of $B$, $B'$ is
+  the greedy left multiplier, and $B', C' \in \Refn \setminus\{A\}$.
+\end{lemma}
+\begin{proof}
+  ($\Rightarrow$)
+  Suppose that $A = BC$ for $B, C \in \Refn \setminus\{I, A\}$, and let $B', C',
+  K_i$ be defined as above. Fix $i$, and consider the $i^{\text{th}}$ row $C_i'$
+  of $C'$. By the definition of $K_i$, for each $j \in K_i$, we have $C_i \leq
+  A_j$; hence $C_i \leq C'_i \leq A_j$. This implies that $A = BC'$, since $A =
+  BC \leq BC' \leq A$. By \thref{lem:greedymaximal}, $A = B'C'$, and $B' \in
+  \Refn$ since $B \leq B'$. Since $C_i \leq C'_i$ for all $i$, $C'$ is also in
+  $\Refn$. It remains to show that neither $B', C' \not\in \{I, A\}$. Note
+  that since $B \leq B'$ (\thref{lem:greedymaximal}) and $C \leq C'$, $B', C'$
+  are not the identity matrix. Since $A$ is trim, if $B'$ or $C'$ were equal
+  to $A$ the product $B'C'$ would have more ones than $A$ does.\\
+  ($\Leftarrow$) Immediate.
+\end{proof}
+Hence, in order to determine whether a trim matrix $A$ is decomposable it
+suffices to:
+\begin{enumerate}
+  \item generate all matrices $C$ with rows intersections of rows of $A$, and
+  \item check whether the product $BC$ with the greedy left multiplier is equal
+    to $A$, and $B, C \not\in \{I, A\}$.
+\end{enumerate}
+If no such matrices $B, C$ are found, then $A$ is indecomposable. This method is
+clearly superior to checking all products of matrices in $\Refn$, but still may
+require significant time.\\
+
+In order to reduce the time spent checking matrices using
+\thref{lem:decomposeintersection}, we would like to only check a smaller set of
+canonical representatives. Unfortunately, the following two matrices illustrate
+that two reflexive matrices can have the same canonical form under row and
+column permutations in $\Bn$, while only one of them is decomposable in $\Refn$. 
+
+TODO: example (in todo app)
+
+However, the following lemma shows that a more restricted form of
+canonicalisation can be applied in this case:
+
+\begin{lemma}
+  \thlabel{lem:reflexivecanonical}
+  Let $A, B \in \Refn$ be such that $A = P^{-1} B P$ for some permutation matrix
+  $P \in S_n$ (i.e. $A$ is obtained by permuting the rows and columns of $B$ by
+  the same permutation). Then $A$ is decomposable in $\Refn$ if and only if $B$
+  is decomposable in $\Refn$.
+\end{lemma}
+\begin{proof}
+  Suppose that $B = XY$ for $X, Y \in \Refn\setminus \{I, A\}$. Then $P^{-1}XP,
+  P^{-1}YP \in \Refn\setminus\{I, A\}$ and $P^{-1}XPP^{-1}YP = A$. The proof of
+  the other direction is dual, since $PAP^{-1} = B$.
+\end{proof}
+
+We then have the following algorithm for finding a minimal generating set for
+$\Refn$:
+\begin{itemize}
+  \item
+    Enumerate the trim reflexive boolean matrices using a backtrack search,
+    storing canonical representatives under a row and column permutation in a
+    set $S$
+  \item 
+    Filter out the properly decomposable matrices in $S$ using
+    \thref{lem:decomposeintersection}, leaving a set $T$ of trim matrices that
+    are not properly decomposable
+  \item
+    The minimal generating set of $\Refn$ is then $T \cup E$.
+\end{itemize}
+Using this algorithm, we can calculate the sizes of minimal generating sets up
+to $n = 7$:
+
+\begin{figure}
+  \label{fig:reflexiverank}
+  \centering
+  \begin{tabular}{l|r|r}
+    $n$ & $\mathbf{d}(\Refn)$ &   \\
+    \hline
+    1 & 1          & - \\ 
+    2 & 2          & - \\ 
+    3 & 8          & - \\ 
+    4 & 38         & - \\
+    5 & 1415       & \cmark \\
+    6 & 482\ 430   & \cmark \\ 
+    7 & ?          & \cmark \\
+    9 & ?          & ?
+  \end{tabular}
+\end{figure}
 \printbibliography
 \end{document} 
