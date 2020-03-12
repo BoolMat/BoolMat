@@ -11,6 +11,7 @@ tabu, enumerate}
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{lemma}[thm]{Lemma}
 \newtheorem{defi}[thm]{Definition}
+\newtheorem{ex}[thm]{Example}
 \newenvironment{de}{\begin{defi}\rm}{\end{defi}}
 \newcommand{\proofref}[1]{\noindent {\emph{Proof of Theorem}~\ref{#1}.\ }}
 \newcommand{\defn}[1]{\textbf{\textit{#1}}}
@@ -40,6 +41,7 @@ tabu, enumerate}
 \newcommand{\B}{\mathbb{B}}
 \newcommand{\Bn}{M_n(\B)}
 \newcommand{\Refn}{M_n^{\text{id}}(\B)}
+\newcommand{\Ref}[1]{M_{#1}^{\text{id}}(\B)}
 \newcommand{\Bm}[1]{M_{m}(\B)}
 \renewcommand{\L}{\mathscr{L}}
 \newcommand{\R}{\mathscr{R}}
@@ -99,7 +101,7 @@ random product of matrices in $\Bn$ equals the universal matrix:
 \end{equation*} 
 tends to $1$ as $n\to \infty$; the minimal size of a generating set for $\Bn$
 grows exponentially with $n$ (see~Theorem~\ref{}); Devadze~\cite{Devadze1968aa} and
-Konieczny~\cite{} characterise minimum cardinality generating sets for $\Bn$; 
+Konieczny~\cite{Konieczny2011aa} characterise minimum cardinality generating sets for $\Bn$; 
 more.
 
 Despite its venerable status, many aspects of the monoids $\Bn$ are still
@@ -346,8 +348,6 @@ immediately below the top: $D_E$. Note that $D_F \leq D_E$. The next results
 show that in fact these are in fact all of the $\J$-classes immediately below
 the top.
 
-TODO: a picture of the top of $\Bn$
-
 Let $\beta_n$ denote the set $\set{R(A)}{A\in \Bn\setminus S_n}$ of all
 possible proper row subspaces of elements of $\Bn$, and let $\B^n$ denote
 the space of all boolean vectors of length $n$. Note that $\B^n$ is the
@@ -361,7 +361,7 @@ row/column space of precisely the permutation matrices.
 \begin{proof}
   Let $A \in \Bn$ be prime, and suppose that $R(A) \subseteq R(B)$ for some
   $B \in \Bn \setminus S_n$. Then $A = CB$ for some $C \in \Bn$ by 
-  \thref{lem:GreensRowColumnSpacesLeq}. Now since $A$ is prime, we must have
+  \thref{prop-principal}. Now since $A$ is prime, we must have
   $C \in S_n$, and thus $R(A) = R(CB) = R(B)$, so $R(A)$ is maximal in
   $\beta_n$. \\
   Suppose instead that $A$ is elementary, with $R(A) \subseteq R(B)$ for some
@@ -389,8 +389,6 @@ An important result for computation is the following:
 This result allows us to store single representatives of the $\J$-classes of
 reduced matrices by computing a canonical image under permuting rows and
 columns.
-
-TODO: Use this + Konieczny's EROs to detect D relation?
 
 \begin{de}[Trim matrices]
   A matrix $A \in \Bn$ is \emph{row-trim} if no non-zero row of $A$ is contained in
@@ -421,7 +419,7 @@ The importance of trim matrices lies in the following facts:
 \end{proof}
 
 We can now find minimal generating sets, using the following result:
-\begin{thm}[Devadze's Theorem \cite{Konieczny2011}]
+\begin{thm}[Devadze's Theorem \cite{Konieczny2011aa}]
   \thlabel{thm:Devadze}
   A minimal generating set for $\Bn$ is given by $\{T, U, E, F\} \cup P$
   where $P$ is a set of representatives of the prime $\J$-classes of $\Bn$.
@@ -464,7 +462,7 @@ to restrict the matrices we need to consider:
   In every $\J$-class of $\Bn$ there is a matrix $A$ in \emph{standard form} with the following properties:
   \begin{itemize}
   \item{$A$ is reduced,}
-  \item{all non-zero rows [columns] of $A$ are at the top [left],}
+  \item{all non-zero rows [columns] of $A$ are at the top [right],}
   \item{considering the non-zero rows [columns] of $A$ as binary numbers, they
         form a strictly increasing sequence,}
   \item{all ones in the first non-zero row [column] of $A$ are on the right
@@ -475,7 +473,31 @@ to restrict the matrices we need to consider:
 
 Each of these properties is an attempt to minimise the value of the matrix in its $\J$-class when considered as a binary number.
 Unfortunately, having these properties is not enough to guarantee that the matrix is minimal, so standard form does not give a canonical form for matrices.
-TODO: example
+
+\begin{ex}
+Let
+\begin{align*}
+  A = \begin{pmatrix}
+    1 & 0 & 0 & 0 & 1 \\
+    0 & 1 & 0 & 1 & 0 \\
+    0 & 0 & 1 & 1 & 1 \\
+    1 & 0 & 1 & 1 & 0 \\
+    0 & 1 & 1 & 0 & 1 
+  \end{pmatrix}\text{, }&
+  B = \begin{pmatrix}
+    1 & 0 & 1 & 0 & 0 \\
+    0 & 1 & 0 & 1 & 0 \\
+    0 & 0 & 1 & 1 & 1 \\
+    1 & 0 & 0 & 1 & 1 \\
+    0 & 1 & 1 & 0 & 1 
+  \end{pmatrix}.&\\
+\end{align*}
+Then $A$ and $B$ are in the standard form of
+\thref{prop:StandardFormProperties}. Swapping rows $1$ and $2$ and columns $3$
+and $4$ shows that $A$ and $B$ are related, by
+\thref{lem:PermutingReducedMatrices}.
+\end{ex}
+
 
 Using this simple algorithm minimal generating sets for $n \leq 7$ have been obtained.
 Some numbers are contained in Figure~\ref{figure-table-1}.
@@ -726,8 +748,43 @@ In order to reduce the time spent checking matrices using
 canonical representatives. Unfortunately, the following two matrices illustrate
 that two reflexive matrices can have the same canonical form under row and
 column permutations in $\Bn$, while only one of them is decomposable in $\Refn$. 
-
-TODO: example (in todo app)
+\begin{ex}
+  Let
+\begin{align*}
+  A = \begin{pmatrix}
+    1 & 0 & 0 & 0 & 1 \\
+    0 & 1 & 0 & 1 & 0 \\
+    0 & 0 & 1 & 1 & 1 \\
+    1 & 0 & 1 & 1 & 0 \\
+    0 & 1 & 1 & 0 & 1 
+  \end{pmatrix}\text{, }&
+  B = \begin{pmatrix}
+    1 & 0 & 1 & 0 & 0 \\
+    0 & 1 & 0 & 1 & 0 \\
+    0 & 0 & 1 & 1 & 1 \\
+    1 & 0 & 0 & 1 & 1 \\
+    0 & 1 & 1 & 0 & 1 
+  \end{pmatrix}.&\\
+\end{align*}
+Then $A, B \in \Ref{5}$, and $B$ may be obtained by exchanging columns $3$ and
+$5$ of $A$. However, $A$ is indecomposable whilst
+\begin{align*}
+  B = \begin{pmatrix}
+    1 & 0 & 1 & 0 & 0 \\
+    0 & 1 & 0 & 0 & 0 \\
+    0 & 0 & 1 & 1 & 0 \\
+    1 & 0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 0 & 1 
+  \end{pmatrix}
+  \begin{pmatrix}
+    1 & 0 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 1 & 0 \\
+    0 & 0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 1 & 1 \\
+    0 & 1 & 1 & 0 & 1 
+  \end{pmatrix}.&\\
+\end{align*}
+\end{ex} 
 
 However, the following lemma shows that a more restricted form of
 canonicalisation can be applied in this case:
