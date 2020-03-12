@@ -4,6 +4,9 @@
 #include <unordered_set>  // for unordered_set
 #include <vector>         // for vector
 
+#include <random>
+#include <algorithm>
+
 #include "catch.hpp"
 #include "test-main.hpp"
 
@@ -17,6 +20,7 @@
 #include "timer.hpp"
 
 #include "../extern/bliss-0.73/graph.hh"
+
 
 #include <omp.h>
 namespace libsemigroups {
@@ -737,7 +741,13 @@ namespace libsemigroups {
         bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
       }
       f.close();
-
+       
+      std::random_device rd;
+      std::mt19937 g(rd());
+ 
+      std::shuffle(bmat_enum.begin(), bmat_enum.end(), g);
+      
+      std::atomic<size_t> count{0};
       #pragma omp parallel for
       for (size_t i = 0; i < bmat_enum.size(); ++i) {
         HPCombi::BMat8 bm = bmat_enum[i];
@@ -745,9 +755,11 @@ namespace libsemigroups {
           std::lock_guard<std::mutex> lg(_mtx);
           _filtered.push_back(bm);
         }
+        count++;
         if (report()) {
-          REPORT_DEFAULT("On %d out of %d, keeping %d.\n",
+          REPORT_DEFAULT("On %d (overall %d out of %d), keeping %d.\n",
                          i + 1,
+                         count.load(),
                          bmat_enum.size(),
                          _filtered.size());
         }
