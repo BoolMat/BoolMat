@@ -496,8 +496,8 @@ namespace libsemigroups {
     size_t                             _n;
     size_t                             _max;
     std::vector<uint8_t>               _rows;
-    std::unordered_set<HPCombi::BMat8> _set;
     std::vector<HPCombi::BMat8>        _out;
+    std::unordered_set<HPCombi::BMat8> _set;
     bool                               _finished;
   };
 
@@ -900,7 +900,8 @@ namespace libsemigroups {
     ReflexiveOrbiter(std::string in)
         : _in(in),
           _out(0),
-          _finished() {}
+          _finished(),
+          _mtx() {}
     void run_impl() {
       std::vector<HPCombi::BMat8> bmat_enum;
       std::ifstream               f(_in);
@@ -929,25 +930,39 @@ namespace libsemigroups {
       S.run();
 
       std::vector<HPCombi::BMat8> S_bmats;
+      std::vector<HPCombi::BMat8> S_bmats_transpose;
       for (Perm p : S) {
-        S_bmats.push_back(bmat8_helpers::make<_dim,
+        HPCombi::BMat8 x = bmat8_helpers::make<_dim,
                                               typename PermHelper<_dim>::type,
-                                              HPCombi::BMat8>(p));
+                                              HPCombi::BMat8>(p);
+        S_bmats.push_back(x);
+        S_bmats_transpose.push_back(x.transpose());
+
       }
 
+      std::atomic<size_t> count{0};
+
       for (size_t i = 0; i < bmat_enum.size(); ++i) {
+        std::unordered_set<HPCombi::BMat8> set(0);
+        std::vector<HPCombi::BMat8> tmp(0);
         HPCombi::BMat8 bm = bmat_enum[i];
-        for (HPCombi::BMat8 p : S_bmats) {
-          HPCombi::BMat8 x = p * bm * p.transpose();
-          if (_set.find(x) == _set.end()) {
-            _set.insert(x);
-            _out.push_back(x);
+        for (size_t j = 0; j < S_bmats.size(); ++j) {
+          HPCombi::BMat8 x = S_bmats[j] * bm * S_bmats_transpose[j];
+          if (set.find(x) == set.end()) {
+            set.insert(x);
+            tmp.push_back(x);
           }
-          
+        }
+        count++;
+        {
+          std::lock_guard<std::mutex> lock(_mtx);
+          _out.reserve(_out.size() + tmp.size());
+          _out.insert(_out.end(), tmp.begin(), tmp.end());
         }
         if (report()) {
-          REPORT_DEFAULT("On %d out of %d, keeping %d.\n",
+          REPORT_DEFAULT("On %d (overall %d out of %d), found %d generators.\n",
                          i + 1,
+                         count.load(),
                          bmat_enum.size(),
                          _out.size());
         }
@@ -978,8 +993,8 @@ namespace libsemigroups {
    private:
     std::string                        _in;
     std::vector<HPCombi::BMat8>        _out;
-    std::unordered_set<HPCombi::BMat8> _set;
     bool                               _finished;
+    std::mutex                         _mtx;
   };
 
   ////////////////////////////////////////////////////////////////////////

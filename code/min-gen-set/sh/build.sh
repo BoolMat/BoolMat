@@ -39,7 +39,7 @@ if [ ! -d  build ]; then
   cp ../../src/test-bmat8-enum.cpp tests
 
   bold "* running autoconf on libsemigroups *******************************************"
-  ./autogen.sh && ./configure
+  ./autogen.sh && ./configure -CXXFLAGS="-fopenmp"
 
   bold "* configuring libsemigroups ***************************************************"
   cd ../..
