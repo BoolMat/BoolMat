@@ -1158,6 +1158,7 @@ namespace libsemigroups {
     std::string gensf = "../output/bmat_reflexive_gens_"
                         + detail::to_string(n) + ".txt";
     ReflexiveFilterer<n> filterer(candf, filtf, discf);
+    filterer.run();
     ReflexiveOrbiter<n> orbiter(filtf);
     write_bmat_file(gensf, orbiter.reps());
     for (size_t i = 0; i < n; ++i) {
