@@ -42,6 +42,10 @@ tabu, enumerate}
 \newcommand{\Bn}{M_n(\B)}
 \newcommand{\Refn}{M_n^{\text{id}}(\B)}
 \newcommand{\Ref}[1]{M_{#1}^{\text{id}}(\B)}
+\newcommand{\Halln}{M_n^{\text{S}}(\B)}
+\newcommand{\Hall}[1]{M_{#1}^{\text{S}}(\B)}
+\newcommand{\Mtn}{M_n^{\text{T}}(\B)}
+\newcommand{\Mt}[1]{M_{#1}^{\text{T}}(\B)}
 \newcommand{\Bm}[1]{M_{m}(\B)}
 \renewcommand{\L}{\mathscr{L}}
 \newcommand{\R}{\mathscr{R}}
@@ -49,7 +53,6 @@ tabu, enumerate}
 \newcommand{\J}{\mathscr{J}}
 \renewcommand{\H}{\mathscr{H}}
 \newcommand{\N}{\mathbb{N}}
-
 
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
@@ -100,7 +103,7 @@ random product of matrices in $\Bn$ equals the universal matrix:
 \end{pmatrix} 
 \end{equation*} 
 tends to $1$ as $n\to \infty$; the minimal size of a generating set for $\Bn$
-grows exponentially with $n$ (see~\thref{lem:exponentialgenset});
+grows exponentially with $n$ (see~\thref{lem:exponentialgensets});
 Devadze~\cite{Devadze1968aa} and Konieczny~\cite{Konieczny2011aa} characterise
 minimum cardinality generating sets for $\Bn$; TODO: more.
 
@@ -381,7 +384,7 @@ The following concept is useful when attempting to decompose matrices as
 products.
 \begin{defi}
   Given two matrices $A, B \in \Bn$, we say that the \textbf{\textit{greedy
-  left [right] multiplier}} of $A$ w.r.t. $A$ is the matrix $C$ containing a $1$
+  left [right] multiplier}} of $A$ w.r.t. $B$ is the matrix $C$ containing a $1$
   in position $(i, j)$ if and only if $A_j \leq B_i$ [$A^T_i \leq B^T_j$].
 \end{defi}
 
@@ -406,7 +409,8 @@ The importance of trim matrices lies in the following facts:
 \begin{proof}
   Let $A \in \Bn$ be prime. Suppose some non-zero row $k$ of $A$ is contained in
   a row $l$ of $A$. Then $XA = A$, where $X$ is the greedy left multiplier, and
-  since $|X_l| \geq 2$, $X \not\in S_n$, a contradiction. A dual argument shows   that no non-zero column of $A$ is contained in another column.
+  since $|X_l| \geq 2$, $X \not\in S_n$, a contradiction. A dual argument shows
+  that no non-zero column of $A$ is contained in another column.
 \end{proof}
 
 \begin{lemma}
@@ -425,6 +429,10 @@ The importance of trim matrices lies in the following facts:
   A minimal generating set for $\Bn$ is given by $\{T, U, E, F\} \cup P$
   where $P$ is a set of representatives of the prime $\J$-classes of $\Bn$.
 \end{thm}
+
+In fact, Devadze's theorem is stronger: \emph{any} minimal generating set for
+$\Bn$ consists of $P$ together with two generators for the group of units $S_n$,
+an elementary matrix, and some matrix $\J$-related to $F$. 
 
 \begin{cor}
   \thlabel{lem:exponentialgensets}
@@ -847,6 +855,163 @@ to $n = 7$; these are contained in Figure~\ref{fig:reflexiverank}.
     that the value is unknown.}
   \label{fig:reflexiverank}
 \end{figure}
+
+\section{Hall Matrices}
+The submonoid of $\Bn$ consisting of those boolean matrices containing a
+permutation matrix is particularly interesting. It is often called the
+\emph{Hall monoid} since matrices containing a permutation matrix correspond to
+instances of the Hall marriage problem that have a solution, and are thus
+referred to as \emph{Hall matrices}. We will denote the Hall monoid by
+$\Halln$. 
+
+In order to prove our main result on the Hall monoid, we will need the following
+classical result, restated in our context.
+
+\begin{thm}[Hall's Marriage Theorem]
+  Let $A in \Bn$. Then $A$ is a Hall matrix if and only if every union of $k$
+  rows contains at least $k$ ones, for $1 \leq k \leq n$.
+\end{thm}
+We shall say that a subset $X$ of the rows of a matrix \emph{satisfies the Hall
+  condition} if the union of the rows in $X$ contains at least $|X|$ ones, and
+that a matrix satifies the Hall condition if every subset of the rows satisfies
+the Hall condition.
+
+It will be useful in this section to define $e_i$ to be the boolean vector of
+length $n$ with a single $1$ in position $i$.
+
+The Hall monoid is similar in certain ways to $\Refn$. In particular
+the $\J$-relation is easily described through the following lemmas.
+
+\begin{lemma}
+  \thlabel{lem:HallContainment}
+  For any $A, B \in \Halln$, the product $AB$ contains at least as many ones as
+  $A$ or $B$ does.
+\end{lemma}
+\begin{proof}
+  Since $A \in \Halln$, $A$ contains a permutation matrix; hence $AB$ contains a
+  row-permuted copy of $B$. Similarly, $AB$ contains a column-permuted copy of
+  $A$.
+\end{proof}
+
+\begin{lemma}
+  \thlabel{lem:HallJRelation}
+  Two matrices $A, B \in \Halln$ are $\J$-related in $\Halln$ if and only if $A
+  = PBQ$ for two permutation matrices $P, Q \in S_n$.
+\end{lemma}
+\begin{proof}
+  The forward direction is clear. For the reverse, suppose that $A = SBT$ and $B
+  = UAV$ for matrices $S, T, U, V \in \Halln$. Then $BT$ contains a
+  column-permuted copy of $B$, and hence $A$ contains a row- and column-permuted
+  copy of $B$. Since, similarly, $B$ contains a row- and column-permuted copy of
+  $A$, it follows that $A$ is a row- and column-permutation of $B$.
+\end{proof}
+
+Unlike $\Refn$, $\Halln$ has a particularly nice minimal generating set.
+\begin{lemma}
+  Every minimal generating set for $\Halln$ is obtained by removing a rank $n-1$
+  matrix from a minimal generating set for $\Bn$. That is, every minimal
+  generating set for $\Halln$ consists of a set of representatives $P$ of the
+  prime $J$-classes of $\Bn$ together with two generators for the group of units
+  $S_n$ and an elementary matrix.
+\end{lemma}
+\begin{proof}
+  The fact that $P \subset \Halln$ is a consequence of the discussion after
+  \cite[Definition 2.4]{Caen1981aa}. Let $G \subset \Halln$ be obtained as in
+  the statement. To establish that $G$ is a generating set, we will show that
+  any Hall matrix that lies below the matrices in $G$ in the $\J$-order may be
+  written as a product of two higher non-permutation Hall matrices, and
+  therefore by an infinite ascent argument may be factorized into matrices in
+  $G$.
+  
+  Note that $G$ consists of matrices from the maximal $\J$-class and all
+  one-below-maximal $\J$-classes. By \thref{lem:PermutingReducedMatrices}, every
+  matrix in the $\J$-classes of matrices in $G$ is generated by $G$.
+
+  Let $A$ be a Hall matrix that lies below $G$ in the $\J$-order. We may assume
+  without loss of generality that $A$ contains the identity permutation, since
+  $\langle G \rangle$ contains $S_n$. We will decompose $A$ as a product of
+  non-permutation Hall matrices that lie above $A$ in the $\J$-order. 
+
+  First, suppose that $A$ is not trim, i.e.\ some row $i$ of $A$ is contained in
+  row $j$. Let $B$ be the matrix obtained by setting entry $i$ of row $j$ to be
+  equal to $0$, and $C$ be the greedy left multiplier of $B$ with respect to
+  $A$. Then $B$ and $C$ both contain the identity permutation, and hence are
+  Hall matrices. Since row $i$ of $B$ is contained in row $j$ of $A$, entry $(j,
+  i)$ of $C$ is $1$ and hence $C$ is not a permutation matrix.  Since $A$ was
+  not an elementary matrix, and $B$ was obtained by removing a single $1$ from
+  $A$, $B$ is not a permutation matrix. Finally, $A = CB$.
+
+  We now assume that $A$ is trim. Since $A$ lies below $G$ in the $\J$-order, it
+  has non-maximal row space. Let $B$ be a maximal non-permutation matrix in
+  $\Bn$ which contains the row space of $A$. Then $B$ is prime or elementary,
+  and hence is similar to some matrix in $G$. By multiplying by permutation
+  matrices $U$ and $V$, we may assume that $UBV$ contains the identity
+  permutation. Now $A = CB$ where $C$ is the greedy multiplier. Since $A$ is
+  trim, we must also have that $C$ is trim. However, there is no reason that $C$
+  must be a Hall matrix.
+  
+  Suppose that $C$ is a Hall matrix. Then, since $B$ is not similar to $A$, $C$
+  is not a permutation matrix.  Since $B$ is not a permutation matrix, $C$ is
+  not similar to $A$. By \thref{lem:HallJRelation}, $B$ and $C$ are both
+  non-permutation matrices which are greater than $A$ in the $\J$-order.
+
+  Now, if $C$ is not a Hall matrix, then it does not satisfy the Hall condition
+  and hence there is some minimal subset of rows $W \subseteq \{1, \ldots, n \}$
+  that do not satisfy the Hall condition. By multiplying by permutation matrices
+  $X$ and $Y$, and working with the matrix $XCY$, we may assume that $W = \{1,
+    \ldots, r \}$ and that the union of rows $1$ up to $r$ contains a $1$ in
+  positions $1$ up to $s$, $s < r$. We now construct two new matrices $S, T \in
+  \Halln$ such that $A = ST$. 
+  Let $x, y, u, v$ be the permutations of $\{1, \ldots, n \}$ associated with
+  the matrices $X, Y, U, V$. For $1 \leq i \leq s$, define row $i$ of $S$ to
+  be row $i$ of $XCY$ and row $i$ of $T$ to be row $i$ of $UBV$. For $s + 1 \leq
+  i \leq r$, define row $i$ of $S$ to be row $i$ of $XCY$ plus $e_i$, and define
+  row $i$ of $T$ to be $e_i$. For $r + 1 \leq i \leq n$, define row $i$ of $S$
+  to be $e_i$, and row $i$ of $T$ to be row $i$ of $A$. 
+  
+  
+  Oh dear, this doesn't work.
+ 
+
+  We note now
+  that if $A$ is similar to a direct sum of a Hall matrix in $\Hall{m}$, $m <
+  n$, and an $(n-m)$ dimension identity matrix, then $A$ is decomposable into 
+
+\end{proof}
+
+\section{Transformation Hall Matrices}
+The previous two sections can both be viewed in the context of ``matrices which
+are forced to contain permutations''; for reflexive boolean matrices this
+permutation must be the identity. We now relax this requirement to consider the
+monoid $\MTn$ of matrices which contain a transformation, i.e. have a $1$ in
+every row. Such a matrix will be called a TC matrix, standing for
+``transformation containing''.
+
+\begin{lemma}
+  All minimal generating sets for $\MTn$ are obtained by replacing the rank $n -
+  1$ matrix in a minimal generating set for $\Bn$ by a matrix similar to
+  \begin{align*}
+    F = \begin{pmatrix}
+      0 & 0 & 0 & 0 & \cdots & 0 \\
+      0 & 1 & 0 & 0 & \cdots & 0 \\
+      0 & 0 & 1 & 0 & \cdots & 0 \\
+      0 & 0 & 0 & 1 & \cdots & 0 \\
+        &   &   \dots & \dots & \\
+      0 & 0 & 0 & 0 & \cdots & 1
+    \end{pmatrix}
+  \end{align*}
+\end{lemma}
+\begin{proof}
+  Since all prime matrices have full rank, such a set $G$ is contained in
+  $\MTn$. To see that it is a generating set, consider a matrix $A$ which is not
+  $\J$-related to any matrix in $G$. Then we may write $A = BC$ where $B$ and
+  $C$ lie strictly above $A$ in the $\J$-order in $\Bn$. Since $A$ contains a
+  $1$ in every row, so does $C$. Now if $B$ does not contain a $1$ in every row,
+  it may be modified to a matrix $B'$ containing a $1$ in every row and lying in
+  the same $\J$ class as $B$ by repeating some non-zero row of $B$.
+
+\end{proof}
+
 
 \printbibliography
 \end{document} 
