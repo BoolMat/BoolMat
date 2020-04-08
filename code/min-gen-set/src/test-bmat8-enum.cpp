@@ -263,6 +263,41 @@ namespace libsemigroups {
   bool cmp_by_fewer_ones(HPCombi::BMat8 x, HPCombi::BMat8 y) {
     return nr_ones(x) > nr_ones(y);
   }
+  
+  ////////////////////////////////////////////////////////////////////////
+  // JDM helper functions
+  ////////////////////////////////////////////////////////////////////////
+
+  std::vector<HPCombi::BMat8> read_bmat_file(std::string const &fn) {
+    std::vector<HPCombi::BMat8> out;
+    std::ifstream               f(fn);
+    std::string                 line;
+    while (std::getline(f, line)) {
+      out.push_back(HPCombi::BMat8(std::stoul(line)));
+    }
+    f.close();
+    return out;
+  }
+
+  void write_bmat_file(std::string const &                fn,
+                       std::vector<HPCombi::BMat8> const &vec) {
+    std::ofstream f(fn, std::ios::out | std::ios::trunc);
+    for (auto x : vec) {
+      f << x.to_int() << "\n";
+    }
+    f.close();
+  }
+
+  void append_bmat_file(std::string const &                fn,
+                       HPCombi::BMat8 x) {
+    std::ofstream f(fn, std::ios::out | std::ios::app);
+    f << x.to_int() << "\n";
+    f.close();
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+  // Heavy lifters
+  ////////////////////////////////////////////////////////////////////////
 
   class BMatEnumerator : public libsemigroups::Runner {
    public:
@@ -731,8 +766,13 @@ namespace libsemigroups {
   template <size_t _dim>
   class ReflexiveFilterer : public ::libsemigroups::Runner {
    public:
-    ReflexiveFilterer(std::string in)
-        : _in(in), _filtered(0), _finished(false), _mtx() {}
+    ReflexiveFilterer(std::string in, std::string out, std::string disc)
+        : _in(in),
+          _out(out),
+          _discarded(disc),
+          _filtered(0),
+          _finished(false),
+          _mtx() {}
     void run_impl() {
       std::vector<HPCombi::BMat8> bmat_enum;
       std::ifstream               f(_in);
@@ -741,6 +781,10 @@ namespace libsemigroups {
         bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
       }
       f.close();
+   
+      // clear the files
+      write_bmat_file(_out, _filtered);
+      write_bmat_file(_discarded, _filtered);
        
       std::random_device rd;
       std::mt19937 g(rd());
@@ -754,6 +798,10 @@ namespace libsemigroups {
         if (is_maximal_reflexive_bmat(bm, _dim)) {
           std::lock_guard<std::mutex> lg(_mtx);
           _filtered.push_back(bm);
+          append_bmat_file(_out, bm);
+        } else {
+          std::lock_guard<std::mutex> lg(_mtx);
+          append_bmat_file(_discarded, bm);
         }
         count++;
         if (report()) {
@@ -789,6 +837,8 @@ namespace libsemigroups {
 
    private:
     std::string                 _in;
+    std::string                 _out;
+    std::string                 _discarded;
     std::vector<HPCombi::BMat8> _filtered;
     bool                        _finished;
     std::mutex                  _mtx;
@@ -997,36 +1047,6 @@ namespace libsemigroups {
     std::mutex                         _mtx;
   };
 
-  ////////////////////////////////////////////////////////////////////////
-  // JDM helper functions
-  ////////////////////////////////////////////////////////////////////////
-
-  std::vector<HPCombi::BMat8> read_bmat_file(std::string const &fn) {
-    std::vector<HPCombi::BMat8> out;
-    std::ifstream               f(fn);
-    std::string                 line;
-    while (std::getline(f, line)) {
-      out.push_back(HPCombi::BMat8(std::stoul(line)));
-    }
-    f.close();
-    return out;
-  }
-
-  void write_bmat_file(std::string const &                fn,
-                       std::vector<HPCombi::BMat8> const &vec) {
-    std::ofstream f(fn, std::ios::out | std::ios::trunc);
-    for (auto x : vec) {
-      f << x.to_int() << "\n";
-    }
-    f.close();
-  }
-
-  void append_bmat_file(std::string const &                fn,
-                       HPCombi::BMat8 x) {
-    std::ofstream f(fn, std::ios::out | std::ios::app);
-    f << x.to_int() << "\n";
-    f.close();
-  }
 
   ////////////////////////////////////////////////////////////////////////
   // The function actually performing the calculation
@@ -1072,12 +1092,13 @@ namespace libsemigroups {
                         + detail::to_string(n) + ".txt";
     std::string filtf = "../output/bmat_reflexive_filtered_"
                         + detail::to_string(n) + ".txt";
+    std::string discf = "../output/bmat_reflexive_discarded_"
+                        + detail::to_string(n) + ".txt";
     std::string gensf = "../output/bmat_reflexive_gens_"
                         + detail::to_string(n) + ".txt";
     BMatReflexiveTrimStraightEnumerator enumerator(n);
     write_bmat_file(candf, enumerator.reps());
-    ReflexiveFilterer<n> filterer(candf);
-    write_bmat_file(filtf, filterer.reps());
+    ReflexiveFilterer<n> filterer(candf, filtf, discf);
     ReflexiveOrbiter<n> orbiter(filtf);
     write_bmat_file(gensf, orbiter.reps());
     for (size_t i = 0; i < n; ++i) {
@@ -1095,6 +1116,7 @@ namespace libsemigroups {
     std::cout << "    " << gensf << "\n";
   }
   
+  /*
   template <size_t n>
   void reflexive_self_filter_and_orbit() {
     auto                                rg = ReportGuard();
@@ -1122,6 +1144,7 @@ namespace libsemigroups {
               << " generators written to:";
     std::cout << "    " << gensf << "\n";
   }
+  */
   
   template <size_t n>
   void reflexive_filter_and_orbit() {
@@ -1130,10 +1153,11 @@ namespace libsemigroups {
                         + detail::to_string(n) + ".txt";
     std::string filtf = "../output/bmat_reflexive_filtered_"
                         + detail::to_string(n) + "_filt1.txt";
+    std::string discf = "../output/bmat_reflexive_discarded_"
+                        + detail::to_string(n) + "_filt1.txt";
     std::string gensf = "../output/bmat_reflexive_gens_"
                         + detail::to_string(n) + ".txt";
-    ReflexiveFilterer<n> filterer(candf);
-    write_bmat_file(filtf, filterer.reps());
+    ReflexiveFilterer<n> filterer(candf, filtf, discf);
     ReflexiveOrbiter<n> orbiter(filtf);
     write_bmat_file(gensf, orbiter.reps());
     for (size_t i = 0; i < n; ++i) {
@@ -1239,17 +1263,33 @@ namespace libsemigroups {
                           "filter reflexive 7 reps - delete this when done"
                           "boolean mat monoid with n = 7",
                           "[standard][enumerate]") {
-    reflexive_self_filter_and_orbit<7>();
+    reflexive_filter_and_orbit<7>();
   }
+      
   
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "19",
-                          "filter reflexive 7 reps - delete this when done"
+                          "find out how large these intersections are - remove"
                           "boolean mat monoid with n = 7",
                           "[standard][enumerate]") {
-    reflexive_filter_and_orbit<7>();
+    std::vector<HPCombi::BMat8> bmats
+        = read_bmat_file("../output/bmat_reflexive_candidates_7.txt");
+    size_t count = 0;
+    for (HPCombi::BMat8 x : bmats) {
+      std::vector<std::vector<uint8_t>> intersects = intersections(x, 7);
+      size_t prod = 1;
+      for (auto x : intersects) {
+        prod *= (x.size() - 1);
+      }
+      if (prod > 100000000000) {
+        count++;
+        std::cout << prod << std::endl;
+      }
+    }
+    std::cout << count << " reps have very large intersection searches"
+              << std::endl;
   }
-
+  
   /////////////////////////////////////////////////////////////////////////////
   //
   // Filter the trim matrices in B8 by running tests 551 - 561
