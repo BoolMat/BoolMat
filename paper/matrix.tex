@@ -40,13 +40,13 @@ tabu, enumitem}
 
 \newcommand{\B}{\mathbb{B}}
 \newcommand{\Bn}{M_n(\B)}
+\newcommand{\Bm}[1]{M_{#1}(\B)}
 \newcommand{\Refn}{M_n^{\text{id}}(\B)}
 \newcommand{\Ref}[1]{M_{#1}^{\text{id}}(\B)}
 \newcommand{\Halln}{M_n^{\text{S}}(\B)}
 \newcommand{\Hall}[1]{M_{#1}^{\text{S}}(\B)}
 \newcommand{\MTn}{M_n^{\text{T}}(\B)}
 \newcommand{\MT}[1]{M_{#1}^{\text{T}}(\B)}
-\newcommand{\Bm}[1]{M_{m}(\B)}
 \renewcommand{\L}{\mathscr{L}}
 \newcommand{\R}{\mathscr{R}}
 \newcommand{\D}{\mathscr{D}}
@@ -634,6 +634,12 @@ The principle improvements in this algorithm are
     automorphism group of prime row spaces seems to be almost always be trivial.
 \end{itemize}
 
+Using this algorithm, minimal generating sets for $\Bm{8}$ have been computed;
+the size of such generating sets is contained in Figure~\ref{figure-table-1}. It
+seems unlikely that this algorithm can produce minimal generating sets for $n >
+8$. The generating sets obtained from this algorithm are obtainable at TODO,
+along with code to produce them.
+
 \section{Reflexive Boolean Matrices}
 An interesting submonoid of $\Bn$ is the monoid $\Refn$ of reflexive boolean
 matrices, i.e. boolean matrices with $1$s on the main diagonal. Minimal
@@ -658,8 +664,7 @@ is essentially caused by the following well-known facts.
   If $A \D B$, then $A \leq B$ and $B \leq A$ w.r.t containment. Hence $A = B$.    
 \end{proof}
 
-
-In order to find a generating set for $\Refn$, we require the following results:
+In order to determine generating sets for $\Refn$, we require the following results:
 
 \begin{defi}
   An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if
@@ -729,7 +734,7 @@ is properly decomposable. The following lemmas suggest a method for doing so.
   \begin{enumerate}
     \item
       the greedy left multiplier $C$ of $A$ w.r.t $B$ is maximal w.r.t
-      containment in the set $\set{X \in \Bn}{XA \leq B}$, and\\
+      containment in the set $\set{X \in \Bn}{XA \leq B}$,
     \item 
       the product $CA$ is maximal w.r.t containment amongst products $XA$
       contained in $B$.
@@ -821,7 +826,7 @@ $5$ of $A$. However, $A$ is indecomposable whilst
 \end{ex} 
 
 However, the following lemma shows that a more restricted form of
-canonicalisation can be applied in this case:
+canonicalisation can be applied in $\Refn$:
 
 \begin{lemma}
   \thlabel{lem:reflexivecanonical}
@@ -836,20 +841,29 @@ canonicalisation can be applied in this case:
   the other direction is dual, since $PAP^{-1} = B$.
 \end{proof}
 
+This means that it is sufficient to enumerate the trim reflexive matrices in the
+following standard form:
+\begin{itemize}
+  \item{all $1$s in the first row of $A$ are on the left,}
+  \item{no row has fewer ones than the first row,}
+  \item{if a $1$ appears in row $i$ in column $j$, then for each $k < j$ there
+      is some row $l < i$ with a $1$ in position $k$.}
+\end{itemize}
+
 We then have the following algorithm for finding a minimal generating set for
 $\Refn$:
-\begin{itemize}
+\begin{enumerate}
   \item
-    Enumerate the trim reflexive boolean matrices using a backtrack search,
-    storing canonical representatives under a row and column permutation in a
-    set $S$
+    Enumerate the trim reflexive boolean matrices in standard form using a
+    backtrack search, storing canonical representatives under a row and column
+    permutation in a set $S$
   \item 
     Filter out the properly decomposable matrices in $S$ using
     \thref{lem:decomposeintersection}, leaving a set $T$ of trim matrices that
     are not properly decomposable
   \item
     The minimal generating set of $\Refn$ is then $T \cup E$.
-\end{itemize}
+\end{enumerate}
 Using this algorithm, we can calculate the sizes of minimal generating sets up
 to $n = 7$; these are contained in Figure~\ref{fig:reflexiverank}.
 
@@ -865,7 +879,6 @@ to $n = 7$; these are contained in Figure~\ref{fig:reflexiverank}.
     5 & 1415       & \cmark \\
     6 & 482\ 430   & \cmark \\ 
     7 & ?          & \cmark \\
-    7 & ?          & ? \\
   \end{tabular}
   \caption{The minimum size $d(\Refn)$ of a generating set for the monoid
     consisting of all reflexive $n \times n$ Boolean matrices matrices where:
@@ -874,6 +887,10 @@ to $n = 7$; these are contained in Figure~\ref{fig:reflexiverank}.
     that the value is unknown.}
   \label{fig:reflexiverank}
 \end{figure}
+
+There are certain matrices in $\Ref{7}$ for which
+\thref{lem:decomposeintersection} is too slow. These matrices may be handled
+using TODO??
 
 \section{Hall Matrices}
 The submonoid of $\Bn$ consisting of those boolean matrices containing a
@@ -1003,8 +1020,7 @@ The previous two sections can both be viewed in the context of ``matrices which
 are forced to contain permutations''; for reflexive boolean matrices this
 permutation must be the identity. We now relax this requirement to consider the
 monoid $\MTn$ of matrices which contain a transformation, i.e. have a $1$ in
-every row. Such a matrix will be called a TC matrix, standing for
-``transformation containing''.
+every row.
 
 \begin{lemma}
   All minimal generating sets for $\MTn$ are obtained by replacing the rank $n -
