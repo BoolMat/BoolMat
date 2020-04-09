@@ -44,8 +44,8 @@ tabu, enumerate}
 \newcommand{\Ref}[1]{M_{#1}^{\text{id}}(\B)}
 \newcommand{\Halln}{M_n^{\text{S}}(\B)}
 \newcommand{\Hall}[1]{M_{#1}^{\text{S}}(\B)}
-\newcommand{\Mtn}{M_n^{\text{T}}(\B)}
-\newcommand{\Mt}[1]{M_{#1}^{\text{T}}(\B)}
+\newcommand{\MTn}{M_n^{\text{T}}(\B)}
+\newcommand{\MT}[1]{M_{#1}^{\text{T}}(\B)}
 \newcommand{\Bm}[1]{M_{m}(\B)}
 \renewcommand{\L}{\mathscr{L}}
 \newcommand{\R}{\mathscr{R}}
@@ -84,16 +84,17 @@ The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by
 and multiplication defined as usual for the real numbers $0$ and $1$.  The
 addition and multiplication of elements of $\B$ naturally extends to row and
 column vectors of equal length with entries in $\B$.  The main object of study
-in this document is the collection $\Bn$ of $n\times n$ matrices with entries
-in $\B$. Under the usual multiplication of matrices, using addition and
+in this document is the collection $\Bn$ of $n\times n$ matrices with entries in
+$\B$. Under the usual multiplication of matrices, using addition and
 multiplication in $\B$, the set $\Bn$ forms a monoid; call the \defn{full
-boolean matrix monoid}. The monoid $\Bn$ is classical in the literature of
+  boolean matrix monoid}. The monoid $\Bn$ is classical in the literature of
 semigroup theory being among the first monoids to be studied; see, for example,
-\cite{}. The monoids $\Bn$, $n\in \N$, have been extensively studies in the
-literature, by many authors, and a great deal is known about its structure and
-properties. For example, if $G$ is a finite group, then there exists an $n\in
-\N$ such that $G$ occurs as a maximal subgroup of $\Bn$; the probability that a
-random product of matrices in $\Bn$ equals the universal matrix:
+\cite{Zaretskii1963aa}. The monoids $\Bn$, $n\in \N$, have been extensively
+studied in the literature, by many authors, and a great deal is known about its
+structure and properties. For example, if $G$ is a finite group, then there
+exists an $n\in \N$ such that $G$ occurs as a maximal subgroup of $\Bn$; the
+probability that a random product of matrices in $\Bn$ equals the universal
+matrix:
 \begin{equation*} 
   \begin{pmatrix}
   1 & 1 & \cdots & 1\\
@@ -991,8 +992,8 @@ every row. Such a matrix will be called a TC matrix, standing for
   All minimal generating sets for $\MTn$ are obtained by replacing the rank $n -
   1$ matrix in a minimal generating set for $\Bn$ by a matrix similar to
   \begin{align*}
-    F = \begin{pmatrix}
-      0 & 0 & 0 & 0 & \cdots & 0 \\
+    F' = \begin{pmatrix}
+      0 & 1 & 0 & 0 & \cdots & 0 \\
       0 & 1 & 0 & 0 & \cdots & 0 \\
       0 & 0 & 1 & 0 & \cdots & 0 \\
       0 & 0 & 0 & 1 & \cdots & 0 \\
@@ -1004,14 +1005,35 @@ every row. Such a matrix will be called a TC matrix, standing for
 \begin{proof}
   Since all prime matrices have full rank, such a set $G$ is contained in
   $\MTn$. To see that it is a generating set, consider a matrix $A$ which is not
-  $\J$-related to any matrix in $G$. Then we may write $A = BC$ where $B$ and
-  $C$ lie strictly above $A$ in the $\J$-order in $\Bn$. Since $A$ contains a
-  $1$ in every row, so does $C$. Now if $B$ does not contain a $1$ in every row,
-  it may be modified to a matrix $B'$ containing a $1$ in every row and lying in
-  the same $\J$ class as $B$ by repeating some non-zero row of $B$.
-
+  $\J$-related to any matrix in $G$. We wish to write $A$ as a product of
+  matrices which lie strictly above $A$ in the $\J$-order. 
+  
+  Suppose that $A$ is not row-trim, and row $i$ is contained in row $j$. Then
+  subtracting row $i$ from row $j$, we obtain a new matrix $A'$. If row $j$ is
+  now empty, we then insert any row that is not in the row space of $A$ as row
+  $j$. Now $A$ is the product $F''A'$ of $A'$ with some matrix similar to $F'$. By
+  replacing $A$ with $A'$, and repeating if necessary, we may assume that $A$ is
+  row-trim; a dual procedure allows us to assume that $A$ is column-trim. 
+  
+  Let $A_0 = A$. Then we write $A_0 = B_0C_0$ where $B_0, C_0 \in \Bn$, $B_0$ has a
+  maximal row-space amongst non-permutation matrices, and $C_0$ is the greedy left
+  multiplier. Since $B_0$ is Hall, it lies in $\MTn$; it is also $\J$-related to
+  some matrix in $G$ and hence lies above $A_0$. Since $A_0$ is trim, $C_0$ must also
+  be trim, and similarly since $A_0$ contains no zero row neither does $C_0$.
+  However, $B_0$ is not a permutation matrix, and therefore $A_0 = C_0B_0$ contains more
+  $1$s than $C_0$ does. Now either $C_0$ also lies strictly above $A_0$, in which case
+  we are done, or we can repeat the process with $A_1 = C_0$. Since we
+  cannot continue producing matrices with fewer and fewer ones forever,
+  eventually we must decompose one of the $A_i$s as desired; then the product $A
+  = C_i B_i B_{i - 1} \ldots B_1$ consists of matrices strictly above $A$ in the
+  $\J$-order, which all lie in $\MTn$. Hence by Lemma~TODO, $G$ generates
+  $\MTn$.
+  Now, since every generating set for $\Bn$ must contain a representative of
+  each prime $\J$-class and an elementary matrix, so too must every generating
+  set for $\MTn$. Now $F'$ is not Hall, while all prime and elementary matrices
+  are Hall, so $F'$ is not generated by prime and elementary matrices. Hence,
+  any such generating set $G$ is minimal. TODO: clean up this last paragraph.
 \end{proof}
-
 
 \printbibliography
 \end{document} 
