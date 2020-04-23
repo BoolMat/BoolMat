@@ -845,74 +845,73 @@ namespace libsemigroups {
   };
 
   template <size_t _dim>
-  class ReflexiveSelfFilterer : public ::libsemigroups::Runner {
+  class ReflexiveBruteFilterer : public ::libsemigroups::Runner {
    public:
-    ReflexiveSelfFilterer(std::string in)
-        : _in(in), _filtered(0), _finished(false) {}
+    ReflexiveBruteFilterer(std::vector<HPCombi::BMat8> filtees,
+                           std::vector<HPCombi::BMat8> filters)
+        : _filtees(filtees),
+          _filters(filters),
+          _filtered(0),
+          _finished(false) {}
 
     void run_impl() {
-      std::vector<HPCombi::BMat8> bmat_enum;
-      std::ifstream               f(_in);
-      std::string                 line;
-      while (std::getline(f, line)) {
-        bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
+      using Perm = typename PermHelper<_dim>::type;
+      HPCombi::epu8 cycle;
+      HPCombi::epu8 transposition;
+      // TODO: fix for tiny perms
+      transposition[0] = 1;
+      transposition[1] = 0;
+      cycle[0]         = 1;
+      for (uint8_t i = 2; i < _dim; ++i) {
+        cycle[i - 1]     = i;
+        transposition[i] = i;
       }
-      f.close();
+      cycle[_dim - 1] = 0;
 
-      std::vector<HPCombi::BMat8> elems;
-      for (size_t i = 0; i < _dim; ++i) {
-        for (size_t j = 0; j < _dim; ++j) {
-          if (i != j) {
-            HPCombi::BMat8 elem = bmat8_helpers::one<HPCombi::BMat8>(_dim);
-            elem.set(i, j, true);
-            elems.push_back(elem);
-          }
+      std::vector<Perm> S_gens = {Perm(cycle), Perm(transposition)};
+
+      FroidurePin<Perm> S(S_gens);
+      S.run();
+
+      std::vector<HPCombi::BMat8> S_bmats;
+      for (Perm p : S) {
+        S_bmats.push_back(bmat8_helpers::make<_dim,
+                                              typename PermHelper<_dim>::type,
+                                              HPCombi::BMat8>(p));
+      }
+
+      HPCombi::BMat8 one = bmat8_helpers::one<HPCombi::BMat8>(_dim);
+
+      for (size_t i = 0; i < _filtees.size(); ++i) {
+        HPCombi::BMat8 x = _filtees[i];
+        std::vector<HPCombi::BMat8> permuted;
+        for (HPCombi::BMat8 p : S_bmats) {
+          permuted.push_back(p.transpose() * x * p);
         }
-      }
-
-      std::vector<HPCombi::BMat8> pre_filt;
-      for (size_t i = 0; i < bmat_enum.size(); ++i) {
-        HPCombi::BMat8 x = bmat_enum[i];
         bool found = false;
-        for (HPCombi::BMat8 elem : elems) {
-          HPCombi::BMat8 mult = left_reflexive_multiplier(elem, x, _dim);
-          if ((x != elem) && (mult * elem == x)) {
-            found = true;
-            break;
+        for (size_t j = 0; j < _filters.size() && !found; ++j) { 
+          HPCombi::BMat8 y = _filters[j];
+          if (x == y | y == one) {
+            continue;
           }
-        }
-        if (!found) {
-          pre_filt.push_back(x);
-        }
-        if (report()) {
-          REPORT_DEFAULT("Prefiltering %d out of %d, keeping %d.\n",
-                         i + 1,
-                         bmat_enum.size(),
-                         pre_filt.size());
-        }
-      }
-
-      std::sort(pre_filt.begin(), pre_filt.end(), cmp_by_fewer_ones);
-      HPCombi::BMat8 one_basis = bmat8_helpers::one<HPCombi::BMat8>(_dim).row_space_basis();
-
-      for (size_t i = 0; i < pre_filt.size(); ++i) {
-        HPCombi::BMat8 x = pre_filt[i];
-        bool found = false;
-        size_t x_ones = nr_ones(x);
-        for (size_t j = pre_filt.size() - 1; j > i && nr_ones(pre_filt[j]) < x_ones; --j) {
-          HPCombi::BMat8 y = pre_filt[j];
-          if (y.row_space_basis() != one_basis && in_left_reflexive_ideal(y, x, _dim)) {
-            found = true;
-            break;
+          for (HPCombi::BMat8 z : permuted) {
+            if ((z.to_int() | y.to_int() == z.to_int())
+                && left_reflexive_multiplier(y, z, _dim) * y == z) {
+              found = true;
+              std::cout << "discarding " << x.to_int() << " as " << z.to_int()
+                        << " can be decomposed by " << y.to_int() << std::endl;
+              break;
+            }
           }
         }
         if (!found) {
           _filtered.push_back(x);
+          std::cout << "keeping " << x.to_int() << std::endl;
         }
         if (report()) {
           REPORT_DEFAULT("On %d out of %d, keeping %d.\n",
                          i + 1,
-                         pre_filt.size(),
+                         _filtees.size(),
                          _filtered.size());
         }
       }
@@ -939,7 +938,8 @@ namespace libsemigroups {
     }
 
    private:
-    std::string                 _in;
+    std::vector<HPCombi::BMat8> _filtees;
+    std::vector<HPCombi::BMat8> _filters;
     std::vector<HPCombi::BMat8> _filtered;
     bool                        _finished;
   };
@@ -992,6 +992,7 @@ namespace libsemigroups {
 
       std::atomic<size_t> count{0};
 
+      #pragma omp parallel for schedule(dynamic, 100)
       for (size_t i = 0; i < bmat_enum.size(); ++i) {
         std::unordered_set<HPCombi::BMat8> set(0);
         std::vector<HPCombi::BMat8> tmp(0);
@@ -1115,36 +1116,6 @@ namespace libsemigroups {
               << " generators written to:";
     std::cout << "    " << gensf << "\n";
   }
-  
-  /*
-  template <size_t n>
-  void reflexive_self_filter_and_orbit() {
-    auto                                rg = ReportGuard();
-    std::string candf = "../output/bmat_reflexive_candidates_"
-                        + detail::to_string(n) + ".txt";
-    std::string filtf = "../output/bmat_reflexive_filtered_"
-                        + detail::to_string(n) + "_filt2.txt";
-    std::string gensf = "../output/bmat_reflexive_gens_"
-                        + detail::to_string(n) + ".txt";
-    ReflexiveSelfFilterer<n> filterer(candf);
-    write_bmat_file(filtf, filterer.reps());
-    ReflexiveOrbiter<n> orbiter(filtf);
-    write_bmat_file(gensf, orbiter.reps());
-    for (size_t i = 0; i < n; ++i) {
-      for (size_t j = 0; j < n; ++j) {
-        if (i != j) {
-          HPCombi::BMat8 bm = bmat8_helpers::one<HPCombi::BMat8>(n);
-          bm.set(i, j, true);
-          append_bmat_file(gensf, bm);
-        }
-      }
-    }
-    std::cout << orbiter.size() << std::endl;
-    std::cout << orbiter.size() + (n * n - n)
-              << " generators written to:";
-    std::cout << "    " << gensf << "\n";
-  }
-  */
   
   template <size_t n>
   void reflexive_filter_and_orbit() {
@@ -1290,6 +1261,51 @@ namespace libsemigroups {
     std::cout << count << " reps have very large intersection searches"
               << std::endl;
   }
+
+  LIBSEMIGROUPS_TEST_CASE(
+      "BMat8 enum",
+      "20",
+      "filter the leftover matrices from the reflexive monoid"
+      "boolean mat monoid with n = 7",
+      "[standard][enumerate]") {
+    std::vector<HPCombi::BMat8> filters
+        = read_bmat_file("../output/saved/bmat_reflexive_part_filtered_7.txt");
+    write_bmat_file("../output/saved/bmat_reflexive_fully_filtered_7.txt", filters);
+    std::vector<HPCombi::BMat8> filtees
+        = read_bmat_file("../output/saved/bmat_reflexive_leftovers_7.txt");
+    filters.insert(filters.end(), filtees.begin(), filtees.end());
+    ReflexiveBruteFilterer<7> filt(filtees, filters);
+    filt.run();
+    write_bmat_file("../output/bmat_reflexive_leftovers_filtered_7.txt",
+                    filt.reps());
+    for (HPCombi::BMat8 bm : filt.reps()) {
+      append_bmat_file("../output/saved/bmat_reflexive_fully_filtered_7.txt", bm);
+    }
+  }
+  
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "21",
+                          "orbit the reflexive 7 reps"
+                          "boolean mat monoid with n = 7",
+                          "[standard][enumerate]") {
+    std::string gensf = "../output/saved/bmat_reflexive_gens_7.txt";
+    ReflexiveOrbiter<7> orbiter("../output/saved/bmat_reflexive_fully_filtered_7.txt");
+    write_bmat_file(gensf, orbiter.reps());
+    for (size_t i = 0; i < 7; ++i) {
+      for (size_t j = 0; j < 7; ++j) {
+        if (i != j) {
+          HPCombi::BMat8 bm = bmat8_helpers::one<HPCombi::BMat8>(7);
+          bm.set(i, j, true);
+          append_bmat_file(gensf, bm);
+        }
+      }
+    }
+    std::cout << orbiter.size() << std::endl;
+    std::cout << orbiter.size() + (7 * 6)
+              << " generators written to:";
+    std::cout << "    " << gensf << "\n";
+  }
+
   
   /////////////////////////////////////////////////////////////////////////////
   //
