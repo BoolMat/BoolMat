@@ -370,7 +370,9 @@ If $A, B\in \Bn$, then $A$ and $B$ are \defn{similar} if one can be obtained
 from the other by permuting the rows and/or columns. Note that similar matrices
 are $\J$-related, by multiplying on the left and/or right by permutation
 matrices.
-We call any matrix similar to $E$ an \defn{elementary} matrix.
+We call any matrix similar to $E$ an \defn{elementary} matrix. The elementary
+matrix which consists of the identity matrix together with a $1$ in position
+$j$ of the $i$th row will be denoted by $E_{i,j}$.
 
 To describe minimal generating sets, we need a few more concepts:
 
@@ -1111,13 +1113,31 @@ particularly simple minimal generating set:
 
 \begin{lemma}
   \thlabel{lem:mingeneratingsetfortriangular}
-  The unique minimal (monoid) generating set for $\UTn$ [$\LTn$] consists of
+  The unique minimal (monoid) generating set $X$ for $\UTn$ [$\LTn$] consists of
   those elementary matrices and matrices similar to $F$ which are upper [lower]
   triangular.
 \end{lemma}
 
 \begin{proof}
-  TODO, easy - but should come after refactoring
+  We will prove the lemma for upper triangular matrices; the proof for lower
+  triangular matrices is dual.
+  We will first construct any matrix $A \in \UTn$ as a product of matrices in
+  $X$. We iteratively define a product $A_i$, $0 \leq i \leq n$ where $A_0$ is
+  the identity and $n$ is the number of $1$s in $A$. For the $i$-th $1$
+  contained in $A$ (ordered by row then column) with position $(x_i, y_i)$, we
+  obtain $A_i$ from $A_{i - 1}$ by left-multiplying by $E_{x_i, y_i}$. Let the
+  zero rows of $A$ have indices $\{z_1, \ldots, z_{k}\}$. Note that the matrices
+  in $\UTn$ similar to $F$ are precisely those matrices obtained by deleting a
+  single $1$ from an identity matrix. We define $A_{n + j}$ to be matrix
+  obtained by left multiplying $A_{n + j - 1}$ by the element of $X$ with a zero
+  row in position $z_j$. Then $A_{n + k} = A$. (TODO: prove this construction
+  actually works).
+  
+  
+  Now it is easy to show that for each matrix $A \in X$, if $A$ is written as a
+  product $A = BC$ in $\UTn$ then one of $B$ or $C$ must be equal to $A$; hence
+  any generating set for $\UTn$ must contain all matrices in $X$. Hence $X$ is
+  the unique minimal generating set for $\UTn$.
 \end{proof}
 
 \section{Tropical matrices}
