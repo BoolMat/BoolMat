@@ -1,5 +1,6 @@
 #include <bitset>
 #include <fstream>
+#include <cstdio>
 #include <iostream>
 #include <unordered_set>  // for unordered_set
 #include <vector>         // for vector
@@ -947,11 +948,8 @@ namespace libsemigroups {
   template <size_t _dim>
   class ReflexiveOrbiter : public ::libsemigroups::Runner {
    public:
-    ReflexiveOrbiter(std::string in)
-        : _in(in),
-          _out(0),
-          _finished(),
-          _mtx() {}
+    ReflexiveOrbiter(std::string in, std::string out_pref)
+        : _in(in), _out_pref(out_pref), _out(0), _finished() {}
     void run_impl() {
       std::vector<HPCombi::BMat8> bmat_enum;
       std::ifstream               f(_in);
@@ -1005,19 +1003,32 @@ namespace libsemigroups {
           }
         }
         count++;
-        {
-          std::lock_guard<std::mutex> lock(_mtx);
-          _out.reserve(_out.size() + tmp.size());
-          _out.insert(_out.end(), tmp.begin(), tmp.end());
-        }
+        write_bmat_file(
+            _out_pref + "_associates_of_" + std::to_string(i) + ".txt", tmp);
+
         if (report()) {
-          REPORT_DEFAULT("On %d (overall %d out of %d), found %d generators.\n",
+          REPORT_DEFAULT(
+              "Orbited %d (overall %d out of %d).\n",
+              i + 1,
+              count.load(),
+              bmat_enum.size());
+        }
+      }
+
+      for (size_t i = 0; i < bmat_enum.size(); ++i) {
+        std::vector<HPCombi::BMat8> tmp = read_bmat_file(
+            _out_pref + "_associates_of_" + std::to_string(i) + ".txt");
+        _out.insert(_out.end(), tmp.begin(), tmp.end());
+        std::remove((_out_pref + "_associates_of_" + std::to_string(i) + ".txt")
+                        .c_str());
+        if (report()) {
+          REPORT_DEFAULT("Gathered %d out of %d; %d generators found.\n",
                          i + 1,
-                         count.load(),
                          bmat_enum.size(),
                          _out.size());
         }
       }
+      
 
       _finished = true;
       report_why_we_stopped();
@@ -1043,9 +1054,9 @@ namespace libsemigroups {
 
    private:
     std::string                        _in;
+    std::string                        _out_pref;
     std::vector<HPCombi::BMat8>        _out;
     bool                               _finished;
-    std::mutex                         _mtx;
   };
 
 
@@ -1097,10 +1108,11 @@ namespace libsemigroups {
                         + detail::to_string(n) + ".txt";
     std::string gensf = "../output/bmat_reflexive_gens_"
                         + detail::to_string(n) + ".txt";
+    std::string asocf = "../output/bmat_reflexive";
     BMatReflexiveTrimStraightEnumerator enumerator(n);
     write_bmat_file(candf, enumerator.reps());
     ReflexiveFilterer<n> filterer(candf, filtf, discf);
-    ReflexiveOrbiter<n> orbiter(filtf);
+    ReflexiveOrbiter<n> orbiter(filtf, asocf);
     write_bmat_file(gensf, orbiter.reps());
     for (size_t i = 0; i < n; ++i) {
       for (size_t j = 0; j < n; ++j) {
@@ -1128,9 +1140,10 @@ namespace libsemigroups {
                         + detail::to_string(n) + "_filt1.txt";
     std::string gensf = "../output/bmat_reflexive_gens_"
                         + detail::to_string(n) + ".txt";
+    std::string asocf = "../output/bmat_reflexive";
     ReflexiveFilterer<n> filterer(candf, filtf, discf);
     filterer.run();
-    ReflexiveOrbiter<n> orbiter(filtf);
+    ReflexiveOrbiter<n> orbiter(filtf, asocf);
     write_bmat_file(gensf, orbiter.reps());
     for (size_t i = 0; i < n; ++i) {
       for (size_t j = 0; j < n; ++j) {
@@ -1289,7 +1302,9 @@ namespace libsemigroups {
                           "boolean mat monoid with n = 7",
                           "[standard][enumerate]") {
     std::string gensf = "../output/saved/bmat_reflexive_gens_7.txt";
-    ReflexiveOrbiter<7> orbiter("../output/saved/bmat_reflexive_fully_filtered_7.txt");
+    ReflexiveOrbiter<7> orbiter(
+        "../output/saved/bmat_reflexive_fully_filtered_7.txt",
+        "../output/saved/bmat_reflexive");
     write_bmat_file(gensf, orbiter.reps());
     for (size_t i = 0; i < 7; ++i) {
       for (size_t j = 0; j < 7; ++j) {
