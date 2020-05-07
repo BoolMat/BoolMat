@@ -10,9 +10,11 @@ tabu, enumitem}
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{lemma}[thm]{Lemma}
-\newtheorem{defi}[thm]{Definition}
+\newtheorem*{defi}{Definition}
 \newtheorem{ex}[thm]{Example}
+\newtheorem{algo}[thm]{Algorithm}
 \newenvironment{de}{\begin{defi}\rm}{\end{defi}}
+\newenvironment{alg}{\begin{algo}\rm}{\end{algo}}
 \newcommand{\proofref}[1]{\noindent {\emph{Proof of Theorem}~\ref{#1}.\ }}
 \newcommand{\defn}[1]{\textbf{\textit{#1}}}
 \numberwithin{equation}{section}
@@ -47,14 +49,15 @@ tabu, enumitem}
 \newcommand{\Hall}[1]{M_{#1}^{\text{S}}(\B)}
 \newcommand{\MTn}{M_n^{\text{T}}(\B)}
 \newcommand{\MT}[1]{M_{#1}^{\text{T}}(\B)}
-\newcommand{\UTn}{U_n(\B)}
-\newcommand{\LTn}{L_n(\B)}
+\newcommand{\UTn}{UT_n(\B)}
+\newcommand{\LTn}{LT_n(\B)}
 \renewcommand{\L}{\mathscr{L}}
 \newcommand{\R}{\mathscr{R}}
 \newcommand{\D}{\mathscr{D}}
 \newcommand{\J}{\mathscr{J}}
 \renewcommand{\H}{\mathscr{H}}
 \newcommand{\N}{\mathbb{N}}
+\newcommand{\rank}{\operatorname{rank}}
 
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
@@ -64,8 +67,8 @@ tabu, enumitem}
 \usepackage[backend=biber, bibencoding=utf8]{biblatex}
 \bibliography{matrix}
 
-\title{Minimal generating sets for the monoid of all boolean matrices}
-\author{F. Hivert, J. D. Mitchell, and F. L. Smith}
+\title{Minimal generating sets for matrix monoids}
+\author{F. Hivert, J. D. Mitchell, F. L. Smith, and W. A. Wilson}
 \date{\today}
 \begin{document}
 
@@ -80,75 +83,51 @@ tabu, enumitem}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
-\begin{align*}
-  0 + 1 = 1 + 0 &= 1 + 1 = 1 \\
-  0 + 0 &= 0
-\end{align*}
-and multiplication defined as usual for the real numbers $0$ and $1$.  The
-addition and multiplication of elements of $\B$ naturally extends to row and
-column vectors of equal length with entries in $\B$.  The main object of study
-in this document is the collection $\Bn$ of $n\times n$ matrices with entries in
-$\B$. Under the usual multiplication of matrices, using addition and
-multiplication in $\B$, the set $\Bn$ forms a monoid; call the \defn{full
-  boolean matrix monoid}. The monoid $\Bn$ is classical in the literature of
-semigroup theory being among the first monoids to be studied; see, for example,
-\cite{Zaretskii1963aa}. The monoids $\Bn$, $n\in \N$, have been extensively
-studied in the literature, by many authors, and a great deal is known about its
-structure and properties. For example, if $G$ is a finite group, then there
-exists an $n\in \N$ such that $G$ occurs as a maximal subgroup of $\Bn$; the
-probability that a random product of matrices in $\Bn$ equals the universal
-matrix:
-\begin{equation*} 
-  \begin{pmatrix}
-  1 & 1 & \cdots & 1\\
-  1 & 1 & \cdots & 1\\ 
-  \vdots & \vdots & \ddots & \vdots\\
-  1 & 1 & \cdots & 1\\ 
-\end{pmatrix} 
-\end{equation*} 
-tends to $1$ as $n\to \infty$; the minimal size of a generating set for $\Bn$
-grows exponentially with $n$ (see~\thref{lem:exponentialgensets});
-Devadze~\cite{Devadze1968aa} and Konieczny~\cite{Konieczny2011aa} characterise
-minimum cardinality generating sets for $\Bn$; TODO: more.
-
-Despite its venerable status, many aspects of the monoids $\Bn$ are still
-shrouded in mystery. The purpose of this article is to cast some light on the
-problems of determining the minimum cardinality $\mathbf{d}(\Bn)$ of a
-generating set for $\Bn$ and certain submonoids of $\Bn$ such as the reflexive
-boolean matrix monoid $\Refn$, and other submonoids where the matrices contain
-particular matrices.
-% The time and space complexity of determining any of these value is exponential
-% in $n$. 
-It seems unlikely that an explicit formula for any of these numbers exists.
-In this paper we describe algorithms for computing the numbers listed,
-and the output of our implementation~\cite{} of these algorithms. The latter
-are summarised in Figures~\ref{figure-table-1} and \ref{fig:reflexiverank}.
-
-\begin{figure}
-  \centering
-  \begin{tabular}{l|r|r}
-    $n$ & $\mathbf{d}(\Bn)$ &   \\
-    \hline
-    1 & 2          & - \\ 
-    2 & 3          & - \\ 
-    3 & 5          & - \\ 
-    4 & 7          & - \\
-    5 & 13         & ? \\
-    6 & 68         & ? \\ 
-    7 & 2\ 143     & \cmark \\
-    8 & 495\ 115   & \cmark \\
-    9 & ?          & ?
-  \end{tabular}
-\vspace{1cm}
-
-  \caption{The minimum size $d(\Bn)$ of a generating set for the monoid
-  consisting of all $n \times n$ Boolean matrices matrices where: 
-  ``-'' indicates a value that can be computed by hand or brute force;
-  ``\cmark'' indicates that the value was first found here;
-  ``?'' indicates that the value is unknown.}
-  \label{figure-table-1}
-\end{figure}
+%The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
+%\begin{align*}
+%  0 + 1 = 1 + 0 &= 1 + 1 = 1 \\
+%  0 + 0 &= 0
+%\end{align*}
+%and multiplication defined as usual for the real numbers $0$ and $1$.  The
+%addition and multiplication of elements of $\B$ naturally extends to row and
+%column vectors of equal length with entries in $\B$.  The main object of study
+%in this document is the collection $\Bn$ of $n\times n$ matrices with entries in
+%$\B$. Under the usual multiplication of matrices, using addition and
+%multiplication in $\B$, the set $\Bn$ forms a monoid; call the \defn{full
+%  boolean matrix monoid}. The monoid $\Bn$ is classical in the literature of
+%semigroup theory being among the first monoids to be studied; see, for example,
+%\cite{Zaretskii1963aa}. The monoids $\Bn$, $n\in \N$, have been extensively
+%studied in the literature, by many authors, and a great deal is known about its
+%structure and properties. For example, if $G$ is a finite group, then there
+%exists an $n\in \N$ such that $G$ occurs as a maximal subgroup of $\Bn$; the
+%probability that a random product of matrices in $\Bn$ equals the universal
+%matrix:
+%\begin{equation*} 
+%  \begin{pmatrix}
+%  1 & 1 & \cdots & 1\\
+%  1 & 1 & \cdots & 1\\ 
+%  \vdots & \vdots & \ddots & \vdots\\
+%  1 & 1 & \cdots & 1\\ 
+%\end{pmatrix} 
+%\end{equation*} 
+%tends to $1$ as $n\to \infty$; the minimal size of a generating set for $\Bn$
+%grows exponentially with $n$ (see~\thref{lem:exponentialgensets});
+%Devadze~\cite{Devadze1968aa} and Konieczny~\cite{Konieczny2011aa} characterise
+%minimum cardinality generating sets for $\Bn$; TODO: more.
+%
+%Despite its venerable status, many aspects of the monoids $\Bn$ are still
+%shrouded in mystery. The purpose of this article is to cast some light on the
+%problems of determining the minimum cardinality $\mathbf{d}(\Bn)$ of a
+%generating set for $\Bn$ and certain submonoids of $\Bn$ such as the reflexive
+%boolean matrix monoid $\Refn$, and other submonoids where the matrices contain
+%particular matrices.
+%% The time and space complexity of determining any of these value is exponential
+%% in $n$. 
+%It seems unlikely that an explicit formula for any of these numbers exists.
+%In this paper we describe algorithms for computing the numbers listed,
+%and the output of our implementation~\cite{} of these algorithms. The latter
+%are summarised in Figures~\ref{figure-table-1} and \ref{fig:reflexiverank}.
+%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
@@ -176,35 +155,27 @@ There is a natural partial order on certain Green's classes
 Further background on Green's relations can be found in~\cite{Howie1995aa}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Boolean matrices}
-The group of units of $\Bn$ is isomorphic to the symmetric group $S_n$, and we
-will henceforth denote the group of units by $S_n$.
+\subsection{Matrix semigroups}
+Given a semiring $R$, we are interested in the multiplicative monoid of square
+matrices of dimension $n \in \N$ over that semiring, denoted by $M_n(R)$.  There
+are a number of common features of such matrix monoids. As usual, we let $0$
+denote the additive identity of $R$ and $1$ denote the multiplicative identity.
 
-If $A \in \Bn$, then the \defn{row space} $R(A)$ of $A$ is the set of 
-all finite sums of the rows of $A$. If the rows of $A\in \Bn$ are viewed as
-the characteristic function of a subset of $\{1, \ldots, n\}$, then summing two
-rows is the same as taking the union of the corresponding subsets.  The
-\defn{row basis} $r(A)$ of $A\in \Bn$ is the set of rows of $A$ that cannot be
-written as a sum of other rows of $A$. The \defn{column space}
-$C(A)$ and \defn{column basis} $c(A)$ of a boolean matrix $\Bn$ are defined
-dually. It is straightforward to verify that if $A \in \Bn$, then $r(A)$ is the
-unique minimal generating set for $R(A)$, and $c(A)$ is the unique minimal
-generating set for $C(A)$. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The importance of the row and column bases in the study of $\Bn$ arises from the
-following well-known results, due originally to
-Zaretskii~\cite{Zaretskii1963aa}. 
+Let $A \in M_n(R)$. We write $A_{i*}$ to denote the $i$th row of $A$, and
+$A_{*i}$ to denote the $i$th column. The \defn{row space} $R(A)$ of $A$ is the
+set of all linear combinations of the rows of $A$. A \defn{row basis} of $A$ is
+a linearly independent spanning set for the row space of $A$. \defn{Column
+  spaces} and \defn{column bases} are defined dually. The importance of row and
+column bases arises from the following well-known results~\cite{TODO}:
 
 \begin{prop}
-  \thlabel{prop-principal}
-  Let $A, B \in \Bn$. Then the following hold:
+  \thlabel{prop:rowsandideals}
+  Let $A, B \in M_n(R)$. Then the following hold:
   \begin{enumerate}[label=\roman*]
 
     \item
-      If $R(A) \subseteq R(B)$, then $A \in \Bn B$.  Similarly, if $C(A)
-      \subseteq C(B)$, then $A \in B \Bn$.
+      If $R(A) \subseteq R(B)$, then $A \in M_n(R) B$.  Similarly, if $C(A)
+      \subseteq C(B)$, then $A \in B M_n(R)$.
 
     \item 
       $R(AB) \subseteq R(B)$ and $C(AB) \subseteq C(B)$.
@@ -212,10 +183,10 @@ Zaretskii~\cite{Zaretskii1963aa}.
 \end{prop}
 \begin{proof}
   \noindent \textbf{(i).}
-  If $R(A) \subseteq R(B)$, then every row of $A$ can be expressed as a sum of
-  rows of $B$. Define $X$ by $X = [x_{ij}]$ where $x_{ij}$ is $1$ whenever the
-  $j$th row of $B$ is contained in the $i$th row of $A$. Then $A = XB \in \Bn
-  B$.  The other case is dual.
+  If $R(A) \subseteq R(B)$, then every row of $A$ can be expressed as a linear
+  combination of rows of $B$. For $1 \leq i \leq n$ of $A$, let $A_{i*} =
+  \sum_{j = 1}^{n}x_{ij}B_{j*}$, and define $X = [x_{ij}]$. Then $A = XB \in
+  M_n(R)B$. The other case is dual.
   \bigskip
 
   \noindent \textbf{(ii).}
@@ -251,14 +222,80 @@ Zaretskii~\cite{Zaretskii1963aa}.
    % \ldots, \alpha_{in}\beta_{nn}) \\
     =
     \sum_{k = 1} ^ {n} 
-    \alpha_{ik}
-    (\beta_{k1}, \beta_{k2}, \ldots, \beta_{kn}).
+    \alpha_{ik}B_{k*}.
   \]
   Thus the $i$th row of $AB$ is a sum of rows of $B$, and so $R(AB) \subseteq
   R(B)$. 
 \end{proof}
 
+\begin{prop} 
+  \thlabel{lem:BMatGreensRowColumnBases}
+  Let $A, B \in \Bn$. Then the following are equivalent:
+  \begin{enumerate}[label=\roman*]
+    \item 
+      $A \L B$;
+
+    \item 
+      $R(A) = R(B)$;
+  \end{enumerate}
+  An analogous statement holds for Green's $\R$-relation using column spaces. 
+\end{prop}
+\begin{proof}
+  \textbf{(i) $\Rightarrow$ (ii).} 
+  If $A \L B$, then there are 
+  $X, Y \in \Bn$ such that $XA = B$ and $YB = A$. Then $R(B) = R(XA) \subseteq
+  R(A)$ and $R(A) = R(YB) \subseteq R(B)$ by
+  Proposition~\ref{prop:rowsandideals}(ii).
+  \bigskip
+
+  \textbf{(ii) $\Rightarrow$ (i).} Follows immediately by
+  Proposition~\ref{prop:rowsandideals}(i). 
+\end{proof}
+
+The \defn{group of units} of $M_n(R)$ is the group of invertible matrices
+(\defn{units}) over $R$; the identity matrix is always a unit. The group of
+units is always the maximal class in the $\J$-order.
+
+For any semiring $R$, the symmetric group embeds into the group of units of
+$M_n(R)$ by the map 
+\begin{align*}
+  \phi:\: &\alpha \to [a_{ij}], \\
+  &a_{ij} =
+    \begin{cases}
+      1 \quad & i\alpha = j \\ 
+      0 \quad &\text{otherwise}.
+    \end{cases}
+\end{align*}
+The image of this embedding will often simply be referred to as $S_n$ or the
+symmetric group when context prevents ambiguity.
+
+Two matrices $A, B\in M_n(R)$ are \defn{similar} if each can be obtained from
+the other by permuting the rows and/or columns. Note that similar matrices are
+$\J$-related, by multiplying on the left and/or right by permutation matrices.
+
+\begin{de}[\textbf{Prime matrices.}]
+  A non-unit matrix $A \in M_n(R)$ is \defn{prime} if $A = BC$ implies $B$ or
+  $C$ is a unit.
+\end{de}
+
+The prime matrices of $M_n(R)$ are immediately below $S_n$ in the $\J$-order. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Boolean matrices}
+We now consider the case of the Boolean semiring, and the matrix monoid $\Bn$.
+Some of the results above may be strengthened for $\Bn$, and there are a number
+of additional useful concepts.
+We first note that each row or column of a matrix $A \in \Bn$ may be viewed
+as the characteristic function of a subset of $\{1, \ldots, n\}$. Since there is
+a single non-zero element of $\B$, we may talk of \defn{unions} of rows rather than
+linear combinations. We also say that a row (or column) of $A$ is \defn{contained}
+in another if it is true for the corresponding subsets.
+
+
+It is straightforward to verify that if $A \in \Bn$, then there is a unique row
+basis $r(A)$, which is the unique minimal generating set for $R(A)$ under
+union. The dual statement for column spaces also holds. This yields a
+strengthening of \thref{prop:rowsandideals}.
 
 \begin{prop} 
   \thlabel{lem:BMatGreensRowColumnBases}
@@ -276,54 +313,74 @@ Zaretskii~\cite{Zaretskii1963aa}.
   An analogous statement holds for Green's $\R$-relation using column spaces
   and bases. 
 \end{prop}
+
+This paper is concerned with generating sets; the following concept is useful
+when attempting to decompose matrices as products.
+\begin{de}[\textbf{Greedy multipliers}]
+  Given two matrices $A, B \in \Bn$, we say that the \emph{greedy
+  left [right] multiplier} of $A$ w.r.t. $B$ is the matrix $C$ containing a $1$
+  in position $(i, j)$ if and only if $A_j \leq B_i$ [$A^T_i \leq B^T_j$].
+\end{de}
+
+Given an expression of the form $CA = B$, we will often simply say that
+\emph{$C$ is the greedy multiplier} if $C$ is the greedy left multiplier
+of $A$ w.r.t $B$; the dual is also true.
+
+
+Considering rows as subsets of $\{1, \ldots, n\}$ leads naturally to the
+following concepts:
+
+\begin{de}[\textbf{Reduced matrices}]
+  A matrix $A \in \Bn$ is \emph{row-reduced} if no row of $A$ can be written as
+  a sum of other rows of $A$. \emph{Column-reduced} is defined dually. We say
+  that $A$ is \emph{reduced} if it is both row-reduced and column-reduced.
+\end{de}
+
+\begin{de}[\textbf{Trim matrices}]
+  A matrix $A \in \Bn$ is \emph{row-trim} if no non-zero row of $A$ is contained in
+  another row. \emph{Column-trim} is defined dually. We say that $A$ is
+  \emph{trim} if it is both row-trim and column-trim.
+\end{de}
+
+\begin{lemma}
+  \thlabel{lem:TrimMatricesAreReduced}
+  Every trim matrix is reduced.
+\end{lemma}
 \begin{proof}
-  Parts (ii) and (iii) are equivalent since a row space is uniquely determined
-  by its row basis. It remains to show that (i) and (ii) are
-  equivalent.\bigskip
-
-  \textbf{(i) $\Rightarrow$ (ii).} 
-  If $A \L B$, then there are 
-  $X, Y \in \Bn$ such that $XA = B$ and $YB = A$. Then $R(B) = R(XA) \subseteq
-  R(A)$ and $R(A) = R(YB) \subseteq R(B)$ by
-  Proposition~\ref{prop-principal}(ii).
-  \bigskip
-
-  \textbf{(ii) $\Rightarrow$ (i).} Follows immediately by
-  Proposition~\ref{prop-principal}(i). 
+  Since no row [column] of a reduced matrix is contained in another row
+  [column], no row [column] can be expressed as a sum of other rows [columns].
 \end{proof}
 
-\subsection{Minimal generating sets}
-This is where all the common lemmas should go - Wilf's approach is similar
-to what I was using so some combination will work.
+The following results is one of the key reasons to be interested in trim and
+reduced matrices.
 
-%\begin{lem}\label{lem-all-contain}
-%  Let $R \in \{K^{\infty}\} \cup \set{K_{t}^{\infty}}{t \in \N}$.  Then
-%  any generating set for $M_{2}(R)$ contains an associate of $A_{i}$
-%  (i.e. $A_{i}$ with its rows/columns possibly permuted), for each possible $i$,
-%  and the same for $B$.
-%\end{lem}
-%
-%\begin{lem}\label{lem-non-D}
-%  The generating sets given in Theorem~\ref{thm-min-plus} and
-%  Corollary~\ref{cor-finite-min-plus} consist of $\D$-non-equivalent elements.
-%\end{lem}
-%
-%\begin{prop}[Wilf, elsewhere]\label{prop-wilf}
-%  Let $S$ be a finite semigroup.  Suppose that $X$ is an irredundant generating
-%  subset of $S$ that contains at most one element from each $\D$-class of $S$.
-%  Then $X$ has minimal cardinality, i.e. $\rank(S) = |X|$.
-%\end{prop}
+\begin{lemma}[\cite{Konieczny2011aa}]
+  \thlabel{lem:PrimeMatricesAreTrim}
+  Every prime matrix is trim.
+\end{lemma}
+\begin{proof}
+  Let $A \in \Bn$ be prime. Suppose some non-zero row $k$ of $A$ is contained in
+  a row $l$ of $A$. Then $XA = A$, where $X$ is the greedy left multiplier, and
+  since $|X_l| \geq 2$, $X \not\in S_n$, a contradiction. A dual argument shows
+  that no non-zero column of $A$ is contained in another column.
+\end{proof}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Reduced matrices are particularly convenient to compute with, due to the
+following lemma. 
+\begin{lemma}[\cite{Plemmons1970aa}]
+  \thlabel{lem:PermutingReducedMatrices}
+  Let $A, B \in \Bn$ be reduced. Then $A \J B$ if and only $A = \alpha B \beta$
+  for some $\alpha, \beta \in S_n$. 
+\end{lemma}
 
+This result allows us to find single representatives of the $\J$-classes of
+reduced matrices by computing a canonical image under row and column
+permutations. Note that the problem of detecting if two boolean matrices are
+$\J$-related is in general NP-hard~\cite{Fenner2018aa}.\\
 
-\section{Boolean Matrix Monoids}
-TODO: most of this should go in preliminaries probably
-
-The main problem that this paper is concerned with is finding algorithms for
-determining minimal generating sets for $\Bn$ and certain submonoids.
-Unfortunately it is known that the size of a minimal generating set for $\Bn$
-grows very quickly with $n$; see~\thref{lem:exponentialgensets}.\\
+This paper is concerned with generating sets for matrix monoids. Unfortunately
+it is known that the size of a minimal generating set for $\Bn$ grows very
+quickly with $n$; see~\thref{lem:exponentialgensets}.\\
 
 In contrast, the subsemigroup of $\Bn$ generated by all the regular elements can
 be generated by the four matrices \cite{Roush1977aa}
@@ -362,29 +419,18 @@ be generated by the four matrices \cite{Roush1977aa}
     0 & 0 & 0 & 0 & \cdots & 1
   \end{pmatrix}.
 \end{align*}
-Note that together $T$ and $U$ generate the symmetric group, which is the
-maximal $\J$-class of $\Bn$. We will refer to this embedding of the symmetric
-group in $\Bn$ as $S_n$.
+We will continue to use these names for these matrices throughout
+Section~\ref{sec:boolmat}. Note that together $T$ and $U$ generate $S_n$.
 
-If $A, B\in \Bn$, then $A$ and $B$ are \defn{similar} if one can be obtained
-from the other by permuting the rows and/or columns. Note that similar matrices
-are $\J$-related, by multiplying on the left and/or right by permutation
-matrices.
 We call any matrix similar to $E$ an \defn{elementary} matrix. The elementary
 matrix which consists of the identity matrix together with a $1$ in position
 $j$ of the $i$th row will be denoted by $E_{i,j}$.
 
-To describe minimal generating sets, we need a few more concepts:
-
-\begin{de}[\textbf{Prime matrices.}]
-  A matrix $A \in \Bn$ is \defn{prime} if $A = BC$ implies $B$ or $C$ is a
-  permutation matrix, and $A$ itself is not a permutation matrix.
-\end{de}
-
-The prime matrices sit directly below $S_n$ in the partial order of
-$\J$-classes. There is, however, one more $\J$-class immediately below $S_n$:
-$J_E$. Note that $J_F \leq J_E$. The next result shows that in fact there are
-all of the $\J$-classes immediately below $S_n$.
+The prime matrices of $M_n(R)$ sit directly below $S_n$ in the partial order of
+$\J$-classes for any semiring $R$. In the case of $\Bn$, there is a single extra
+$\J$-class immediately below $S_n$: $J_E$. Note that $J_F \leq J_E$. The next
+result shows that in fact these are all of the $\J$-classes immediately below
+$S_n$.
 
 Let $\beta_n$ denote the set $\set{R(A)}{A\in \Bn\setminus S_n}$ of all
 possible proper row subspaces of elements of $\Bn$, and let $\B^n$ denote
@@ -397,78 +443,56 @@ row/column space of precisely the permutation matrices.
   containment in $\beta_n$ if and only if $A$ is prime or elementary.  
 \end{thm}
 
-\begin{de}[Reduced matrices]
-  A matrix $A \in \Bn$ is \emph{row-reduced} if no row of $A$ can be written as
-  a sum of other rows of $A$. \emph{Column-reduced} is defined dually. We say
-  that $A$ is \emph{reduced} if it is both row-reduced and column-reduced.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Minimal generating sets}
+
+\begin{de}[\textbf{Indecomposable elements}
+  An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if
+  there exist $y, z \in M$ with $x = yz$, and \defn{properly decomposable} if
+  there exist $y, z \in M\setminus\{e, x\}$ such that $x = yz$.
 \end{de}
-
-An important result for computation is the following:
-\begin{lemma}[\cite{Plemmons1970aa}]
-  \thlabel{lem:PermutingReducedMatrices}
-  Let $A, B \in \Bn$ be reduced. Then $A \J B$ if and only $A = \alpha B \beta$
-  for some $\alpha, \beta \in S_n$. 
-\end{lemma}
-
-This result allows us to find single representatives of the $\J$-classes of
-reduced matrices by computing a canonical image under row and column
-permutations. \\
-
-The following concept is useful when attempting to decompose matrices as
-products.
-\begin{defi}
-  Given two matrices $A, B \in \Bn$, we say that the \textbf{\textit{greedy
-  left [right] multiplier}} of $A$ w.r.t. $B$ is the matrix $C$ containing a $1$
-  in position $(i, j)$ if and only if $A_j \leq B_i$ [$A^T_i \leq B^T_j$].
-\end{defi}
-
-Given an expression of the form $CA = B$, we will often simply say that
-\textit{$C$ is the greedy multiplier} if $C$ is the greedy left multiplier
-of $A$ w.r.t $B$; the dual is also true.
-
-In order to find prime matrices, we must introduce another special class of
-boolean matrices.
-
-\begin{de}[Trim matrices]
-  A matrix $A \in \Bn$ is \emph{row-trim} if no non-zero row of $A$ is contained in
-  another row. \emph{Column-trim} is defined dually. We say that $A$ is
-  \emph{trim} if it is both row-trim and column-trim.
-\end{de}
-
-The importance of trim matrices lies in the following facts:
-\begin{lemma}[\cite{Konieczny2011aa}]
-  \thlabel{lem:PrimeMatricesAreTrim}
-  Every prime matrix is trim.
-\end{lemma}
-\begin{proof}
-  Let $A \in \Bn$ be prime. Suppose some non-zero row $k$ of $A$ is contained in
-  a row $l$ of $A$. Then $XA = A$, where $X$ is the greedy left multiplier, and
-  since $|X_l| \geq 2$, $X \not\in S_n$, a contradiction. A dual argument shows
-  that no non-zero column of $A$ is contained in another column.
-\end{proof}
 
 \begin{lemma}
-  \thlabel{lem:TrimMatricesAreReduced}
-  Every trim matrix is reduced.
+  Let $S$ be a finite semigroup and let $X$ be a set of elements which generate
+  all elements of the maximal $\J$-classes of $S$. Suppose that for all $A$ not
+  in the maximal $\J$-classes of $S$, $A$ can be written as a product of
+  elements which lie strictly above $A$ in the $\J$-order. Then $X$ generates
+  $S$. 
 \end{lemma}
 \begin{proof}
-  Since no row [column] of a reduced matrix is contained in another row
-  [column], no row [column] can be expressed as a sum of other rows [columns].
+  easy, will fill in after rearrangement
 \end{proof}
 
+\begin{prop}[Wilf, elsewhere]
+  \thlabel{prop-wilf}
+  Let $S$ be a finite semigroup.  Suppose that $X$ is an irredundant generating
+  subset of $S$ that contains at most one element from each $\D$-class of $S$.
+  Then $X$ has minimal cardinality, i.e. $\rank(S) = |X|$.
+\end{prop}
+\begin{proof}
+  Wilf claims to have proven this.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Boolean Matrix Monoids}
+\label{sec:boolmat}
+We now turn our attention to minimal generating sets for $\Bn$ and certain
+submonoids.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Full Boolean Matrix Monoid}
-
+In the case of $\Bn$, the form of any minimal generating set was stated by
+Devadze in 1968; the first published proof is due to Konieczny in 2011.
 \begin{thm}[Devadze's Theorem \cite{Konieczny2011aa}]
   \thlabel{thm:Devadze}
-  A minimal generating set for $\Bn$ is given by $\{T, U, E, F\} \cup P$
-  where $P$ is a set of representatives of the prime $\J$-classes of $\Bn$.
+  Any minimal generating set for $\Bn$ is given by $\{T', U', E', F'\} \cup P$,
+  where $T'$ and $U'$ generate $S_n$, $E'$ is elementary, $F'$ is a matrix
+  similar to $F$, and $P$ is a set of representatives of the prime $\J$-classes
+  of $\Bn$.
 \end{thm}
-
-In fact, Devadze's theorem is stronger: \emph{any} minimal generating set for
-$\Bn$ consists of a set of representatives of the prime $\J$-classes of $\Bn$,
-together with two generators for the group of units $S_n$, an elementary matrix,
-and some matrix $\J$-related to $F$. 
+% TODO: technically Devadze's theorem as proven by Konieczny isn't this strong,
+% but is it worth providing the extra proof?
 
 \begin{cor}
   \thlabel{lem:exponentialgensets}
@@ -478,13 +502,14 @@ and some matrix $\J$-related to $F$.
 \begin{proof}
   This follows from the fact that there at least $2^{\frac{n^2}{4} - O(n)}$
   prime boolean matrices in $\Bn$ (see~\cite[Theorem 2.4.1]{Kim1982aa}) and each
-  $\J$ class contains at most $(n!)^2$ elements; hence there are exponentially
-  many prime $\J$-classes.
+  prime $\J$ class contains at most $(n!)^2$ elements; hence there are
+  exponentially many prime $\J$-classes.
 \end{proof}
-TODO: superexponentially?
+% TODO: superexponentially?
 
 A possible algorithm for computing minimal generating sets is the following:
 
+\begin{alg}\ 
 \begin{enumerate}
   \item
     Enumerate the trim boolean matrices using a backtrack search, storing 
@@ -495,7 +520,7 @@ A possible algorithm for computing minimal generating sets is the following:
     Representatives of the prime $D$-classes are then those $A \in S\setminus S_n$ 
     with row space maximal in $R$.
 \end{enumerate}
-
+\end{alg}
 \begin{proof}
   By \thref{lem:PrimeMatricesAreTrim} and \thref{lem:PermutingReducedMatrices},
   $S$ contains a single canonical representative of each prime $\J$-class.  Now
@@ -514,12 +539,14 @@ A possible algorithm for computing minimal generating sets is the following:
   row-space maximal in $R$ are precisely the prime representatives. 
 \end{proof}
 
-We can improve the algorithm by using the following result to restrict the
-matrices considered:
+Of course, the size of $R$ will grow extremely rapidly with $n$, so this
+algorithm is only suitable for small $n$. We can improve the algorithm by using
+the following result to restrict the set $S$ of matrices generated by the
+backtrack search:
 
 \begin{prop}[\cite{Breen1997aa}]
   \thlabel{prop:StandardFormProperties}
-  In every $\J$-class of $\Bn$ there is a matrix $A$ in \emph{standard form} with the following properties:
+  In every $\J$-class of $\Bn$ there exists a matrix $A$ in \emph{standard form} with the following properties:
   \begin{itemize}
   \item{$A$ is reduced,}
   \item{all non-zero rows [columns] of $A$ are at the top [right],}
@@ -533,9 +560,9 @@ matrices considered:
 
 Each of these properties can be viewed as an attempt to minimise the value of
 the matrix in its $\J$-class when considered as a binary number. Unfortunately,
-having these properties is not enough to guarantee that the matrix is minimal,
-(although the minimal matrix in a $\J$-class has these properties) so standard
-form does not give a canonical form for matrices.
+having these properties is not enough to guarantee that the matrix is minimal
+(although the minimal matrix in a $\J$-class has these properties), so standard
+form is not a canonical form for boolean matrices.
 
 \begin{ex}
 Let
@@ -566,11 +593,11 @@ The sizes of minimal generating sets for $n \leq 7$ are contained in
 Figure~\ref{figure-table-1}.
 
 For $n=8$ this algorithm is no longer sufficient. In this case it is necessary
-to filter the matrices before comparing the row spaces. The most obvious way
-to do this is check containment of each row space in all the column permutations
-of some set of the largest row spaces. It is also worthwhile to filter by
-checking containment in all the column permutations of a known set of prime
-matrices; such a set can be found using the following lemma.
+to use heuristics to reduce size of $R$. The most obvious way to do this is
+check whether each of the matrices in $S$ lies below a small sample of the
+matrices of $S$ with large row spaces. It is also worthwhile to filter $R$ by
+checking containment in the row spaces of all the column permutations of a known
+set of prime matrices; such a set can be found using the following lemma.
 
 \begin{lemma}
   \thlabel{lem:ExtendingPrimeMatrices}
@@ -589,15 +616,15 @@ matrices; such a set can be found using the following lemma.
 
 For $n=8$ prefiltering by some of the large row spaces and extended prime
 matrices is enough to make the minimal generating set algorithm feasible.
-A significant improvement can be obtained using the following ideas:
+A significant improvement can be obtained by using the following ideas:
 
-\begin{defi}
+\begin{de}
   Let $v, w \in \B^n$. We say that $v \leq w$ if $v_i = 1 \implies w_i = 1$ for all $i$.
-\end{defi}
+\end{de}
 
-\begin{defi}
+\begin{de}[Graph of $R(A)$]
   Let $A \in \Bn$. The \emph{graph} of $R(A)$ is the directed graph with vertices $R(A)$ and an edge from $v$ to $w$ if $v \leq w$. The graph of $C(A)$ is defined analogously. 
-\end{defi}
+\end{de}
 
 \begin{thm}[Zaretskii's theorem]
   \thlabel{thm:Zaretskii}
@@ -609,14 +636,15 @@ A significant improvement can be obtained using the following ideas:
 In other words, $A \leq_{\J} B$ iff there exists a homomorphic embedding of the 
 graph of $R(A)$ into the graph of $R(B)$ which respects edges and non-edges. \\
 
-In our case, we can put restrictions on the homomorphic embeddings. We will instead
-look for homomorphic embeddings between certain augmented graphs.
+For practical computational purposes, it is useful to add restrictions to the
+homomorphic embeddings. We will instead look for homomorphic embeddings between
+certain augmented graphs.
 
-\begin{defi}
+\begin{de}[\textbf{Augmented Graph}]
   Let $A \in \Bn$. The \emph{augmented graph of $R(A)$} is the disjoint union of
   the graph of $R(A)$ with the empty graph on the vertices $\{c_i \: : \: 1 \leq
     i \leq n\}$, with an edge from $v \in R(A)$ to $c_i$ if $v_i = 1$.
-\end{defi}
+\end{de}
 
 \begin{lemma}
   \thlabel{lem:EmbeddingGraphs}
@@ -639,6 +667,7 @@ another containing $i$ ones to preserve adjacency and non-adjacency with the set
 $\{ c_i : 1 \leq i \leq n \}$.
 
 We can therefore use the following improved algorithm.
+\begin{alg}\ 
 \begin{enumerate}
   \item
     Enumerate the trim boolean matrices using a backtrack search, storing 
@@ -651,6 +680,7 @@ We can therefore use the following improved algorithm.
   \item
     The remaining matrices are then representatives of the prime matrices.
 \end{enumerate}
+\end{alg}
 
 The principle improvements in this algorithm are
 \begin{itemize}
@@ -671,6 +701,30 @@ the size of such generating sets is contained in Figure~\ref{figure-table-1}. It
 seems unlikely that this algorithm can produce minimal generating sets for $n >
 8$. The generating sets obtained from this algorithm are obtainable at TODO,
 along with code to produce them.
+
+\begin{figure}
+  \centering
+  \begin{tabular}{l|r|r}
+    $n$ & $\mathbf{d}(\Bn)$ &   \\
+    \hline
+    1 & 2          & - \\ 
+    2 & 3          & - \\ 
+    3 & 5          & - \\ 
+    4 & 7          & - \\
+    5 & 13         & ? \\
+    6 & 68         & \cmark \\ 
+    7 & 2\ 143     & \cmark \\
+    8 & 495\ 115   & \cmark \\
+  \end{tabular}
+\vspace{1cm}
+
+  \caption{The minimum size $d(\Bn)$ of a generating set for the monoid
+  consisting of all $n \times n$ Boolean matrices matrices where: 
+  ``-'' indicates a value that can be computed by hand or brute force;
+  ``\cmark'' indicates that the value was first found here;
+  ``?'' indicates that the value is unknown.}
+  \label{figure-table-1}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Reflexive Boolean Matrices}
@@ -699,11 +753,6 @@ is essentially caused by the following well-known facts.
 
 In order to determine generating sets for $\Refn$, we require the following results:
 
-\begin{defi}
-  An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if
-  there exist $y, z \in M$ with $x = yz$, and \defn{properly decomposable} if
-  there exist $y, z \in M\setminus\{e, x\}$ such that $x = yz$.
-\end{defi}
 
 \begin{lemma}
   \thlabel{lem:reflexivegenstrimorelem}
@@ -1146,6 +1195,8 @@ Another class of semiring which has attracted significant recent attention (see
 TODO. The monoids of matrices over these semirings have significantly more
 complex behaviour than the boolean matrix monoid (see \cite{TODO}).
 
+\subsection{Min-plus matrices}
+
 \begin{thm}[J, J, J]\label{thm-min-plus}
   The monoid $M_{2}(K^{\infty})$ of $2 \times 2$ min-plus matrices is
   generated by the matrices:
@@ -1169,6 +1220,9 @@ complex behaviour than the boolean matrix monoid (see \cite{TODO}).
   \end{equation*}
   where $i \in \{0, 1, \ldots, t, \infty\}$.
 \end{cor}
+
+\subsection{Max-plus matrices}
+???? Seems like a natural thing to include.
 
 \section{Matrices over $\mathbb{Z}_n$}
 
