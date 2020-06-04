@@ -51,7 +51,7 @@ tabu, enumitem}
 \newcommand{\Ref}[1]{M_{#1}^{\text{id}}(\B)}
 \newcommand{\Halln}{M_n^{\text{S}}(\B)}
 \newcommand{\Hall}[1]{M_{#1}^{\text{S}}(\B)}
-\newcommand{\MTn}{M_n^{\text{T}}(\B)}
+\newcommand{\MTn}{M_n^{\mathcal{T}}(\B)}
 \newcommand{\MT}[1]{M_{#1}^{\text{T}}(\B)}
 \newcommand{\UTn}{UT_n(\B)}
 \newcommand{\LTn}{LT_n(\B)}
@@ -84,13 +84,16 @@ tabu, enumitem}
 \maketitle
 
 \begin{abstract}
-  TODO
+  We compute the largest known ranks of the boolean matrix monoid and the
+  submonoids $\Refn$ of reflexive boolean matrices, $\Halln$ of Hall matrices,
+  $\MTn$ of boolean matrices containing a transformation, and $\UTn$ and $\LTn$,
+  of triangular boolean matrices. We also determine the relationship between
+  minimal generating sets for $\Bn$, $\Halln$, and $\MTn$, and prove that the
+  rank of $\UTn$ and $\LTn$ are given by the triangular numbers.
 \end{abstract}
 
 \section{Introduction}
 
-
-%TODO: 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +144,6 @@ tabu, enumitem}
 %are summarised in Tables~\ref{figure-table-1} and \ref{tab:reflexiverank}.
 %
 
-%TODO: make tables horizontal?
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,19 +247,19 @@ $0$ denote the additive identity of $\mathbb{S}$ and $1$ denote the
 multiplicative identity.
 
 Let $A \in M_n(\mathbb{S})$. We write $A_{i*}$ to denote the $i$th row of $A$,
-and $A_{*i}$ to denote the $i$th column. A \defn{linear combination} of rows is
-a sum of scalar multiples of the rows, where both operations are defined
-componentwise in the usual way. The \defn{row space}
-$R(A)$ of $A$ is the set of all linear combinations of the rows of $A$. 
-A set of rows is \defn{linearly independent} if some row can be written as a
-linear combination of other rows; this coincides with the usual definition when
-$\mathbb{S}$ is a field. \defn{Spanning sets} are defined exactly as for
-matrices over fields: a spanning set for a row space is a set of rows which
-every element of the row space may be written as a linear combination of. A
-\defn{row basis} of $A$ is then a linearly independent spanning set for the row
-space of $A$. \defn{Column spaces} and \defn{column bases} are defined dually.
-The importance of row and column bases arises from the following well-known
-results~\cite{TODO}:
+$A_{*i}$ to denote the $i$th column, and $A_{ij}$ to denote the $j$th entry of
+the $i$th row. A \defn{linear combination} of rows is a sum of scalar multiples
+of the rows, where both operations are defined componentwise in the usual way.
+The \defn{row space} $R(A)$ of $A$ is the set of all linear combinations of the
+rows of $A$.  A set of rows is \defn{linearly independent} if some row can be
+written as a linear combination of other rows; this coincides with the usual
+definition when $\mathbb{S}$ is a field. \defn{Spanning sets} are defined
+exactly as for matrices over fields: a spanning set for a row space is a set of
+rows which every element of the row space may be written as a linear combination
+of. A \defn{row basis} of $A$ is then a linearly independent spanning set for
+the row space of $A$. \defn{Column spaces} and \defn{column bases} are defined
+dually. The importance of row and column bases arises from the following
+well-known results:
 
 \begin{prop}
   \thlabel{prop:rowsandideals}
@@ -318,7 +320,6 @@ results~\cite{TODO}:
   R(B)$. 
 \end{proof}
 
-%TODO: iff
 \begin{prop} 
   \thlabel{lem:GreensRowColumnSpaces}
   Let $A, B \in M_n(\mathbb{S})$. Then $A \L B$ if and only if $R(A) = R(B)$,
@@ -354,7 +355,9 @@ The image of this embedding will often simply be referred to as $S_n$ or the
 symmetric group when context prevents ambiguity. Elements of this embedding
 $S_n$ are called \defn{permutation matrices}; multiplying by a permutation
 matrix on the left permutes rows of a matrix, and multiplying on the right
-permutes columns.
+permutes columns. Similarly, we may define a \defn{transformation matrix} to be
+one which contains a single $1$ in every row; these are the images of the
+obvious extension of $\phi$ to the full transformation monoid $\mathcal{T}_n$.
 
 Two matrices $A, B\in M_n(\mathbb{S})$ are \defn{similar} if each can be
 obtained from the other by permuting the rows and/or columns. Note that similar
@@ -377,7 +380,6 @@ $\mathbf{D}(S) \in \N$, then every generating set of cardinality $\mathbf{d}(S)$
 is irredundant and hence minimal; this does not hold when $\mathbf{d}(S)$ is not
 finite.
 
-%TODO: fix this after redrafting reflexive section
 \begin{de}[\textbf{Decomposable elements}]
   An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if
   there exist $y, z \in M$ with $x = yz$, and \defn{properly decomposable} if
@@ -415,30 +417,42 @@ finite.
 
 \section{Boolean Matrix Monoids}
 \label{sec:boolmat}
+
 In this section, we compute minimal generating sets for the full boolean matrix
-monoid $\Bn$ and some of its natural subsemigroups, namely:
+monoid $\Bn$ and some of its natural submonoids. In order to define these
+submonoids, we must introduce the concept of matrix containment: given two
+matrices $A, B \in \Bn$, we say that $A$ is \emph{contained} in $B$ if for all
+$1 \leq i,j \leq n$, $A_{ij} = 1$ implies that $B_{ij} 1$; that is, $B$ contains
+a $1$ in every position in which $A$ does.
+
+We consider the submonoids:
 \begin{enumerate}
-  \item the monoid $\Refn$ of reflexive boolean matrices
-  \item the monoid $\Halln$ of Hall matrices
-  \item the monoid $\MTn$ of boolean matrices containing a transformation, and
-  \item the monoids $\UTn$ and $\LTn$ of upper- and lower-triangular boolean matrices.
+  \item $\Refn$, of matrices containing the identity (reflexive matrices),
+  \item $\Halln$, of matrices containing a permutation matrix (Hall matrices),
+  \item $\MTn$, of matrices containing a transformation matrix, and
+  \item $\UTn$ and $\LTn$, of upper- and lower-triangular boolean matrices.
 \end{enumerate}
 
-The monoid $\Refn$ arises naturally from the equivalence between matrices in
-$\Bn$ and equivalence relations on $\{1, \ldots, n\}$, but may also be viewed as
-the monoid of matrices containing a certain pattern of $1$s - the identity
-matrix. Similarly, $\Halln$ arises as those matrices describing a family of
-subsets which satisfy Hall's marriage condition, but also as those matrices
-containing a permutation matrix. By increasing the permitted patterns, we obtain
-the monoid $\MTn$, consisting of those matrices containing a transformation.
+There is a natural isomorphism $\Theta$ between binary relations on $\{1,
+  \ldots, n\}$ and $\Bn$, which maps a binary relation $\mu$ to the matrix $M
+\in \Bn$ such that $M_{ij} = 1$ if and only if $(i, j) \in \mu$.
+The monoid $\Refn$ arises as the image of the reflexive binary relations under
+$\Theta$, and this is the primary reason for studying $\Refn$. However, it may
+also be viewed as the monoid of matrices containing a certain pattern of $1$s -
+namely the identity matrix. Similarly, $\Halln$ arises as those matrices
+describing a family of subsets which satisfy Hall's marriage condition, but also
+as those matrices containing a permutation matrix. By increasing the number of
+permitted patterns, we obtain the monoid $\MTn$, consisting of those matrices
+containing a transformation. 
 
-The known ranks of these monoids are given in Table~\ref{tab:BMatResults}, up
-to $n = 9$. The rank of $\UTn$ and $\LTn$ are known for all $n$ - see
-\thref{cor:RankTriBoolMat} - but none of the other ranks are known beyond $n =
-8$. Note that since $\UTn$ and $\LTn$ are anti-isomorphic via the transposition
-map, $\mathbf{d}(\UTn) = \mathbf{d}(\LTn)$ for all $n$.
+We compute the largest known ranks of these monoids, which are presented in
+Table~\ref{tab:BMatResults} along with whether that rank was previously known or
+is practically computable by brute force. The rank of $\UTn$ is given by the
+triangular numbers $T_n$ for $n \geq 2$; this may have already been known but we
+were unable to find a reference in the literature. Note that since $\UTn$ and
+$\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
+\mathbf{d}(\LTn)$ for all $n$. None of the other ranks are known beyond $n = 8$. 
 
-% TODO: hunt down references 
 \begin{table}
   \centering
   \begin{tabular}{l|r|r|r|r|r}
@@ -451,7 +465,7 @@ map, $\mathbf{d}(\UTn) = \mathbf{d}(\LTn)$ for all $n$.
     4 & *7         & *38& *6& *7& *10\\
     5 & *13        & *1\ 415& *12& *13& *15\\
     6 & 68         & 482\ 430& 67& 68& 21\\
-    7 & 2\ 143     & 1\ 034\ 972\ 230& 2\ 142& 2\ 142& 28\\
+    7 & 2\ 143     & 1\ 034\ 972\ 230& 2\ 142& 2\ 143& 28\\
     8 & 495\ 115   & ?& 495\ 114& 495\ 115 & 36\\
     9 & ?   & ?& ?& ? & 45
   \end{tabular}
@@ -462,10 +476,24 @@ map, $\mathbf{d}(\UTn) = \mathbf{d}(\LTn)$ for all $n$.
     that the value is unknown.}
   \label{tab:BMatResults}
 \end{table}
-%TODO: signpost that the values are equal for all n where appropriate
-%TODO: include citation to git repo here
+There are several obvious relationships between columns in
+Table~\ref{tab:BMatResults}; we prove that these relationships hold for all $n
+\in \N$.
 
-In Section~\ref{sec:BMatPrelim}, we introduce a number of concepts and results
+There are a number of other submonoids of $\Bn$ that may be considered. If we
+define the \defn{containment closure} $\bar{S}$ of a subsemigroup $S \leq \Bn$
+to be the set of matrices $A \in \Bn$ containing some element of $S$, then for
+any choice of subsemigroup $S$, $S \leq \bar{S} \leq \Bn$. In
+particular, the submonoids $\Refn$, $\Halln$, and $\MTn$ are of this type. It
+remains an open problem to determine minimal generating sets for arbitrary
+containment closures. This problem seems difficult; a more tractable problem may
+be to restrict $S$ to subgroups of $S_n$ or submonoids of transformation
+matrices.
+
+%TODO: namedrop gossip monoid
+
+The rest of Section~\ref{sec:BoolMat} is organised as follows. In
+Section~\ref{sec:BMatPrelim}, we introduce a number of concepts and results
 particular to matrices over $\B$. These are used throughout the rest of
 Section~\ref{sec:boolmat}. In Section~\ref{sec:FullBoolMat}, we describe how to
 compute minimal generating sets for $\Bn$ based on a theorem of
@@ -474,7 +502,7 @@ unique minimal generating sets for $\Refn$ and how to compute it; in
 Sections~\ref{sec:HallBoolMat} and~\ref{sec:TransBoolMat} we describe how all
 minimal generating sets for $\Halln$ and $\MTn$ may be obtained from minimal
 generating sets for $\Bn$; and in Section~\ref{sec:TriBoolMat} we give a simple
-description of the unique minimal generating set for $\UTn$ and $\LTn$.
+description of the unique minimal generating sets for $\UTn$ and $\LTn$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -569,7 +597,6 @@ spaces also holds. This yields a strengthening of
   Let $A, B \in \Bn$. Then $A \L B$ in $\Bn$ if and only if $r(A) = r(B)$,
   and $A \R B$ in $\Bn$ if and only if $c(A) = c(B)$.
 \end{prop}
-%TODO: provide this algorithm?
 There is a simple algorithm to compute the row and column bases of matrices in
 $\Bn$ in time and space cubic in $n$, and hence the previous proposition gives
 an efficient method for determining whether two matrices are $\L$- or
@@ -582,13 +609,12 @@ $\Bn$. Note that transposition gives an anti-automorphism from $\Bn$ to itself
 which exchanges $\L$ and $\R$ classes, and hence determining the $\L$- and
 $\R$-structure only requires computation of one of the relations.
 
-%TODO: fill in
 \begin{table}
   \centering
-  \begin{tabular}{r|r|r|r|r|r|r|r|r}
-    $n$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+  \begin{tabular}{r|r|r|r|r|r|r|r}
+    $n$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
     \hline
-     & 2 & 7 & 55 & 1\ 324& 120\ 633& 42\ 299\ 663& ? & ? 
+     & 2 & 7 & 55 & 1\ 324& 120\ 633& 42\ 299\ 663& ?  
   \end{tabular}
 \vspace{1cm}
 
@@ -597,11 +623,11 @@ $\R$-structure only requires computation of one of the relations.
 \end{table}
 
 Even determining the possible cardinalities of row spaces of matrices in $\Bn$
-is a hard problem: see \cite{TODO:Zivkovicetc}. This is in stark contrast to the
-row-spaces of matrices over fields, which have dimension a power of the
-cardinality of the field. For example, the matrix
-\[\mat{0}{1}{1}{1} \in \Bn\]
-has row space cardinality $3$.
+is a hard problem: see \cite{Breen2001aa, Konieczny1992aa, Li1995aa,
+  Shaofang1998aa, Zivkovic2006aa}. This is in stark contrast to the row-spaces
+of matrices over fields, which have dimension a power of the cardinality of the
+field. For example, the matrix \[\mat{0}{1}{1}{1} \in \Bn\] has row space
+cardinality $3$.
 
 It is significantly more difficult to determine the $\J$-relation in $\Bn$ than
 the $\L$- or $\R$-relation. Indeed, the problem of determining whether two
@@ -680,6 +706,7 @@ compute with. A linear reduction to graph isomorphism, described in
 Section~\ref{sec:fullboolmat}, shows that the problem of determining whether two
 reduced matrices are $\J$-related has complexity at most quasi-polynomial; see
 \ref{TODO:babai}.
+%TODO: babai paper not published yet?
 It also implies that the $\J$-class of any prime matrix $P$ consists of prime
 matrices similar to $P$, and we refer to such a $\J$-class as a \defn{prime
   $\J$-class}. Note that a prime $\J$-class therefore contains at most $(n!)^2$
@@ -697,11 +724,10 @@ corollary.
   prime $\J$-class contains at most $(n!)^2$ elements; hence there are
   super-exponentially many prime $\J$-classes.
 \end{proof}
-%TODO: add lower bounds here
+%TODO: add lower bounds here - can only do once can access book
 
-%TODO: prove that primes appear as J classes of arbitrary above?
-The prime matrices of $M_n(mathbb{S})$ sit directly below the group of units in
-the $\J$-order on $M_n(mathbb{S})$ for any semiring $\mathbb{S}$. In the case of
+The prime matrices of $M_n(\mathbb{S})$ sit directly below the group of units in
+the $\J$-order on $M_n(\mathbb{S})$ for any semiring $\mathbb{S}$. In the case of
 $\Bn$, there is an additional $\J$-class immediately below $S_n$: the $\J$-class
 $J_E$ of the elementary matrix $E$ from \ref{}. The next result shows that in
 fact these are all of the $\J$-classes immediately below $S_n$.
@@ -812,21 +838,20 @@ Let $A, B \in \Bn$ be the matrices defined by
     0 & 0 & 1 & 1 & 1 \\
     1 & 0 & 1 & 1 & 0 \\
     0 & 1 & 1 & 0 & 1 
-  \end{pmatrix}\quad&\quad
+  \end{pmatrix}\quad \quad
   \begin{pmatrix}
     1 & 0 & 1 & 0 & 0 \\
     0 & 1 & 0 & 1 & 0 \\
     0 & 0 & 1 & 1 & 1 \\
     1 & 0 & 0 & 1 & 1 \\
     0 & 1 & 1 & 0 & 1 
-  \end{pmatrix}.&\\
+  \end{pmatrix}&\\
 \end{align*}
 respectively. Then $A$ and $B$ are in the Breen form of
 \thref{de:BreenForm}. Swapping rows $1$ and $2$ and columns $3$
 and $4$ shows that $A$ and $B$ are similar, and hence are $\J$-related in $\Bn$.
 \end{ex}
 
-%TODO: numbers of Breen form matrices
 There are significantly fewer than $2^{n^2}$ matrices in Breen form in $\Bn$,
 as shown in Table~\ref{tab:BreenFormMatrices}, and so it is feasible to
 enumerate the matrices in Breen form for several values of $n$ for which it
@@ -836,21 +861,20 @@ $\phi$, the image $Q_\phi = \phi(S)$ contains $P_\phi$. Later in this section,
 we will discuss several methods of filtering $Q_\phi$ to obtain the prime
 matrices. 
 
-% TODO: include number of J classes for comparison
 \begin{table}
   \centering
   \begin{tabular}{l|r|r|r|r|r}
     $n$ & $|\Bn|$ & $|\mathcal{B}_n|$ & $|\mathcal{TB}_n|$ & $\phi(\mathcal{TB}_n)$ &
-    $|J(\Bn)|$ \\
+    $|J(\Bn)|$~\cite{Breen2001aa, Breen1997aa} \\
       \hline
-    $1$ & 2 & 2 & 2 & & 2\\
-    $2$ & 16 & 4 & 3 & & 3\\
-    $3$ & 512 & 13 & 5 & & 11\\
+    $1$ & 2 & 2 & 2 & 2 & 2\\
+    $2$ & 16 & 4 & 3 & 3 & 3\\
+    $3$ & 512 & 13 & 5 & 5 & 11\\
     $4$ & 65\ 536 & 146 & 12 & 10 & 60\\
     $5$ & 33 554 432& 7\ 549 & 141& 32 & 877\\
     $6$ & 68\ 719\ 476\ 736& 1\ 660\ 301& 15\ 020 & 394 & 42\ 944\\
     $7$ & $5.6 \times 10^{14}$ & 1\ 396\ 234\ 450 & 7\ 876\ 125 & 34\ 014 & 7\ 339\ 704 \\
-    $8$ & $1.8 \times 10^{19}$ & ? & ? & 17\ 120\ 845 & 4\ 256\ 203\ 214
+    $8$ & $1.8 \times 10^{19}$ & ? & 18\ 409\ 121\ 852 & 17\ 120\ 845 & 4\ 256\ 203\ 214
   
   \end{tabular}
   \vspace{1cm}
@@ -885,11 +909,10 @@ the other coloured $1$. We call a function $\psi: \BGSet \to \BGSet$ a
 \emph{canonical form} for $\BGSet$ if the equivalence classes of $\ker\psi$ are
 the graph-theoretical colour-preserving isomorphism classes of $\BGSet$.
 Computing canonical forms for graphs is a well-studied problem; for a recent
-article see~\cite{TODO:BrendanMackay} and the references within. 
-% TODO: refer to bliss and the article which introduces it
+article see~\cite{McKay2013aa} and the references within. 
 and we use the software bliss\footnote{In fact, a slightly-modified version of
   bliss which avoids repeated memory allocation was used; this is available at
-  \cite{TODO}}~\cite{TODO:BLISS}to obtain such functions $\psi_n$. 
+  \cite{TODO}}~\cite{Junttila2007aa, Bliss} to obtain such functions $\psi_n$. 
 \begin{lemma}
   The function $\Phi_n = \Gamma^{-1}\psi_n\Gamma$ is a canonical form when
   restricted to reduced matrices. 
@@ -931,9 +954,9 @@ We now describe how to backtrack through matrices in Breen form to find a
 superset of prime matrices $Q_{\Phi_n}$. This may be seen as a depth-first
 traversal of a (non-rooted) tree, with nodes $m\times n$ matrices ($m \leq
 n$) and leaves $n \times n$ matrices.
+
 \begin{alg}
-  \thlabel{alg:canonicalbacktrack}
-  \ \\
+  \thlabel{alg:canonicalbacktrack}Backtracking for canonical forms.\\
   \textbf{Input}: A natural number $n$. \\
   \textbf{Output}: A set $Q_{\Phi_n}$, with $P_{\Phi_n} \subseteq Q_{\Phi_n}
   \subseteq \im\Phi_n$.
@@ -945,7 +968,7 @@ n$) and leaves $n \times n$ matrices.
       of matrices to return.
     \item If $m < n$, then for each $x \in \{\bar{A_{m*}} + 1,
         \ldots, 2^n - 1\}$, if:
-      \begin{enumerate}[label=\roman*]
+      \begin{enumerate}[label={(\roman*)}]
         \item $x^\dagger$ does not contain $A_{l*}$ for any $1 \leq l \leq m$,
           and
         \item $x^\dagger$ has at least as many ones as $A_{f*}$,
@@ -1019,8 +1042,7 @@ $Q_{\Phi_n}$ is prime. We present two algorithms for doing so, in
 \thref{alg:filter1} and \thref{alg:filter2}.
 
 \begin{alg}
-  \thlabel{alg:filter1}
-  \ \\
+  \thlabel{alg:filter1}Filtering canonical forms by row spaces.\\
   \textbf{Input}: A set $Q_{\Phi_n}$, containing the images $P_{\Phi_n}$ of the
   prime matrices of $\Bn$ under $\Phi_n$, and not containing any permutation
   matrices. \\
@@ -1174,8 +1196,7 @@ We can therefore use the following improved algorithm to filter canonical
 supersets of prime matrices.
 
 \begin{alg}
-  \thlabel{alg:filter2}
-  \ \\
+  \thlabel{alg:filter2} Filtering canonical forms by digraph embeddings.\\
   \textbf{Input}: A canonical superset $Q$ of prime matrices $P$, which does not
   contain a permutation matrix.\\
   \textbf{Output}: The set $P$.
@@ -1349,7 +1370,6 @@ clearly superior to checking all products of matrices in $\Refn$, but still
 quickly becomes infeasible to use for all trim matrices in $\Refn$.\\
 %TODO: tables
 
-
 In order to reduce the time spent checking matrices using
 \thref{lem:decomposeintersection}, we would like to only check a smaller set of
 canonical representatives. Unfortunately, the following two matrices illustrate
@@ -1436,9 +1456,26 @@ Using this algorithm, we can calculate the sizes of minimal generating sets up
 to $n = 7$; these are contained in Table~\ref{tab:BMatResults}.
 
 There are a small number of matrices in $\Ref{7}$ for which an approach based on
-\thref{lem:decomposeintersection} is too inefficient. These matrices can be
-handled by attempting to write each of them as a product $A = B(C\alpha)$, where
-$C$ is an element of $S$ TODO
+\thref{lem:decomposeintersection} is too inefficient; we chose to use a
+different approach for $12$ matrices in total. Observe that a matrix $A$ is
+decomposable into a product of generators $X_1 X_2 \ldots X_k$ from some minimal
+generating set if and only if $\alpha A \alpha^{-1} = \alpha (X_1 X_2 \ldots
+X_{k-1})\alpha^{-1}\alpha X_k \alpha^{-1}$ for all permutations $\alpha$. Since
+the set $S$ of Algorithm TODO contains $\alpha X_k \alpha^{-1}$ for some $\alpha
+\in S_n$, we can detect if $A$ is properly decomposable by testing whether
+$\alpha A \alpha^{-1} = CB$ for any $\alpha \in S_n$, $B \in S$ and with $C$ the
+greedy multiplier of $(\alpha A \alpha^{-1}, B)$. A brute force approach based
+on this observation is sufficient to filter the $12$ difficult matrices for $n =
+7$.
+
+% The single matrix that is kept is:
+%1000010
+%0100101
+%1010101
+%1001101
+%0110110
+%0111010
+%0111001
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Hall Matrices}
@@ -1454,7 +1491,7 @@ In order to prove our main result on the Hall monoid, we will need the following
 classical result, restated in our context.
 
 \begin{thm}[Hall's Marriage Theorem]
-  Let $A in \Bn$. Then $A$ is a Hall matrix if and only if every union of $k$
+  Let $A \in \Bn$. Then $A$ is a Hall matrix if and only if every union of $k$
   rows contains at least $k$ ones, for $1 \leq k \leq n$.
 \end{thm}
 We shall say that a subset $X$ of the rows of a matrix \emph{satisfies the Hall
@@ -1492,78 +1529,187 @@ the $\J$-relation is easily described through the following lemmas.
   $A$, it follows that $A$ is a row- and column-permutation of $B$.
 \end{proof}
 
-Unlike $\Refn$, $\Halln$ has a particularly nice minimal generating set.
+Unlike $\Refn$, $\Halln$ has minimal generating sets that are strongly related
+to the minimal generating sets for $\Bn$.
 \begin{lemma}
   Every minimal generating set for $\Halln$ is obtained by removing a rank $n-1$
   matrix from a minimal generating set for $\Bn$. That is, every minimal
   generating set for $\Halln$ consists of a set of representatives $P$ of the
   prime $J$-classes of $\Bn$ together with two generators for the group of units
-  $S_n$ and an elementary matrix.
+  and an elementary matrix.
 \end{lemma}
+
 \begin{proof}
   The fact that $P \subset \Halln$ is a consequence of the discussion after
   \cite[Definition 2.4]{Caen1981aa}. Let $G \subset \Halln$ be obtained as in
   the statement. To establish that $G$ is a generating set, we will show that
-  any Hall matrix that lies below the matrices in $G$ in the $\J$-order may be
-  written as a product of two higher non-permutation Hall matrices, and
-  therefore by an infinite ascent argument may be factorized into matrices in
-  $G$.
-  
+  any Hall matrix $A$ that lies below the matrices in $G$ in the $\J$-order may
+  be written as a product of two Hall matrices that are strictly higher in the
+  $\J$-order than $A$, and therefore by \thref{lem:GenSetDecomposition}, $G$ is
+  a generating set. Since we require a matrix from every prime $\J$-class, two
+  generators for $S_n$, and an elementary matrix in any generating set for
+  $\Bn$, and each of these lie in $\Halln$, we must require these matrices in
+  any generating set for $\Halln$; hence $G$ is minimal. The same argument shows
+  that every minimal generating set is obtained in this way.
+
   Note that $G$ consists of matrices from the maximal $\J$-class and all
-  one-below-maximal $\J$-classes. By \thref{lem:PermutingReducedMatrices}, every
-  matrix in the $\J$-classes of matrices in $G$ is generated by $G$.
+  $\J$-classes immediately below the maximal $\J$-class. By
+  \thref{lem:PermutingReducedMatrices}, every matrix in the $\J$-classes of
+  matrices in $G$ is generated by $G$.
 
   Let $A$ be a Hall matrix that lies below $G$ in the $\J$-order. We may assume
   without loss of generality that $A$ contains the identity permutation, since
   $\langle G \rangle$ contains $S_n$. We will decompose $A$ as a product of
   non-permutation Hall matrices that lie above $A$ in the $\J$-order. 
 
-  First, suppose that $A$ is not trim, i.e.\ some row $i$ of $A$ is contained in
-  row $j$. Let $B$ be the matrix obtained by setting entry $i$ of row $j$ to be
-  equal to $0$, and $C$ be the greedy left multiplier of $B$ with respect to
-  $A$. Then $B$ and $C$ both contain the identity permutation, and hence are
-  Hall matrices. Since row $i$ of $B$ is contained in row $j$ of $A$, entry $(j,
-  i)$ of $C$ is $1$ and hence $C$ is not a permutation matrix.  Since $A$ was
-  not an elementary matrix, and $B$ was obtained by removing a single $1$ from
-  $A$, $B$ is not a permutation matrix. Finally, $A = CB$.
+  First, suppose that $A$ is not trim; then some $i$th row of $A$ is contained
+  in a $j$th row. Let $B$ be the matrix obtained by setting entry $i$ of row $j$
+  to be equal to $0$. Since $A$ contains the identity permutation, so does $B$;
+  therefore $B$ is a Hall matrix. Now $A = E^{j,i}B$, and by
+  \thref{lem:HallJRelation} neither $E^{j,i}$ nor $B$ is $\J$-related to $A$.
 
-  We now assume that $A$ is trim. Since $A$ lies below $G$ in the $\J$-order, it
+  We now suppose that $A$ is trim. Since $A$ lies below $G$ in the $\J$-order, it
   has non-maximal row space. Let $B$ be a maximal non-permutation matrix in
   $\Bn$ which contains the row space of $A$. Then $B$ is prime or elementary,
-  and hence is similar to some matrix in $G$. By multiplying by permutation
-  matrices $U$ and $V$, we may assume that $UBV$ contains the identity
-  permutation. Now $A = CB$ where $C$ is the greedy multiplier. Since $A$ is
-  trim, we must also have that $C$ is trim. However, there is no reason that $C$
-  must be a Hall matrix.
+  and hence is similar to some matrix in $G$. Letting $C$ be the greedy
+  multiplier of $(A, B)$, we have $A = CB$. Since $A$ is trim, we must also have
+  that $C$ is trim. However, $C$ might not be a Hall matrix.
   
   Suppose that $C$ is a Hall matrix. Then, since $B$ is not similar to $A$, $C$
-  is not a permutation matrix.  Since $B$ is not a permutation matrix, $C$ is
-  not similar to $A$. By \thref{lem:HallJRelation}, $B$ and $C$ are both
-  non-permutation matrices which are greater than $A$ in the $\J$-order.
+  is not a permutation matrix.  Since $B$ is not a permutation matrix, and $C$
+  is trim, $C$ is not similar to $A$. By \thref{lem:HallJRelation}, $B$ and $C$
+  are not $\J$-related to $A$ in the $\Halln$.
 
-  Now, if $C$ is not a Hall matrix, then it does not satisfy the Hall condition
-  and hence there is some minimal subset of rows $W \subseteq \{1, \ldots, n \}$
-  that do not satisfy the Hall condition. By multiplying by permutation matrices
-  $X$ and $Y$, and working with the matrix $XCY$, we may assume that $W = \{1,
-    \ldots, r \}$ and that the union of rows $1$ up to $r$ contains a $1$ in
-  positions $1$ up to $s$, $s < r$. We now construct two new matrices $S, T \in
-  \Halln$ such that $A = ST$. 
-  Let $x, y, u, v$ be the permutations of $\{1, \ldots, n \}$ associated with
-  the matrices $X, Y, U, V$. For $1 \leq i \leq s$, define row $i$ of $S$ to
-  be row $i$ of $XCY$ and row $i$ of $T$ to be row $i$ of $UBV$. For $s + 1 \leq
-  i \leq r$, define row $i$ of $S$ to be row $i$ of $XCY$ plus $e_i$, and define
-  row $i$ of $T$ to be $e_i$. For $r + 1 \leq i \leq n$, define row $i$ of $S$
-  to be $e_i$, and row $i$ of $T$ to be row $i$ of $A$. 
+  Now suppose that $C$ is not a Hall matrix. Since $A$ is a Hall matrix, $C$
+  must contain a $1$ in every row. However, it may be the case that $C$ does not
+  contain a $1$ in every column. We will show how that case may be reduced to
+  the case where $C$ does contain a $1$ in ever column. 
+
+  Suppose that the columns of $C$ indexed by $\{c_1, c_2, \ldots, c_k\}$ do not
+  contain a $1$, and that $B$ contains the permutation $\alpha$. For $1 \leq i
+  \leq k$, define $B'_{c_i*}$ to have a single $1$ in position $\alpha(c_i)$;
+  the remaining rows of $B'$ are the corresponding rows of $B$. Then $B'$
+  contains $\alpha$. Let $C'$ be the greedy multiplier of $(A, B')$; then for
+  all $1 \leq i \leq k$, $C'_{\alpha(c_i)c_i} = 1$ since
+  $A_{\alpha(c_i)\alpha(c_i)} = 1$. Hence we have found $B', C' \in \Bn$ such
+  that $A = C'B'$, $B' \in \Halln$, and every row and column of $C'$ contains a
+  $1$. Of course, this is not sufficient to guarantee that $C'$ is a Hall
+  matrix; we give a construction later in the proof that remedies this situation.
+  In order to continue, we must finally prove that $B'$ and $C'$ are not
+  $\J$-related to $A$ in $\Halln$. Note that $C'$ may not even be an element of
+  $\Halln$. Suppose that $A\J B'$; then $B'$ is similar to $A$, and hence $B'$ is
+  trim. Since $C$ contains a $1$ in every row, and $C'$ contains all $1$s of $C$
+  together with at least one more, $C'$ is not the identity matrix.  Together
+  with $B'$ being trim, this implies that $C'B'$ contains more $1$s than $B'$.
+  But $C'B' = A$, and if $A\J B$ then $A$ and $B$ have the same number of $1$s.
+  Hence $A$ is not $\J$-related to $B'$. Now suppose that $A\J C'$. Then $C'$ is
+  similar to $A$, and thus trim. We would like to apply the same argument as we
+  applied to $B'$, but in order to do so we must know that $B'$ is not a
+  permutation matrix. Since $B$ was not a permutation matrix, and $B'$ was
+  obtained by replacing some rows of $B$ by rows containing a single $1$, the
+  only way that $B'$ may be a permutation matrix is if the non-replaced rows of
+  $B$ - indexed by $\{1, 2, \ldots, n\}\setminus\{c_1, c_2, \ldots, c_k\}$ - all
+  contained a single $1$.  But since $C$ contains $1$s only in those columns,
+  the product $A = CB$ could then only contain $1$s in the columns  $\{1, 2,
+    \ldots, n\}\setminus\{c_1, c_2, \ldots, c_k\}$ and thus would not be a Hall
+  matrix. Hence, $B'$ is not a permutation matrix and a similar argument to that
+  which showed that $A <_\J B'$ applies to $A$ and $C'$, to show that $A$ is not
+  $\J$-related to $C'$ in $\Halln$.
   
+  We may now assume that $A$ is a trim matrix containing the identity
+  permutation, with $A = CB$ for two matrices $B, C \in \Bn$ where $B \in
+  \Halln$, $C$ is a non-Hall matrix containing a $1$ in every column, and
+  neither $B$ nor $C$ are $\J$-related to $A$ in $\Halln$.
   
-  Oh dear, this doesn't work. TODO: finish and fix
+  Since $C$ is not a Hall matrix, it does not satisfy the Hall condition and
+  hence there is some maximal subset of rows, indexed by $W  = \{w_1, w_2,
+    \ldots, w_k\} \subset \{1, \ldots, n\}$, that do not satisfy the Hall
+  condition. Since $C$ contains a $1$ in every column, $k < n$. We will show
+  how we can modify $C$ and $B$ so that the rows indexed by $W$ satisfy the
+  Hall condition, resulting in a smaller maximal subset of rows not satisfying
+  the Hall condition. We will define two new matrices $S, T \in \Bn$ from $B$
+  and $C$.
 
-  We note now
-  that if $A$ is similar to a direct sum of a Hall matrix in $\Hall{m}$, $m <
-  n$, and an $(n-m)$ dimension identity matrix, then $A$ is decomposable into 
+  Let $X = \{x_1, \ldots, x_l\} \subset \{1, \ldots, n\}$ denote the indices of
+  those columns of $C$ that do not contain any $1$s in the rows indexed by $W$.
+  By multiplying $C$ by an appropriate permutation matrix on the right, and $B$
+  by the inverse of this permutation matrix on the left, we may assume that $X^C
+  \subset W$, and that $X \cap W = \{x_1, \ldots, x_{m - 1}\}$, where $m = k + l -
+    n + 1$. That is, the $1$s that occur in rows $W$ occur in a subset of the
+    columns $W$, and those columns indexed by $W$ in which a $1$ does not occur
+    in rows $W$ are labelled by $\{x_1, \ldots, x_{m - 1}\}$.Consider the
+    remaining $n - k$ column indices $\{x_m, \ldots, x_k\}$. The $(n-k) \times
+    (n-k)$ submatrix of $C$ consisting of rows $W^C = \{1, \ldots, n\}\setminus
+    W$ of $C$ and columns $\{x_m, \ldots, x_k\}$
+    must be a Hall matrix, for otherwise it would contain some set of rows
+    violating the Hall condition, and the union of these rows with those indexed
+    by $W$ would be a larger subset of rows of $C$ not satisfying the Hall
+    condition, contradicting the maximality of $W$. Hence, this submatrix
+    contains a permutation matrix, which defines a bijection $f: W^C \to \{x_m,
+      \ldots, x_k\}$ such that for all $i \in W^C$, $f(i)$ is the column
+    containing a $1$ in row $i$. For all $i \in W^C$, we define row $i$ of $S$
+    to be $e_{f(i)}$, and row $f(i)$ of $T$ to be $A_{i*}$. Then $(ST)_{i*} =
+    A_{i*}$. Note that since row $C_{i,f(i)} = 1$, row $f(i)$ of $B$ is
+    contained in row $i$ of $A$ and hence also contained in row $i$ of $T$.
 
+  For all $j \in X^C = \{1, \ldots, n\}\setminus X$, we define row $j$ of $T$ to
+  be $B_{j*}$; then for all $i \in W$, $(CT)_{i*} = A_{i*}$. It remains to
+  define rows $W$ of $S$ and rows $\{x_1, \ldots, x_{m - 1}\}$ of $T$. Since
+  $B$ is a Hall matrix, it contains a permutation matrix $U$. The rows $X^C
+  \cup \{x_m, \ldots, x_k\}$ of $T$ contain the corresponding rows of $U$. For
+  all $j \in \{x_1 \ldots, x_k\}$, consider the cycle in the permutation $u$,
+  corresponding to the permutation matrix $U$, starting at $j$. If $u(j) \in W$,
+  then define $T_{j*} = e_{u(j)}$. Otherwise, $u(j) \not\in W$, and we may
+  construct the tuple $(u^1(j), u^2(j), \ldots, u^{q}(j), iu^{q+1}(j))$ where
+  $u^{i}(j) \not\in W^C$ for $1 \leq i \leq q$, and $u^{q + 1}(j) \in W$. Then
+  we define $T_{j*} = e_{u^{q + 1}(j)}$. By the assumptions on $X$, for $1 \leq
+  i \leq q$ we have $u^{i}(j) \in \{x_m, \ldots, x_l\}$, and by the definitions
+  of rows $\{x_m, \ldots, x_l\}$ of $T$, we have that $T_{u^{i}(q),u^{i}(q)} =
+  1$. For each such tuple, we modify $U$ by defining $U_{j*} = e_{u^{q +
+      1}(j)}$, and $U_{u^{i}(q)*} = e_{u^{q + 1}(j)}$ for $1 \leq i \leq q$.
+  Note that this modification is well-defined since $u$ is a permutation and
+  thus decomposes into disjoint cycles. After this modification, $T$ is fully
+  defined and contains the permutation matrix $U$.
+
+  For each $j \in \{x_1, \ldots, x_{m - 1}\}$, we have $T_{j*} = e_w$ for some $w
+  \in W$, and hence there is a $1$ in position $(w, j)$ of the greedy
+  multiplier of $(A, T)$. Define the rows $W$ of $S$ to be the corresponding
+  rows of the greedy multiplier of $(A, T)$. Then the union $z$ of the rows $W$
+  of $S$ contains $1s$ in columns $\{x_1, \ldots, x_{m - 1}$. Note that since
+  the rows of $T$ indexed by $X^C$, the set of columns that had a $1$ in some
+  row of $W$, are equal to the corresponding rows of $B$, we have $S_{w*} \leq
+  C_{w*}$ for all $w \in W$. Hence $y$ contains $(n - l) + m = k$ ones, and so
+  the rows $W$ satisfy the Hall condition.
+
+  It is straightforward to verify that $A = ST$. We wish to now show that $S$
+  contains a $1$ in every column, and that $A$ is not $\J$-related to $S$ or to
+  $T$. That $S$ contains a $1$ in every column follows from the union $y$ of the
+  rows $W$ containing ones each of the columns indexed by $W$, and the other
+  rows being defined via the bijection $f$. That $T$ is not $\J$-related to $A$
+  follows from the same argument as above; since $A$ is trim so would be $B$,
+  but $S$ contains at least one row with more than one $1$, a contradiction. In
+  order to prove that $S$ is not $\J$-related to $A$, we must as above prove
+  that $T$ is not a permutation matrix. Similarly to the argument above, we note
+  that if $T$ is a permutation matrix then each row of $T$ indexed by $X^C$
+  contains a single one, but these are equal to the corresponding rows of $B$.
+  Then the union of rows $W$ of $CB$ would contain precisely $n - l < k$ ones,
+  and hence $A$ would not be Hall. Hence $T$ is not a permutation matrix, and
+  the argument proceeds as above. 
+
+  It is still not the case that $S$ must be a Hall matrix. However, we have
+  reduced the effective size of the maximal subset of rows which violates the
+  Hall condition. Observe that rows $W^C$ of $S$ contain a single and distinct
+  $1$ each, and these $1$s occur precisely in the columns in which no $1$ occurs
+  in rows $W$ of $S$. Hence, a set of rows $V \subset W$ violates the Hall
+  condition if and only if $V \cup Y$ violates the Hall condition for any subset
+  $Y \subset W^C$. By iteratively repeating the construction of $S$ and $T$,
+  while choosing the next subset of rows which violates the Hall condition as
+  the maximal violating subset of the current set each time, we must eventually
+  be unable to choose such a subset. At this point, $S$ satisfies the Hall
+  condition and hence $S \in \Halln$; we also have that $A = ST$, $T \in
+  \Halln$, and neither $S$ nor $T$ are $\J$-related to $A$. The theorem now
+  follows from \thref{lem:GenSetDecomposition}.
 \end{proof}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Transformation Hall Matrices}
 \label{sec:TransBoolMat}
@@ -1663,6 +1809,10 @@ particularly simple minimal generating set:
 \end{cor}
 
 \section{Tropical matrices}
+%TODO: we would like to include the following results since they seem like a
+%natural fit, these are the things which need to be proved and we don't quite
+%know what the proofs are:
+
 Another class of semiring which has attracted significant recent attention (see
 ~\cite{TODO}) is the tropical min-plus semirings which are interesting because
 TODO. The monoids of matrices over these semirings have significantly more
