@@ -1346,35 +1346,36 @@ lemmas give a method for testing indecomposability.
 
 \begin{lemma}
   \thlabel{lem:decomposeintersection}
-  A trim matrix $A \in \Refn$ can be decomposed as $A = BC$, $B, C \in
-  \Refn\setminus\{I, A\}$, if and only if $A = B'C'$ where $C'$ is the matrix
-  whose $i$th row $C_i$ is the intersection 
-  \[ C_i = \cap_{K_i} A_i \]
-  where $K_i$ is the positions of the $1$s in the $i$th column of $B$, $B'$ is
-  the greedy left multiplier of $(C', A)$, and $B', C' \in \Refn
-  \setminus\{A\}$.
+  Let $A \in \Refn$ be a trim matrix. Then $A$ can be decomposed as $A = BC$,
+  where $B, C \in \Refn\setminus\{I, A\}$, if and only if $A = B'C'$ where $B'$
+  is the greedy multiplier of $(C', A)$, $C'$ is the matrix whose $i$th row
+  $C_{i*}$ is the intersection 
+  \[\bigcap_{j \in K_i} A_{j*} \]
+  and $K_i$ is the set of positions of the $1$s in the $i$th column. If $A$
+  admits a decomposition admits a decomposition $A = BC$ where $B, C \in
+  \Refn\setminus\{I, A\}$, then the corresponding matrices  $B', C'$ belong to
+  $\Refn \setminus\{I, A\}$.
 \end{lemma}
 \begin{proof}
   ($\Rightarrow$)
-  Suppose that $A = BC$ for $B, C \in \Refn \setminus\{I, A\}$, and let $B', C',
-  K_i$ be defined as above. Fix $i$, and consider the $i^{\text{th}}$ row $C_i'$
-  of $C'$. By the definition of $K_i$, for each $j \in K_i$, we have $C_i \leq
-  A_j$; hence $C_i \leq C'_i = \cap_{K_i} A_j \leq A_j$. This implies that $A =
-  BC'$, since $A = BC \leq BC' \leq A$. By \thref{lem:GreedyMultipliers}, $A =
-  B'C'$. Observe that since $A = BC'$, by the definition of the greedy left
-  multiplier we must have $B \leq B'$. Hence $B' \in \Refn$. Since $C_i \leq
-  C'_i$ for all $i$, $C'$ is also in $\Refn$. It remains to show that neither
+  For each $1 \leq i \leq n$, consider the $i$th row $C_{i*}'$. By the
+  definition of $K_i$, for each $j \in K_i$ we have $C_{i*} \leq A_{j*}$. Hence
+  $C_{i*} \leq C'_{i*} = \bigcap_{K_i} A_{j*} \leq A_{j*}$. This implies that $A
+  = BC'$, since $A = BC \leq BC' \leq A$. By \thref{lem:GreedyMultipliers}, $A =
+  B'C'$.  Observe that since $A = BC'$, by the definition of the greedy left
+  multiplier we must have $B \leq B'$. Hence $B' \in \Refn$. Since $C_{i*} \leq
+  C'_{i*}$ for all $i$, $C'$ is also in $\Refn$. It remains to show that neither
   $B'$ nor $C'$ belongs to $\{I, A\}$. Note that since $B \leq B'$ and $C \leq
   C'$, $B', C'$ are not the identity matrix. Since $A$ is trim, if $B'$ or $C'$
   were equal to $A$ the product $B'C'$ would have more ones than $A$ does, but
-  $A = B'C'$.
-  \\ ($\Leftarrow$) Immediate.
+  $A = B'C'$.\\
+  ($\Leftarrow$) Immediate.
 \end{proof}
-Hence, in order to determine whether a trim matrix $A$ is decomposable it
-suffices to:
+It follows from \thref{lem:decomposeintersection} thatin order to determine
+whether a trim matrix $A$ is decomposable it suffices to:
 \begin{enumerate}
-  \item generate all matrices $C$ with rows intersections of rows of $A$, and
-    for each $C$
+  \item generate all matrices $C$ whose rows are intersections of rows of $A$,
+    and for each $C$
   \item test whether the product $BC$ of $C$ with the greedy left multiplier
     $C$ of $(A, B)$ is equal to $A$, and $B, C \not\in \{I, A\}$.
 \end{enumerate}
