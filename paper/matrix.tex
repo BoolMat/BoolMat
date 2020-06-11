@@ -7,7 +7,7 @@ tabu, enumitem}
 \usepackage[ruled, linesnumbered]{algorithm2e}
 \usepackage{makecell}
 
-\newtheorem{thm}{Theorem}[section]
+\newtheorem{thm}{Theorem}[subsection]
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{lemma}[thm]{Lemma}
@@ -988,7 +988,7 @@ n$) and leaves $n \times n$ matrices.
     \item If $m = n$, the non-zero columns of $A$ form a strictly increasing
       sequence under $\num$, and $A$ is column-reduced, then add $\Phi_n(A)$ to
       $X$, the set of matrices to return.
-    \item If $m < n$, then for each $x \in \{\bar{A_{m*}} + 1,
+    \item If $m < n$, then for each $x \in \{\vec(A_{m*}) + 1,
         \ldots, 2^n - 1\}$, if:
       \begin{enumerate}[label={(\roman*)}]
         \item $\vect(x)$ does not contain $A_{l*}$ for any $1 \leq l \leq m$,
@@ -1027,12 +1027,12 @@ n$) and leaves $n \times n$ matrices.
   quasi-Breen form. Note that the matrices that the algorithm is initialised
   with are all trim and in quasi-Breen form, so we must simply prove that
   passing from a node $A$ which is trim and in quasi-Breen form to a node
-  $A'$ by adding a row $x^{\dagger}$ in step $3$ preserves these properties.
+  $A'$ by adding a row $\vect(x)$ in step $3$ preserves these properties.
 
   Trimness is preserved due to condition (i) of step $3$. Since all trim
   matrices are reduced, $A'$ is also reduced. The conditions on non-zero rows
   being at the bottom and forming a strictly increasing sequence of binary
-  numbers are satisfied by choosing $x$ from the range $\{\bar{A_{m*}} + 1,
+  numbers are satisfied by choosing $x$ from the range $\{\num(A_{m*}) + 1,
     \ldots, 2^n - 1\}$.  The conditions on non-zero columns being on the right
   follows from requirement (iii) of step $3$; note that this requirement also
   forces the columns to appear in (not-necessarily-strictly) increasing order.
@@ -1253,7 +1253,7 @@ algorithm are obtainable at TODO, along with code to produce them.
 \subsection{Reflexive Boolean Matrices}
 \label{sec:RefBoolMat}
 An interesting submonoid of $\Bn$ is the monoid $\Refn$ of reflexive boolean
-matrices, i.e. boolean matrices with $1$s on the main diagonal. Minimal
+matrices, that is, boolean matrices with $1$s on the main diagonal. Minimal
 generating sets for $\Refn$ are significantly larger than those of $\Bn$.
 \begin{thm}
   \thlabel{thm:ReflexiveGenSet}
