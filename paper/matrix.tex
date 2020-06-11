@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 
 \usepackage{amsmath, amsfonts, amsthm, amssymb, latexsym, mathrsfs, pifont,
-tabu, enumitem}
+tabu, enumitem, hyperref}
 \usepackage[cm]{fullpage}
 \usepackage{theoremref}
 \usepackage[ruled, linesnumbered]{algorithm2e}
@@ -1315,12 +1315,13 @@ We now prove several results relating to decomposability of elements in $\Refn$.
 \end{lemma}
 \begin{proof}
   Elementary matrices are precisely those matrices in $\Refn$ containing $n + 1$
-  ones. By the observation that the product of two matrices in $\Refn$ contain
-  at least as many $1$s as the maximum number of ones in a factor, it follows
-  that if an elementary matrix is decomposable it is decomposable into other
-  elementary matrices. However, it is easy to show that the only way of writing
-  a reflexive elementary matrix $E$ as a product of elementary matrices is $E =
-  E^{k}$; hence elementary matrices are indecomposable.
+  ones. As noted above, the product of two matrices in $\Refn$ contains at least
+  as many $1$s as the maximum number of $1$s in a factor. It follows that if an
+  elementary matrix is decomposable it is decomposable into other elementary
+  matrices. However, it is routine to verify that the number of $1$s in a
+  product of any two distinct elementary matrices is at least $n + 2$, and that
+  each reflexive elementary matrix is idempotent. Hence elementary matrices are
+  indecomposable.
 \end{proof}
 
 \begin{cor}
@@ -1331,17 +1332,17 @@ We now prove several results relating to decomposability of elements in $\Refn$.
 \begin{proof}[Proof of \thref{thm:ReflexiveGenSet}]
   Let $T$ denote the set of indecomposable trim matrices, and $\mathcal{E}$
   denote the set of reflexive elementary matrices. By
-  \thref{ReflexiveJRelation} and \thref{cor:reflexiveindecomposable}, it follows
+  \thref{lem:ReflexiveJRelation} and \thref{cor:reflexiveindecomposable}, it follows
   from \thref{lem:GenSetDecomposition} that $\genset{T \cup \mathcal{E}} =
   \Refn$. Since each element of $T \cup \mathcal{E}$ is decomposble, $T \cup
   \mathcal{E}$ must be contained in any generating set for $\Refn$, and hence is
   minimal.
 \end{proof}
 
-We now discuss how such minimal generating sets may be computed. Since it is
-easy to enumerate the reflexive elementary matrices, the problem is determining
-the set of indecomposable trim matrices in $\Refn$.
-The following lemmas give a method for testing indecomposability.
+We now discuss how we may compute minimal generating sets for $\Refn$. Since it
+is easy to enumerate the reflexive elementary matrices, the problem is
+determining the set of indecomposable trim matrices in $\Refn$. The next two
+lemmas give a method for testing indecomposability.
 
 \begin{lemma}
   \thlabel{lem:decomposeintersection}
