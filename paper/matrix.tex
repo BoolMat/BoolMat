@@ -381,18 +381,18 @@ is irredundant and hence minimal; this does not hold when $\mathbf{d}(S)$ is not
 finite.
 
 \begin{de}[\textbf{Decomposable elements}]
-  An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if
-  there exist $y, z \in M$ with $x = yz$, and \defn{properly decomposable} if
-  there exist $y, z \in M\setminus\{e, x\}$ such that $x = yz$.
+  An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if $x$
+  may be written as a product of elements not belonging to $\{e, x\}$, and
+  \defn{indecomposable} otherwise.
 \end{de}
 
 \begin{lemma}
   \thlabel{lem:GenSetDecomposition}
   Let $S$ be a finite semigroup and let $X$ be a subset of $S$, such that for
   every element $x \in X$ with $\J$-class $J_x$, we have $J_x \subseteq
-  \genset{X}$. If every $s \in S$ that is not $\J$-related to an element of $X$
-  can be written as a product of elements, none of which are $\J$-related to $s$
-  in $S$, then $X$ generates $S$. 
+  \genset{X}$. If every element $s \in S$ that is not $\J$-related to an element
+  of $X$ can be written as a product of elements of $S$, none of which are
+  $\J$-related to $s$ in $S$, then $X$ generates $S$. 
 \end{lemma}
 \begin{proof}
   Let $x \in S$. Then either $x$ is in a $\J$-class of an element belonging to
@@ -1254,105 +1254,94 @@ algorithm are obtainable at TODO, along with code to produce them.
 \label{sec:RefBoolMat}
 An interesting submonoid of $\Bn$ is the monoid $\Refn$ of reflexive boolean
 matrices, i.e. boolean matrices with $1$s on the main diagonal. Minimal
-generating sets for $\Refn$ are significantly larger than those of $\Bn$; this
-is essentially caused by the following well-known facts.
+generating sets for $\Refn$ are significantly larger than those of $\Bn$.
+\begin{thm}
+  \thlabel{thm:ReflexiveGenSet}
+  The unique minimal monoid generating set for $\Refn$ consists of the set of
+  elementary matrices in $\Refn$ together with the set of indecomposable trim
+  matrices in $\Refn$.
+\end{thm}
+
+In order to prove this theorem, we must understand the  $\J$-relation on
+$\Refn$. Let $A, B$ be two matrices belonging to $\Refn$. Observe that since $A,
+B$ both contain the identity matrix, the product $AB$ must contain both every
+row of $A$ and every column of $B$; hence $A \leq AB$ and $B \leq AB$. This
+leads to the following well-known fact:
 
 \begin{lemma}
-  \thlabel{lem:reflexivecontainment}
-  For any $A, B \in \Refn$, we have $A \leq AB$ and $B \leq AB$, with
-  respect to containment.
-\end{lemma}
-\begin{proof}
-  Since $A, B$ both contain the identity matrix, the product $AB$ must
-  contain both every row of $A$ and every column of $B$.
-\end{proof}
-
-\begin{lemma}
-  \thlabel{lem:reflexivejtrivial}
+  \thlabel{lem:ReflexiveJRelation}
   $\Refn$ is $\J$-trivial. 
 \end{lemma}
 \begin{proof}
   If $A \J B$, then $A \leq B$ and $B \leq A$ with respect to containment. Hence
   $A = B$.    
 \end{proof}
+Note that it also follows that $AB$ has at least as many $1$s as the maximum
+number of $1$s in $A$ or $B$. It also follows from the lemma that any
+decomposable element $A$ is decomposable into a product of elements not
+$\J$-related to $A$.
 
-In order to determine generating sets for $\Refn$, we require the following results:
+We now prove several results relating to decomposability of elements in $\Refn$.
 
 \begin{lemma}
-  \thlabel{lem:reflexivegenstrimorelem}
-  If $A$ is a non-trim, non-elementary matrix, then $A$ is properly
-  decomposable.
+  \thlabel{lem:ReflexiveNonTrimDecomposable}
+  Every matrix in $\Refn$ that is neither trim nor elementary is decomposable in
+  $\Refn$.
 \end{lemma}
 \begin{proof}
-Let $A$ be a non-trim, non-elementary matrix. Then $A$ has some row $i$
-contained in some other row $j$. Let $B$ be the matrix obtained by setting entry
-$i$ of row $j$ to be $0$. Then $B < A$ with respect to  containment, and letting
-$C$ be the greedy left multiplier of $(A, B)$, $A = CB$. Hence $B, C > A$ in the
-$\J$-order. As $A$ is non-elementary, $B$ and $C$ are non-identity matrices;
-hence $A$ is properly decomposable.
+  Let $A \in \Refn$ be neither trim nor elementary.
+  Since $A$ is not trim, it is either not row-trim or not column-trim (or both).
+  Suppose that $A$ is not row-trim; then there exist some $1 \leq i, j
+  \leq n$ such that the $i$th row $A_{i*}$ is contained in the $j$th row
+  $A_{j*}$.
+  Let $B$ be the matrix obtained by setting entry $i$ of row $j$ of $A$ to be
+  equal to $0$, that is
+  \[B_{kl} = \begin{cases} 
+                0 \quad& k = i \text{ and } l = j \\ 
+                A_{kl} \quad& \text{otherwise.} 
+              \end{cases} \]
+  Since $i \neq j$ and $A$ is reflexive, so too is $B$. Now $B_{j*} \cup A_{i*}
+  = A_{j*}$, and so $A = E^{j,i}B$. By \thref{lem:ReflexiveJRelation} neither
+  $E^{j,i}$ nor $B$ is $\J$-related to $A$.
+  
+  If, instead, $A$ is column trim, then the same argument applied to the
+  transpose $A^T$ demonstrates that $A^T$ may decomposed in such a way, and thus
+  $A$ may also.
 \end{proof}
 
 \begin{lemma}
   \thlabel{lem:reflexiveelementaryindecomposable}
-  Elementary matrices are properly indecomposable in $\Refn$.
+  Elementary matrices are indecomposable in $\Refn$.
 \end{lemma}
 \begin{proof}
   Elementary matrices are precisely those matrices in $\Refn$ containing $n + 1$
-  ones. Since non-identity matrices in $\Refn$ have at least $n + 1$ ones, by
-  \thref{lem:reflexivecontainment} elementary matrices are not properly
-  indecomposable.
+  ones. By the observation that the product of two matrices in $\Refn$ contain
+  at least as many $1$s as the maximum number of ones in a factor, it follows
+  that if an elementary matrix is decomposable it is decomposable into other
+  elementary matrices. However, it is easy to show that the only way of writing
+  a reflexive elementary matrix $E$ as a product of elementary matrices is $E =
+  E^{k}$; hence elementary matrices are indecomposable.
 \end{proof}
 
 \begin{cor}
   \thlabel{cor:reflexiveindecomposable}
-  Let $X$ denote the set of matrices in $\Refn$ that are not properly
-  decomposable, $T \subset X$ denote the trim matrices in $X$, and $E$ denote
-  the elementary matrices. Then $X \setminus T = E$. 
+  An indecomposable element of $\Refn$ is either trim or elementary.
 \end{cor}
 
-%TODO: use the generating set lemma from section 2 here
-\begin{lemma}
-  The unique minimal (monoid) generating set for $\Refn$ is $T \cup E$.
-\end{lemma}
-\begin{proof}
-  We first note that $T$ must be contained in any generating set for $\Refn$.
-  Since the elements of $E$ are precisely those reflexive matrices containing
-  $n + 1$ ones, \thref{lem:reflexivecontainment} implies that they are not
-  properly decomposable and hence $E$ must be contained in any generating set.
-
-  Now let $A \in \Refn$; we must show that $A \in \genset{T \cup E}$. If $A \in
-  T \cup E$ then we are done, so suppose not. By
-  \thref{lem:reflexivegenstrimorelem} and the definition of $T$, $A$ must be a
-  properly decomposable matrix; say $A = BC$ for $B, C \in \Refn\setminus\{I,
-  A\}$. By \thref{lem:reflexivejtrivial}, $B$ and $C$ are strictly above $A$ in
-  the $\J$-order of $\Refn$. Now if $B$ or $C$ are not in $T \cup E$, we may
-  again decompose to find elements still higher in the $\J$-order. Since $\Refn$
-  has finite height, we must eventually not be able to properly decompose the
-  elements we have found; by \thref{cor:reflexiveindecomposable} we have then
-  found a decomposition of $A$ as a product of matrices in $T \cup E$.
+\begin{proof}[Proof of \thref{thm:ReflexiveGenSet}]
+  Let $T$ denote the set of indecomposable trim matrices, and $\mathcal{E}$
+  denote the set of reflexive elementary matrices. By
+  \thref{ReflexiveJRelation} and \thref{cor:reflexiveindecomposable}, it follows
+  from \thref{lem:GenSetDecomposition} that $\genset{T \cup \mathcal{E}} =
+  \Refn$. Since each element of $T \cup \mathcal{E}$ is decomposble, $T \cup
+  \mathcal{E}$ must be contained in any generating set for $\Refn$, and hence is
+  minimal.
 \end{proof}
 
-Given a matrix $A \in \Refn$, it is helpful to be able to determine whether $A$
-is properly decomposable. The following lemmas suggest a method for doing so.
-
-\begin{lemma}
-  \thlabel{lem:greedymaximal}
-  Given matrices $A, B \in \Bn$:
-  \begin{enumerate}[label={\rm (\roman*)}]
-    \item
-      the greedy left multiplier $C$ of $(A, B)$ is maximal with respect to
-      containment in the set $\set{X \in \Bn}{XA \leq B}$,
-    \item 
-      the product $CA$ is maximal with respect to containment amongst products
-      $XA$ contained in $B$.
-  \end{enumerate}
-\end{lemma}
-\begin{proof}
-  Let $D \in \set{X \in \Bn}{XA = B}$, and suppose that row $i$ of $D$ contains
-  a $1$ in position $j$. Then row $j$ of $A$ is contained in row $i$ of $B$, and
-  hence $C$ has a $1$ in position $j$ of row $i$. Therefore $D \leq X$. The
-  second part follows directly from this.
-\end{proof}
+We now discuss how such minimal generating sets may be computed. Since it is
+easy to enumerate the reflexive elementary matrices, the problem is determining
+the set of indecomposable trim matrices in $\Refn$.
+The following lemmas give a method for testing indecomposability.
 
 \begin{lemma}
   \thlabel{lem:decomposeintersection}
@@ -1369,28 +1358,28 @@ is properly decomposable. The following lemmas suggest a method for doing so.
   Suppose that $A = BC$ for $B, C \in \Refn \setminus\{I, A\}$, and let $B', C',
   K_i$ be defined as above. Fix $i$, and consider the $i^{\text{th}}$ row $C_i'$
   of $C'$. By the definition of $K_i$, for each $j \in K_i$, we have $C_i \leq
-  A_j$; hence $C_i \leq C'_i \leq A_j$. This implies that $A = BC'$, since $A =
-  BC \leq BC' \leq A$. By \thref{lem:greedymaximal}, $A = B'C'$, and $B' \in
-  \Refn$ since $B \leq B'$. Since $C_i \leq C'_i$ for all $i$, $C'$ is also in
-  $\Refn$. It remains to show that neither $B', C' \not\in \{I, A\}$. Note
-  that since $B \leq B'$ (\thref{lem:greedymaximal}) and $C \leq C'$, $B', C'$
-  are not the identity matrix. Since $A$ is trim, if $B'$ or $C'$ were equal
-  to $A$ the product $B'C'$ would have more ones than $A$ does.\\
-  ($\Leftarrow$) Immediate.
+  A_j$; hence $C_i \leq C'_i = \cap_{K_i} A_j \leq A_j$. This implies that $A =
+  BC'$, since $A = BC \leq BC' \leq A$. By \thref{lem:GreedyMultipliers}, $A =
+  B'C'$. Observe that since $A = BC'$, by the definition of the greedy left
+  multiplier we must have $B \leq B'$. Hence $B' \in \Refn$. Since $C_i \leq
+  C'_i$ for all $i$, $C'$ is also in $\Refn$. It remains to show that neither
+  $B'$ nor $C'$ belongs to $\{I, A\}$. Note that since $B \leq B'$ and $C \leq
+  C'$, $B', C'$ are not the identity matrix. Since $A$ is trim, if $B'$ or $C'$
+  were equal to $A$ the product $B'C'$ would have more ones than $A$ does, but
+  $A = B'C'$.
+  \\ ($\Leftarrow$) Immediate.
 \end{proof}
 Hence, in order to determine whether a trim matrix $A$ is decomposable it
 suffices to:
 \begin{enumerate}
   \item generate all matrices $C$ with rows intersections of rows of $A$, and
     for each $C$
-    %TODO: fix this
-  \item check whether the product $BC$ with the greedy left multiplier is equal
-    to $A$, and $B, C \not\in \{I, A\}$.
+  \item test whether the product $BC$ of $C$ with the greedy left multiplier
+    $C$ of $(A, B)$ is equal to $A$, and $B, C \not\in \{I, A\}$.
 \end{enumerate}
 If no such matrices $B, C$ are found, then $A$ is indecomposable. This method is
 clearly superior to checking all products of matrices in $\Refn$, but still
 quickly becomes infeasible to use for all trim matrices in $\Refn$.\\
-%TODO: tables
 
 In order to reduce the time spent checking matrices using
 \thref{lem:decomposeintersection}, we would like to only check the smallest
@@ -1503,7 +1492,7 @@ We then have the following algorithm for finding a minimal generating set for
 $\Refn$:
 \begin{alg}
   \thlabel{alg:ReflexiveGenSet}
-  Computing a minimal generating set for $\Refn$ \\
+  Computing the minimal generating set for $\Refn$ \\
   \textbf{Input}: A natural number $n$.\\
   \textbf{Output}: A minimal generating set for $\Refn$.
 \begin{enumerate}
@@ -1516,7 +1505,7 @@ $\Refn$:
     \thref{lem:decomposeintersection}, leaving a set $T$ of trim matrices that
     are not properly decomposable
   \item
-    The minimal generating set of $\Refn$ is then $T \cup E$.
+    Return $T$ together with the reflexive elementary matrices.
 \end{enumerate}
 \end{alg}
 Using this algorithm, we can calculate the sizes of minimal generating sets up
@@ -1550,7 +1539,6 @@ the $12$ difficult matrices for $n = 7$.
 
 %TODO: get rid of "indexed by" everywhere
 
-%TODO: rework this intro
 There is a particularly interesting submonoid of $\Bn$ consisting of those
 boolean matrices containing a permutation matrix is particularly interesting. It
 is often called the \emph{Hall monoid} since matrices containing a permutation
@@ -1560,9 +1548,10 @@ Hall monoid by $\Halln$. For convenience, we shall often simply say that a Hall
 matrix contains a permutation when it contains the corresponding permutation
 matrix.
 
-The main result of this section is the following theorem.  Unlike the monoid of
-reflexive boolean matrices $\Refn$, $\Halln$ has minimal generating sets that
-are strongly related to the minimal generating sets for $\Bn$.
+The main result of this section is the following theorem. Unlike the monoid of
+reflexive boolean matrices $\Refn$, the Hall monoid $\Halln$ has minimal
+generating sets that are strongly related to the minimal generating sets for
+$\Bn$.
 \begin{thm}
   \thlabel{thm:HallGenSet}
   Every minimal generating set for $\Halln$ is obtained by removing a rank $n-1$
@@ -1585,26 +1574,19 @@ We shall say that a subset $X$ of the rows of a matrix \emph{satisfies the Hall
 that a matrix satifies the Hall condition if every subset of the rows satisfies
 the Hall condition.
 
-% TODO: make this just text, and clarify (at least as many ones as the maximum)
-The fact that elements of $\Halln$ contain a permutation leads the following
-useful observation. Given two matrices $A, B \in \Halln$
-\begin{lemma}
-  \thlabel{lem:HallContainment}
-  For any $A, B \in \Halln$, the product $AB$ contains at least as many ones as
-  $A$ or $B$ does.
-\end{lemma}
-\begin{proof}
-  Since $A \in \Halln$, $A$ contains a permutation matrix; hence $AB$ contains a
-  row-permuted copy of $B$. Similarly, $AB$ contains a column-permuted copy of
-  $A$.
-\end{proof}
+Similarly to the case for reflexive matrices, the fact that Hall matrices contain
+permutations gives useful information on products of matrices. Given two
+matrices $A, B \in \Halln$, both $A$ and $B$ contain a permutation matrix; hence
+$AB$ contains a row-permuted copy of $B$ and a column-permuted copy of $A$. It
+follows that $AB$ contains at least as many $1$s as the maximum number of $1$s
+in $A$ or $B$.
 
-The Hall monoid is similar in certain ways to $\Refn$. In particular the
-$\J$-relation is easily described through the following lemmas.
+The $\J$-relation for $\Halln$ is also easily described through the following
+lemmas
 \begin{lemma}
   \thlabel{lem:HallJRelation}
-  Two matrices $A, B \in \Halln$ are $\J$-related in $\Halln$ if and only if $A
-  = PBQ$ for two permutation matrices $P, Q \in S_n$.
+  Two matrices $A, B \in \Halln$ are $\J$-related in $\Halln$ if and only if
+  they are similar.
 \end{lemma}
 \begin{proof}
   The reverse direction is clear. For the forward direction, suppose that $A =
@@ -1613,7 +1595,6 @@ $\J$-relation is easily described through the following lemmas.
   copy of $B$. Since, similarly, $B$ contains a row- and column-permuted copy of
   $A$, it follows that $A$ is a row- and column-permutation of $B$.
 \end{proof}
-
 
 We will prove \thref{thm:HallGenSet} through a series of lemmas. The
 first thing to prove is that every element specificed actually belongs to
@@ -1646,32 +1627,15 @@ finding such a decomposition.
   \Halln$ such that $A = CB$, and neither $B$ nor $C$ is $\J$-related to $A$.
 \end{lemma}
 \begin{proof}
-  We may assume without loss of generality that $A$ contains the identity
-  permutation, since $\Halln$ contains $S_n$ and the properties in the lemma are
-  preserved under row and column permutations.
-
-  Since $A$ is not trim, it is either not row-trim or not column-trim (or both).
-  Suppose that $A$ is not row-trim; then there exist some $1 \leq i, j
-  \leq n$ such that the $i$th row $A_{i*}$ is contained in the $j$th row
-  $A_{j*}$.
-  Let $B$ be the matrix obtained by setting entry $i$ of row $j$ of $A$ to be
-  equal to $0$, that is
-  \[B_{kl} = \begin{cases} 
-                0 \quad& k = i \text{ and } l = j \\ 
-                A_{kl} \quad& \text{otherwise.} 
-              \end{cases} \]
-  Since $i \neq j$ and $A$ contains the identity permutation, so does $B$;
-  therefore $B$ is a Hall matrix. Now $B_{j*} \cup A_{i*} = A_{j*}$, and so $A =
-  E^{j,i}B$. By \thref{lem:HallJRelation} neither $E^{j,i}$ nor $B$ is
-  $\J$-related to $A$.
-  
-  If, instead, $A$ is column trim, then the same argument applied to the
-  transpose $A^T$ demonstrates that $A^T$ may decomposed in such a way, and thus
-  $A$ may also.
+  We may assume that $A$ contains the identity permutation, since $A$ is
+  decomposable into such matrices $B$ and $C$ if and only if every matrix
+  similar to $A$ is decomposable into matrices similar to $B$ and $C$. The lemma
+  now follows using the same proof as in
+  \thref{lem:ReflexiveNonTrimDecomposable}.
 \end{proof}
 
-It will be in the following proofs to define $e_i$ to be the boolean vector of
-length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
+It will be convenient in the following proofs to define $e_i$ to be the boolean
+vector of length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
 
 \begin{lemma}
   \thlabel{lem:HallAssumptions}
@@ -1692,10 +1656,11 @@ length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
   too is $C$. Since $B$ was chosen to be a non-permutation matrix, the product
   $CB$ contains more $1$s than $C$. But $A = CB$, and $C$ is similar to $A$, a
   contradiction. Hence $C$ is not $\J$-related to $A$. Since $R(A) \subsetneq
-  R(B)$, $B$ is not $\J$-related to $A$ in $\Bn$ and thus in $\Halln$.
+  R(B)$, $B$ is not $\J$-related to $A$ in $\Bn$ and thus is not $\J$-related to
+  $A$ in $\Halln$.
 
   If $C$ contains a $1$ in every column, we are done. However, there is no
-  reason for this to be the case.
+  reason that this must be the case.
 
   Suppose that the columns of $C$ indexed by $X = \{c_1, c_2, \ldots, c_k\}$ do
   not contain a $1$, and that $B$ contains the permutation $\alpha$. For $1 \leq
@@ -1727,14 +1692,6 @@ length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
   $\J$-related to $B'$ applies to $A$ and $C'$, to show that $A$ is not
   $\J$-related to $C'$ in $\Halln$.
 \end{proof}
-
-
-% TODO: note that the maximal $\J$-classes are the same as in $\Bn$
-% TODO: would be nice to include the top of the diagram of the $\J$-order of
-% some Hall monoid
-
-% TODO: refactor this into a kind of "applying this step reduces this
-% bad-Hallness-parameter and preserving these other properties"
 
 While \thref{lem:HallAssumptions} does not provide the decomposition we
 require in order to use \thref{lem:GenSetDecomposition}, it provides a
@@ -1901,13 +1858,16 @@ We may now prove \thref{thm:HallGenSet}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Transformation Hall Matrices}
-\label{sec:TransBoolMat}
-The previous section may be viewed in the context of ``matrices which contain a
-certain permutation''. We now relax this requirement to consider the monoid
-$\MTn$ of matrices which contain a transformation matrix; that is, have a $1$ in
-every row.
+\label{sec:TransBoolMat} 
+After considering the reflexive and Hall matrices, it
+is natural to consider the monoids obtained by relaxing the restrictions on
+which patterns must be contained. In this section, we consider the monoid $\MTn$
+of matrices which contain a transformation matrix; that is, have a $1$ in every
+row. As in the case of the Hall monoid, the minimal generating sets for $\MTn$
+are strongly related to minimal generating sets for $\Bn$.
 
-\begin{lemma}
+%TODO: this is the next proof to tidy up
+\begin{thm}
   All minimal generating sets for $\MTn$ are obtained by replacing the rank $n -
   1$ matrix in a minimal generating set for $\Bn$ by a matrix similar to
   \begin{align*}
@@ -1920,7 +1880,7 @@ every row.
       0 & 0 & 0 & 0 & \cdots & 1
     \end{pmatrix}
   \end{align*}
-\end{lemma}
+\end{thm}
 \begin{proof}
   Since all prime matrices have full rank, such a set $G$ is contained in
   $\MTn$. To see that it is a generating set, consider a matrix $A$ which is not
@@ -1952,7 +1912,6 @@ every row.
   set for $\MTn$. Now $F'$ is not Hall, while all prime and elementary matrices
   are Hall, so $F'$ is not generated by prime and elementary matrices. Hence,
   any such generating set $G$ is minimal.
-  %TODO: clean up this last paragraph.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
