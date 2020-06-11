@@ -33,6 +33,10 @@ tabu, enumitem}
 
 \DeclareMathOperator{\im}{im}
 
+\newcommand{\num}{\mathbf{num}}
+\newcommand{\vect}{\mathbf{vec}}
+
+
 % For Algorithms
 \SetKwProg{Fn}{Function}{}{}
 \SetKwFunction{FZeroIfNotSubset}{ZeroIfNotSubset}
@@ -382,22 +386,23 @@ finite.
   there exist $y, z \in M\setminus\{e, x\}$ such that $x = yz$.
 \end{de}
 
-% TODO: this isn't really accurate, I don't mean the maximal $\J$-classes but
-% some big chunk of $\J$-classes
-% TODO: actually, should just use decomposability!
 \begin{lemma}
   \thlabel{lem:GenSetDecomposition}
-  Let $S$ be a finite semigroup and let $X$ be a subset of $S$ which generates
-  all elements of the maximal $\J$-classes of $S$. If every $s \in S$ that is
-  not in a maximal $\J$-class of $S$ can be written as a product of
-  strictly-greater elements in the $\J$-order, then $X$ generates $S$. 
+  Let $S$ be a finite semigroup and let $X$ be a subset of $S$, such that for
+  every element $x \in X$ with $\J$-class $J_x$, we have $J_x \subseteq
+  \genset{X}$. If every $s \in S$ that is not $\J$-related to an element of $X$
+  can be written as a product of elements, none of which are $\J$-related to $s$
+  in $S$, then $X$ generates $S$. 
 \end{lemma}
 \begin{proof}
-  Let $x \in S$. Then either $x$ is in a maximal $\J$-class, in which case we
-  are done, or $x$ may be written as a product of elements which lie strictly
-  above $x$ in the $\J$-order. This argument may be repeated for each of those
-  elements. Since $S$ is finite, we must eventually reach a decomposition of $x$
-  into elements in maximal $\J$-classes, and hence $x \in \genset{x}$.
+  Let $x \in S$. Then either $x$ is in a $\J$-class of an element belonging to
+  $X$, in which case we are done, or $x$ may be written as a product of elements
+  which are not $\J$-related to $x$, and hence lie strictly above $x$ in the
+  $\J$-order. This same argument applies to each of those elements. Since $S$
+  has finitely many $\J$-classes, this process must eventually terminate.
+  However, the process of decomposing elements may only terminate if each
+  element to be decomposed lies in the $\J$-class of an element of $X$; hence $s
+  \in \genset{X}$.
 \end{proof}
 
 \begin{prop}[Wilf, elsewhere]
@@ -424,7 +429,7 @@ $1 \leq i,j \leq n$, $A_{ij} = 1$ implies that $B_{ij} 1$; that is, $B$ contains
 a $1$ in every position in which $A$ does.
 
 We consider the submonoids:
-\begin{enumerate}
+\begin{enumerate}[label={\rm (\roman*)}]
   \item $\Refn$, of matrices containing the identity (reflexive matrices),
   \item $\Halln$, of matrices containing a permutation matrix (Hall matrices),
   \item $\MTn$, of matrices containing a transformation matrix, and
@@ -722,7 +727,7 @@ compute with. A linear reduction to graph isomorphism, described in
 Section~\ref{sec:FullBoolMat}, shows that the problem of determining whether two
 reduced matrices are $\J$-related has the same complexity as graph isomorphism.
 A recent paper of Babai claims that this complexity is at most quasi-polynomial;
-see~\ref{TODO:babai}.
+see~\cite{Babai2016aa}.
 The previous lemma also implies that the $\J$-class of any prime matrix $P$
 consists of prime matrices similar to $P$, and we refer to such a $\J$-class as
 a \defn{prime $\J$-class}. Note that a prime $\J$-class therefore contains at
@@ -812,14 +817,14 @@ $n = 1, \ldots, 8$. The number of trim matrices in Breen form in $\Bn$ is
 comparable to the number of $\J$-classes for $n \leq 8$.
 Since is infeasible to compute the image of each of the $2^{n^2}$ elements of
 $\Bn$ for $n \geq 7$; we instead compute the images of a smaller set of matrices
-which contains at least one matrix of every $\J$-class of $\Bn$.
-particular form. 
+of a particular form, which contains at least one matrix of every $\J$-class of
+$\Bn$.
 
 \begin{de}[{{\cite[Proposition 3.6]{Breen1997aa}}}]
   \thlabel{de:BreenForm}
   We say that a matrix $A \in \Bmn$ is in \emph{Breen form} if it has all of
   the following properties:
-  \begin{enumerate}
+  \begin{enumerate}[label={\rm (\roman*)}]
   \item{$A$ is reduced,}
   \item{all non-zero rows of $A$ are at the bottom,}
   \item{all non-zero columns of $A$ are at the right,}
@@ -846,6 +851,7 @@ In contrast, being in Breen form is not enough to guarantee that a matrix is
 minimal. Consequently there is not a unique matrix in each $\J$-class of $\Bn$
 in Breen form, as the following example demonstrates. 
 \begin{ex}
+  \thlabel{ex:SimilarBreenMatrices}
 Let $A, B \in \Bn$ be the matrices defined by
 \begin{align*}
   \begin{pmatrix}
@@ -930,7 +936,8 @@ and we use the software bliss\footnote{In fact, a slightly-modified version of
   bliss which avoids repeated memory allocation was used; this is available at
   \cite{https://github.com/james-d-mitchell/bliss}}~\cite{Junttila2007aa, Bliss} to obtain such functions $\psi_n$. 
 \begin{lemma}
-  The function $\Phi_n = \Gamma^{-1}\psi_n\Gamma$ is a canonical form when
+  \thlabel{lem:GraphCanonicalForms}
+  The functions $\Phi_n = \Gamma^{-1}\psi_n\Gamma$ are canonical forms when
   restricted to reduced matrices. 
 \end{lemma}
 \begin{proof}
@@ -963,8 +970,7 @@ and we use the software bliss\footnote{In fact, a slightly-modified version of
 \end{proof}
 
 Given $v \in \B^n$, it will convenient to denote the number represented by $v$
-in binary as $\bar{v}$. We will also write $n^\dagger$ to denote the boolean
-vector such that $\bar{n^\dagger} = n$.
+in binary as $\num(v)$. We will also write $\vect$ for $\mathbf{num}^{-1}$.
 
 We now describe how to backtrack through matrices in Breen form to find a
 superset of prime matrices $Q_{\Phi_n}$. This may be seen as a depth-first
@@ -980,16 +986,16 @@ n$) and leaves $n \times n$ matrices.
     \item We assume that we are at a node $A$ of dimension $m \times n$, and the
       index of the first non-zero row of $A$ is $f \leq m$. 
     \item If $m = n$, the non-zero columns of $A$ form a strictly increasing
-      sequence, and $A$ is column-reduced, then add $\Phi_n(A)$ to $X$, the set
-      of matrices to return.
+      sequence under $\num$, and $A$ is column-reduced, then add $\Phi_n(A)$ to
+      $X$, the set of matrices to return.
     \item If $m < n$, then for each $x \in \{\bar{A_{m*}} + 1,
         \ldots, 2^n - 1\}$, if:
       \begin{enumerate}[label={(\roman*)}]
-        \item $x^\dagger$ does not contain $A_{l*}$ for any $1 \leq l \leq m$,
+        \item $\vect(x)$ does not contain $A_{l*}$ for any $1 \leq l \leq m$,
           and
-        \item $x^\dagger$ has at least as many ones as $A_{f*}$,
+        \item $\vect(x)$ has at least as many ones as $A_{f*}$,
         \item for all column indices $1 \leq i < j \leq m$ such that $A_{*i} =
-          A_{*j}$, if $x^\dagger_i = 1$ then $x^\dagger_j = 1$.
+          A_{*j}$, if $\vect(x)_i = 1$ then $\vect(x)_j = 1$.
       \end{enumerate}
       set the current node to be the matrix obtained from $A$ by adjoining
       $x^\dagger$ as the last row, and return to step 1.
@@ -1115,9 +1121,7 @@ Table~\ref{tab:filter1numbers}, and so this algorithm is only suitable for small
 \end{table}
 
 Using \thref{alg:canonicalbacktrack} and \thref{alg:filter1}, minimal
-generating  Then $B$ is prime or elementary, and hence is similar to some matrix
-  in $G$.
-sets for $n \leq 7$ may be obtained.
+generating sets for $n \leq 7$ may be obtained.
 
 For $n=8$ this algorithm is no longer sufficient, and it is necessary to use
 heuristics to reduce the size of $Q$. The simplest way to do this is to select a
@@ -1135,17 +1139,16 @@ the following lemma.
   then setting $B_{n,n} = 1$. Then $B$ is prime in $\Bn$.
 \end{lemma}
 \begin{proof}
-  We will show that $R(B)$ is maximal in $\beta_n$, by showing that if 
-  $R(C) \in \beta_n$ contains $R(B)$, then $r(B) = r(C)$.
-  Let $C$ be such a matrix.
-  The last row of $B$ must also be in $C$ since it is a minimal in $\B^{n}$. 
-  Now $R(A)$ has a unique basis of $n-1$ rows which must be contained in both $B$ and
-  $C$, so we have $r(B) = r(C)$.
+  Let $C$ be a matrix with row space maximal in $\beta_n$, such that $R(B)
+  \subseteq R(B)$.  The last row of $B$ must also be in $C$ since it is a
+  minimal in $\B^{n}$. Now $R(A)$ has a unique basis of $n-1$ rows which must be
+  contained in both $B$ and $C$, so we have $r(B) = r(C)$; hence $R(B)$ is
+  maximal in $\beta_n$. Since $B$ is not elementary, it is prime.
 \end{proof}
 
 For $n=8$ prefiltering by some of the large row spaces and extended prime
 matrices is enough to obtain a minimal generating set, though the computation is
-lengthy; see Table~\cite{tab:runtimestats} for some details. A significant
+lengthy; see Table~\ref{tab:runtimestats} for some details. A significant
 improvement can be obtained by using Zaretskii's Theorem.
 
 \begin{table}
@@ -1178,8 +1181,8 @@ analogously.
 
 It is an immediate corollary of Zaretskii's Theorem that $A \leq_{\J} B$ if and
 only if there exists a homomorphic embedding of the graph of $R(A)$ into the
-graph of $R(B)$ which respect non-edges. An efficient search for such embeddings
-is implemented in~\cite{Digraphs2020aa}.
+graph of $R(B)$ which respect non-edges. An efficient and optimised search for
+such embeddings is implemented in~\cite{Digraphs2020aa}.
 
 For practical computational purposes, it is useful to add extra structure to the
 row space graphs to guide searches for embeddings. The \emph{augmented graph of
@@ -1215,9 +1218,10 @@ supersets of prime matrices.
 
 \begin{alg}
   \thlabel{alg:filter2} Filtering canonical forms by digraph embeddings.\\
-  \textbf{Input}: A canonical superset $Q$ of prime matrices $P$, which does not
-  contain a permutation matrix.\\
-  \textbf{Output}: The set $P$.
+  \textbf{Input}: A set $Q_{\Phi_n}$, containing the images $P_{\Phi_n}$ of the
+  prime matrices of $\Bn$ under $\Phi_n$, and not containing any permutation
+  matrices. \\
+  \textbf{Output}: The set $P_{\Phi_n}$.
   \begin{enumerate}
   \item
     Generate the set $G$ of augmented graphs of row spaces of matrices in $Q$.
@@ -1334,7 +1338,7 @@ is properly decomposable. The following lemmas suggest a method for doing so.
 \begin{lemma}
   \thlabel{lem:greedymaximal}
   Given matrices $A, B \in \Bn$:
-  \begin{enumerate}
+  \begin{enumerate}[label={\rm (\roman*)}]
     \item
       the greedy left multiplier $C$ of $(A, B)$ is maximal with respect to
       containment in the set $\set{X \in \Bn}{XA \leq B}$,
@@ -1389,10 +1393,13 @@ quickly becomes infeasible to use for all trim matrices in $\Refn$.\\
 %TODO: tables
 
 In order to reduce the time spent checking matrices using
-\thref{lem:decomposeintersection}, we would like to only check a smaller set of
-canonical representatives. Unfortunately, the following two matrices illustrate
-that two reflexive matrices can have the same canonical form under row and
-column permutations in $\Bn$, while only one of them is decomposable in $\Refn$. 
+\thref{lem:decomposeintersection}, we would like to only check the smallest
+necessary set of representatives of some equivalence relation. The most obvious
+choice is to take canonical representatives in $\Bn$. However, the following
+example illustrates that two reduced reflexive matrices can belong to the same
+$\J$-class of $\Bn$ while only one of them is decomposable in $\Refn$; hence we
+can not use the same canonical forms $\Phi_n$ as were used in
+\thref{alg:canonicalbacktrack}, \thref{alg:filter1}, and \thref{alg:filter2}. 
 \begin{ex}
   Let
 \begin{align*}
@@ -1431,8 +1438,8 @@ $5$ of $A$. However, $A$ is indecomposable whilst
 \end{align*}
 \end{ex} 
 
-However, the following lemma shows that a more restricted form of
-canonicalisation can be applied in $\Refn$:
+However, the following lemma shows that we should consider more restricted
+permutations.
 
 \begin{lemma}
   \thlabel{lem:reflexivecanonical}
@@ -1447,22 +1454,63 @@ canonicalisation can be applied in $\Refn$:
   the other direction is dual, since $PAP^{-1} = B$.
 \end{proof}
 
-This means that it is sufficient to enumerate the trim reflexive matrices in the
-following standard form:
-\begin{itemize}
+Hence it is sufficient to consider representatives of the equivalence relation
+which relates any two matrices which are similar under the same row and column
+permutation. In order to compute these representatives, we modify the
+construction of the bipartite graphs $\Gamma$ of Section~\ref{sec:FullBoolMat}.
+
+Given a matrix $A \in \Refn$, we form the vertex-coloured tripartite graph
+$\Gamma_\text{id}(A)$ with vertices $\{1, \ldots, 3n\}$, colours 
+\[\mathbf{col}(v) = \begin{cases}
+    0 \qquad &1 \leq v \leq n, \\
+    1 \qquad &n < v \leq 2n, \\
+    2 \qquad &2n < v \leq 3n,
+  \end{cases}
+\]
+, an edge from $i$ to $j+n$ if and only if $A_{ij} = 1$ for $1 \leq i \leq n$,
+and an edge from $i + 2n$ to $i$ and $i + n$ for $1 \leq i \leq n$. The numbers $\{1,
+  \ldots, n\}$ represent indices of rows, and the numbers $\{n + 1, \ldots, 2n\}$
+represents indices of columns in the matrix $A$. The additional vertices $\{2n +
+  1, \ldots, 3n\}$, adjacent to both the corresponding row and column nodes,
+force an isomorphism of $\Gamma_\text{id}(A)$ to induce the same permutation on rows and
+columns of $A$ in the same way that a permutation was induced in
+\thref{lem:GraphCanonicalForms}. As before, we may obtain canonical forms
+$\Psi_n$ for the graphs $\Gamma_{\text{id}}(A)$ via bliss. Since
+$\Gamma_\text{id}$ is clearly injective, we may compute the functions
+$\Xi_n = \Gamma_\text{id}\Psi_n\Gamma_\text{id}^{-1}$. It is easy to show that
+the equivalence classes $\ker\Xi$ are precisely the classes of matrices which
+are similar under permuting rows and columns by the same permutation.
+
+As in Section~\ref{sec:FullBoolMat}, we wish to only enumerate matrices of a
+certain form. A similar argument to \cite[Proposition 3.6]{Breen1997aa} shows
+that by permuting the rows and columns of matrices by the same permutation,
+matrices in $\Refn$ can be put in the following \defn{reflexive Breen form}:
+
+\begin{enumerate}[label={\rm (\roman*)}]
   \item{all $1$s in the first row of $A$ are on the left,}
   \item{no row has fewer ones than the first row,}
   \item{if a $1$ appears in row $i$ in column $j$, then for each $k < j$ there
       is some row $l < i$ with a $1$ in position $k$.}
-\end{itemize}
+\end{enumerate}
+
+As in \thref{ex:SimilarBreenMatrices}, it is possible for two distinct matrices
+in this form to have the same value under $\Xi_n$.
+
+Now, given $\Xi_n$, a similar backtrack search to \thref{alg:canonicalbacktrack}
+allows appropriate represenatives of matrices to be enumerated.
 
 We then have the following algorithm for finding a minimal generating set for
 $\Refn$:
+\begin{alg}
+  \thlabel{alg:ReflexiveGenSet}
+  Computing a minimal generating set for $\Refn$ \\
+  \textbf{Input}: A natural number $n$.\\
+  \textbf{Output}: A minimal generating set for $\Refn$.
 \begin{enumerate}
   \item
-    Enumerate the trim reflexive boolean matrices in standard form using a
-    backtrack search, storing canonical representatives under a row and column
-    permutation in a set $S$
+    Enumerate the trim reflexive boolean matrices in reflexive Breen form using
+    the analogue of \thref{alg:canonicalbacktrack}, storing canonical
+    representatives under a row and column permutation in a set $S$
   \item 
     Filter out the properly decomposable matrices in $S$ using
     \thref{lem:decomposeintersection}, leaving a set $T$ of trim matrices that
@@ -1470,21 +1518,22 @@ $\Refn$:
   \item
     The minimal generating set of $\Refn$ is then $T \cup E$.
 \end{enumerate}
+\end{alg}
 Using this algorithm, we can calculate the sizes of minimal generating sets up
-to $n = 7$; these are contained in Table~\ref{tab:BMatResults}.
+to $n = 6$; these are contained in Table~\ref{tab:BMatResults}.
 
-There are a small number of matrices in $\Ref{7}$ for which an approach based on
+There are a small number of matrices in $\Ref{7}$ for which the approach based on
 \thref{lem:decomposeintersection} is too inefficient; we chose to use a
-different approach for $12$ matrices in total. Observe that a matrix $A$ is
+different method to test $12$ matrices in total. Observe that a matrix $A$ is
 decomposable into a product of generators $X_1 X_2 \ldots X_k$ from some minimal
 generating set if and only if $\alpha A \alpha^{-1} = \alpha (X_1 X_2 \ldots
 X_{k-1})\alpha^{-1}\alpha X_k \alpha^{-1}$ for all permutations $\alpha$. Since
-the set $S$ of Algorithm TODO contains $\alpha X_k \alpha^{-1}$ for some $\alpha
-\in S_n$, we can detect if $A$ is properly decomposable by testing whether
-$\alpha A \alpha^{-1} = CB$ for any $\alpha \in S_n$, $B \in S$ and with $C$ the
-greedy multiplier of $(\alpha A \alpha^{-1}, B)$. A brute force approach based
-on this observation is sufficient to filter the $12$ difficult matrices for $n =
-7$.
+the set $S$ of Algorithm \thref{alg:ReflexiveGenSet} contains $\alpha X_k
+\alpha^{-1}$ for some $\alpha \in S_n$, we can detect if $A$ is properly
+decomposable by testing whether $\alpha A \alpha^{-1} = CB$ for any $\alpha \in
+S_n$, $B \in S$ and with $C$ the greedy multiplier of $(\alpha A \alpha^{-1},
+B)$. A brute force approach based on this observation is sufficient to filter
+the $12$ difficult matrices for $n = 7$.
 
 % The single matrix that is kept is:
 %1000010
@@ -1502,20 +1551,31 @@ on this observation is sufficient to filter the $12$ difficult matrices for $n =
 %TODO: get rid of "indexed by" everywhere
 
 %TODO: rework this intro
-The submonoid of $\Bn$ consisting of those boolean matrices containing a
-permutation matrix is particularly interesting. It is often called the
-\emph{Hall monoid} since matrices containing a permutation matrix correspond to
-instances of the Hall marriage problem that have a solution, and are thus
-referred to as \emph{Hall matrices}. We will denote the Hall monoid by
-$\Halln$. For convenience, we shall often simply say that a Hall matrix contains
-a permutation when it contains the corresponding permutation matrix.
+There is a particularly interesting submonoid of $\Bn$ consisting of those
+boolean matrices containing a permutation matrix is particularly interesting. It
+is often called the \emph{Hall monoid} since matrices containing a permutation
+matrix correspond to instances of the Hall marriage problem that have a
+solution, and are thus referred to as \emph{Hall matrices}. We will denote the
+Hall monoid by $\Halln$. For convenience, we shall often simply say that a Hall
+matrix contains a permutation when it contains the corresponding permutation
+matrix.
 
-%TODO: state "the main result of this section is:"
+The main result of this section is the following theorem.  Unlike the monoid of
+reflexive boolean matrices $\Refn$, $\Halln$ has minimal generating sets that
+are strongly related to the minimal generating sets for $\Bn$.
+\begin{thm}
+  \thlabel{thm:HallGenSet}
+  Every minimal generating set for $\Halln$ is obtained by removing a rank $n-1$
+  matrix from a minimal generating set for $\Bn$. That is, every minimal
+  generating set for $\Halln$ consists of a set of representatives $P$ of the
+  prime $\J$-classes of $\Bn$ together with two generators for the group of units
+  and an elementary matrix.
+\end{thm}
 
-In order to prove our main result on the Hall monoid, we will need the following
-classical result, restated in our context.
+In order to prove this theorem, we will need the following classical result,
+restated in our context.
 
-\begin{thm}[Hall's Marriage Theorem]
+\begin{thm}[Hall's Marriage Theorem~{\cite[Theorem 1]{Hall1935aa}}]
   \thlabel{thm:HallMarriage}
   Let $A \in \Bn$. Then $A$ is a Hall matrix if and only if every union of $k$
   rows contains at least $k$ ones, for $1 \leq k \leq n$.
@@ -1525,13 +1585,9 @@ We shall say that a subset $X$ of the rows of a matrix \emph{satisfies the Hall
 that a matrix satifies the Hall condition if every subset of the rows satisfies
 the Hall condition.
 
-It will be useful in this section to define $e_i$ to be the boolean vector of
-length $n$ with a single $1$ in position $i$.
-
-The Hall monoid is similar in certain ways to $\Refn$. In particular
-the $\J$-relation is easily described through the following lemmas.
-
 % TODO: make this just text, and clarify (at least as many ones as the maximum)
+The fact that elements of $\Halln$ contain a permutation leads the following
+useful observation. Given two matrices $A, B \in \Halln$
 \begin{lemma}
   \thlabel{lem:HallContainment}
   For any $A, B \in \Halln$, the product $AB$ contains at least as many ones as
@@ -1543,6 +1599,8 @@ the $\J$-relation is easily described through the following lemmas.
   $A$.
 \end{proof}
 
+The Hall monoid is similar in certain ways to $\Refn$. In particular the
+$\J$-relation is easily described through the following lemmas.
 \begin{lemma}
   \thlabel{lem:HallJRelation}
   Two matrices $A, B \in \Halln$ are $\J$-related in $\Halln$ if and only if $A
@@ -1556,17 +1614,6 @@ the $\J$-relation is easily described through the following lemmas.
   $A$, it follows that $A$ is a row- and column-permutation of $B$.
 \end{proof}
 
-Unlike the monoid of reflexive boolean matrices $\Refn$, $\Halln$ has minimal
-generating sets that are strongly related to the minimal generating sets for
-$\Bn$.
-\begin{thm}
-  \thlabel{thm:HallGenSet}
-  Every minimal generating set for $\Halln$ is obtained by removing a rank $n-1$
-  matrix from a minimal generating set for $\Bn$. That is, every minimal
-  generating set for $\Halln$ consists of a set of representatives $P$ of the
-  prime $\J$-classes of $\Bn$ together with two generators for the group of units
-  and an elementary matrix.
-\end{thm}
 
 We will prove \thref{thm:HallGenSet} through a series of lemmas. The
 first thing to prove is that every element specificed actually belongs to
@@ -1622,6 +1669,9 @@ finding such a decomposition.
   transpose $A^T$ demonstrates that $A^T$ may decomposed in such a way, and thus
   $A$ may also.
 \end{proof}
+
+It will be in the following proofs to define $e_i$ to be the boolean vector of
+length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
 
 \begin{lemma}
   \thlabel{lem:HallAssumptions}
@@ -1801,7 +1851,7 @@ $0$-deficient and therefore belongs to $\Halln$.
     
   We wish to now show that $S$ contains a $1$ in every column, and that $A$ is
   not $\J$-related to $S$ or to $T$. That $S$ contains a $1$ in every column
-  follows from the union $y$ of the rows $W$ containing ones in each of the columns
+  follows from the union $y$ of the rows $W$ containing $1$s in each of the columns
   indexed by $W$, and the other rows being defined via the bijection $f$. That
   $T$ is not $\J$-related to $A$ follows from the same argument as above; since
   $A$ is trim so would be $B$, but $S$ contains at least one row with more than
@@ -1895,7 +1945,7 @@ every row.
   cannot continue producing matrices with fewer and fewer ones forever,
   eventually we must decompose one of the $A_i$s as desired; then the product $A
   = C_i B_i B_{i - 1} \ldots B_1$ consists of matrices strictly above $A$ in the
-  $\J$-order, which all lie in $\MTn$. Hence by \thref{lem:GenSetDecomposition},
+  $\J$-order, which all lie in $\MTn$. By \thref{lem:GenSetDecomposition},
   $G$ generates $\MTn$.
   Now, since every generating set for $\Bn$ must contain a representative of
   each prime $\J$-class and an elementary matrix, so too must every generating
@@ -1944,6 +1994,13 @@ particularly simple minimal generating set:
   For $n > 1$, the ranks of $\UTn$ and $\LTn$ are the $n$-th triangular number
   $T_n = \frac{n(n+1)}{2}$.
 \end{cor}
+\begin{proof}
+  Elementary matrices in $\UTn$ are precisely those in the form of an identity
+  matrix together with an additional $1$ in some position above the main
+  diagonal; hence there are $T_{n - 1}$ elementary matrices in $\UTn$. There are
+  $n$ matrices similar to $F$ in $\UTn$, and hence $T_{n - 1} + n =  T_n$
+  elements of the minimal monoid generating set.
+\end{proof}
 
 \section{Tropical matrices}
 %TODO: we would like to include the following results since they seem like a
