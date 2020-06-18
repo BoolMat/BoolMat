@@ -1,0 +1,720 @@
+\documentclass{article}
+
+\usepackage[cm]{fullpage}
+\usepackage{amsmath, amssymb, amsthm, enumerate, tikz,
+mathrsfs, color, comment, xcolor, algorithmicx,  mathtools, enumitem} 
+
+\usepackage[colorlinks]{hyperref}
+\hypersetup{linkcolor=blue, urlcolor=blue, citecolor=red}
+
+\setlength{\marginparwidth}{1in}
+\let\oldmarginpar\marginpar%
+\renewcommand\marginpar[1]{\-\oldmarginpar[\raggedleft\footnotesize #1]%
+{\raggedright\footnotesize #1}}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\M}{\mathscr{M}}
+\newcommand{\stab}{\operatorname{Stab}}
+\newcommand{\sym}{\operatorname{Sym}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\rank}{\operatorname{rank}}
+\renewcommand{\ker}{\operatorname{ker}}
+\newcommand{\coker}{\operatorname{coker}}
+\newcommand{\dom}{\operatorname{dom}}
+\newcommand{\ov}[1]{\overline{#1}}
+\newcommand{\codom}{\operatorname{codom}}
+\renewcommand{\P}{\mathcal{P}}
+\renewcommand{\L}{\mathscr{L}}
+\renewcommand{\H}{\mathscr{H}}
+\newcommand{\D}{\mathscr{D}}
+\newcommand{\J}{\mathscr{J}}
+\newcommand{\K}{\mathscr{K}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\R}{\mathscr{R}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\set}[2]{\{#1:#2\}}
+\newcommand{\n}{\{1,\ldots, n\}}
+\newcommand{\genset}[1]{\langle{#1}\rangle}
+\newcommand{\GAP}{{\sc GAP}}
+\newcommand{\Orb}{{\sc Orb}}
+\newcommand{\Semigroups}{{\sc Semigroups} }
+\renewcommand{\to}{\longrightarrow}
+\newcommand{\bigset}[2]{\big\{ {#1}:{#2} \big\}}
+\newcommand{\rowsp}{\operatorname{Row}}
+\newcommand{\colsp}{\operatorname{Col}}
+
+\newcommand{\mat}[4]{\begin{pmatrix}#1&#2\\#3&#4\end{pmatrix}}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{conj}[thm]{Conjecture}
+
+\title{Semigroups of square matrices over semirings}
+\author{Wilf A. Wilson}
+%\date{}
+
+\begin{document}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Definitions}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Very basic general definitions about rings}
+
+\begin{defn}
+  $\N = \{1, 2, \ldots\}$.
+\end{defn}
+
+\begin{defn}
+  A \emph{semiring} is a triple $(R, +, \times)$, consisting of a set $R$ and
+  binary operations $+$ and $\times$, such that $(R, +)$ is a commutative
+  monoid, $(R, \times)$ is a semigroup, $\times$ distributes over $+$, and the
+  additive identity is a multiplicative zero.
+\end{defn}
+
+The semiring $(R, +, \times)$ is usually referred to as $R$.
+
+\begin{defn}
+  A semiring is \emph{commutative} if its multiplication is commutative.
+\end{defn}
+
+\begin{defn}
+  Given a semiring $R$, the \emph{zero} of $R$, denoted by $0$, is the additive
+  identity and multiplicative zero of $R$.
+\end{defn}
+
+\begin{defn}
+  Given a semiring $R$ such that $(R, \times)$ is a monoid, the \emph{identity}
+  or \emph{one} of $R$, denoted by $1$, is the multiplicative identity of $R$.
+\end{defn}
+
+\begin{defn}
+  An element of a semiring is \emph{invertible}, or a \emph{unit},
+  if the semiring has a one and the element has a multiplicative inverse.
+\end{defn}
+
+\begin{defn}
+  The \emph{group of units} of a monoid is its subgroup of invertible elements.
+  The group of units of a semiring with one is the group of units of its
+  multiplicative monoid.
+\end{defn}
+
+\begin{defn}
+  A \emph{ring} is a semiring $(R, +, \times)$ such that $(R, +)$ is an abelian
+  group. In other words, a ring is a semiring in which each element has an
+  additive inverse.
+\end{defn}
+
+\begin{defn}
+  A \emph{field} is a ring $(R, +, \times)$ in which $(R \setminus \{0\},
+  \times)$ is an abelian group.
+\end{defn}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Basic definitions about matrices}
+
+\begin{defn}
+  A \emph{$k \times k$ matrix over a semiring $R$} is a $k \times k$ array of
+  elements of $R$, for some $k \in \N$ and semiring $R$. Given a $k
+  \times k$ matrix $\alpha$ over a semiring $R$, for $i, j \in \{1, \ldots,
+  k\}$, the entry of $\alpha$ in row $i$ and column $j$ is denoted by
+  $\alpha_{i, j}$, i.e.
+  $$\alpha
+  =
+  \begin{pmatrix}
+    \alpha_{1, 1} & \alpha_{1, 2} & \cdots            & \alpha_{1, k} \\
+    \alpha_{2, 1} & \alpha_{2, 2} &                   & \vdots \\
+    \vdots        &               & \ddots            & \alpha_{k - 1, k} \\
+    \alpha_{k, 1} & \cdots        & \alpha_{k, k - 1} & \alpha_{k, k}
+  \end{pmatrix},$$
+  where $\alpha_{i, j} \in R$ for all $i, j \in \{1, \ldots, k\}$.
+\end{defn}
+
+\begin{defn}
+  Let $\alpha, \beta$ be $k \times k$ matrices over a semiring $R$.  Define
+  $\alpha + \beta$ to be the matrix with entry ${(\alpha + \beta)}_{i, j} =
+  \alpha_{i, j} + \beta_{i, j}$.  Define $\alpha\beta$ to be the matrix
+  with entry ${(\alpha\beta)}_{i, j} = \sum_{m = 1}^{k}
+  \alpha_{i, m} \beta_{m, j}$.
+\end{defn}
+
+\begin{defn}
+  The \emph{transpose} of a matrix $\alpha = (\alpha_{i, j})$ is $(\alpha_{j, i})$,
+  and is denoted by $\alpha^{T}$.
+\end{defn}
+
+Note that ${(\alpha\beta)}^{T} = \beta^{T}\alpha^{T}$.
+
+\begin{defn}
+  The \emph{determinant} of a $k \times k$ matrix $(\alpha_{i,
+  j})$ over some ring (we require additive inverses) is
+  $$\displaystyle\sum_{\sigma \in S_{k}}
+      \left( \operatorname{sign}(\sigma)
+      \prod_{i = 1}^{k}
+      \alpha_{i, (i)\sigma}
+      \right),$$
+  where $\operatorname{sign}(\sigma)$ is $+$ if $\sigma$ is even and $-$ if
+  $\sigma$ is odd (if that makes sense).
+\end{defn}
+
+Note that $\det(AB) = \det(A)\det(B)$ and  $\det(A^{T}) = \det(A)$.
+A matrix is invertible if and only if its determinant is a unit in $R$.
+For an invertible matrix $A$, $\det(A^{-1}) = {\det(A)}^{-1}$.
+
+
+\begin{defn}
+  For a semiring $R$ and $k \in \N$, define $M_{k}(R)$ to be the set of all $k
+  \times k$ matrices over $R$, with the operations of matrix addition and
+  multiplication. Then $M_{k}(R)$ is a semiring. If $R$ is a ring, then
+  $M_{k}(R)$ is a ring called the \emph{full matrix ring over $R$}.
+\end{defn}
+
+The semiring $M_{k}(R)$ has $|R|^{k^{2}}$ elements, and has a one if and only if
+$R$ has a one.
+
+\begin{defn}
+  If $R$ has an identity, then the identity of $M_{k}(R)$ is the \emph{identity
+  matrix}, which has the entry $1$ on its leading diagonal and $0$ elsewhere.
+\end{defn}
+
+The zero of $M_{k}(R)$ is the all-$0$ matrix.
+
+\begin{defn}
+  For a ring with one $R$, let $GL_{k}(R)$ denote the group of units of
+  $M_{k}(R)$.  Then $GL_{k}(R)$ is called the \emph{general linear group of
+  degree $k$ over $R$}.
+\end{defn}
+
+In general, I don't know how big $GL_{k}(R)$ is, or how to specify a small
+generating set for it.
+
+\begin{defn}
+  For a ring with one $R$, the \emph{general linear monoid of degree $k$
+  over $R$} is the multiplicative monoid of $M_{k}(R)$.
+\end{defn}
+
+{\color{blue}Do the definitions of general linear monoid and general linear
+group work more generally, for semirings?}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Basic definitions about modules}
+
+Let $k \in \N$ be fixed.
+
+\begin{defn}
+  A \emph{module} over a ring (semiring?) $R$ is\ldots?
+  A \emph{submodule} is\ldots?
+\end{defn}
+
+We can talk about the free module $R^{k}$ over $R$. 
+It turns out that $M_{k}(R)$ represents endomorphisms of $R^{k}$.
+You can think of the rows/columns of a matrix in $M_{k}(R)$ as elements of
+$R^{k}$. Thus the rows generate a submodule, as do the columns.
+We can think of submodules as subgroups of the $k$-fold direct product
+of the additive group $(R, +)$. Is this wise?
+
+\begin{defn}
+  Let $R$ be a ring (?), and let $\alpha \in M_{k}(R)$. The \emph{row space} of
+  $\alpha$, denoted $\rowsp(\alpha)$, is submodule of $R^{k}$ consisting of all
+  $k$-dimensional row vectors over $R$ of the form
+  %
+  $$\displaystyle\sum_{m = 1}^{k} x_{m} (\alpha_{m, 1},\ \alpha_{m, 2},\
+  \ldots,\ \alpha_{m, k}),$$
+  %
+  for some $x_{1}, x_{2}, \ldots, x_{k} \in R$.  Similarly, the \emph{column
+  space} of $\alpha$, denoted $\colsp(\alpha)$, is the submodule of $R^{k}$
+  consisting of all $k$-dimensional column vectors over $\mathbb{Z}_{n}$ that
+  are combinations of the columns of $\alpha$.
+\end{defn}
+
+%$$\rowsp(\alpha) = \left\{ \displaystyle\sum_{m = 1}^{k} x_{m} (\alpha_{m, 1},\
+%\alpha_{m, 2},\ \ldots,\ \alpha_{m, k})\ :\ x_{1}, x_{2}, \ldots, x_{k} \in
+%R \right\}.$$
+
+Note that $\colsp(\alpha) = \rowsp\left(\alpha^{T}\right)$.
+
+\begin{lem}\label{lem-rowsp-mult}
+  Let $R$ be a ring (commutative? one? semiring?)
+  and let $\alpha, \beta \in M_{k}(R)$. Then
+  \begin{enumerate}
+    \item
+      $\rowsp(\alpha\beta) \subseteq \rowsp(\beta)$, and
+    \item
+      $\colsp(\alpha\beta) \subseteq \colsp(\alpha)$.
+  \end{enumerate}
+\end{lem}
+
+\begin{proof}
+  \begin{align*}
+    \rowsp(\alpha \beta)
+      & = \left\{ \displaystyle\sum_{m = 1}^{k} \lambda_{m}
+            \left( {(\alpha\beta)}_{m, 1},\ 
+                   {(\alpha\beta)}_{m, 2},\ 
+                   \ldots,\ 
+                   {(\alpha\beta)}_{m, k}
+            \right)\ :\
+            \lambda_{1}, \lambda_{2}, \ldots, \lambda_{k} \in R \right\} \\
+      & = \left\{ \displaystyle\sum_{m = 1}^{k} \lambda_{m}
+             \left( \displaystyle\sum_{r = 1}^{k} \alpha_{m, r} \beta_{r, 1},\ 
+                    \displaystyle\sum_{r = 1}^{k} \alpha_{m, r} \beta_{r, 2},\
+                   \ldots,\ 
+                    \displaystyle\sum_{r = 1}^{k} \alpha_{m, r} \beta_{r, k},\ 
+             \right)\ :\
+             \lambda_{1}, \lambda_{2}, \ldots, \lambda_{k} \in R \right\} \\
+      & = \left\{ \displaystyle\sum_{m = 1}^{k} \lambda_{m}
+            \displaystyle\sum_{r = 1}^{k}
+            \left( \alpha_{m, r} \beta_{r, 1},\ 
+                   \alpha_{m, r} \beta_{r, 2},\
+                   \ldots,\ 
+                   \alpha_{m, r} \beta_{r, k}
+            \right)\ :\
+            \lambda_{1}, \lambda_{2}, \ldots, \lambda_{k} \in R \right\} \\
+      & = \left\{ \displaystyle\sum_{m = 1}^{k} \lambda_{m}
+            \displaystyle\sum_{r = 1}^{k} \alpha_{m, r}
+            \left( \beta_{r, 1},\ 
+                   \beta_{r, 2},\
+                   \ldots,\ 
+                   \beta_{r, k}
+            \right)\ :\
+            \lambda_{1}, \lambda_{2}, \ldots, \lambda_{k} \in R \right\} \\
+      & \subseteq \rowsp(\beta).
+  \end{align*}
+  Since $\colsp(\alpha\beta) = \rowsp\left({(\alpha\beta)}^{T}\right) =
+  \rowsp\left(\beta^{T}\alpha^{T}\right) \subseteq \rowsp\left(\alpha^{T}\right)
+  = \colsp(\alpha)$, the result follows.
+\end{proof}
+
+\begin{lem}\label{lem-l-r}
+  Let $R$ be some sort of semiring or ring (dunno) and let
+  $\alpha, \beta \in M_{k}(R)$. Then
+  \begin{enumerate}
+    \item
+      $\alpha \L \beta$ if and only if $\rowsp(\alpha) = \rowsp(\beta)$;
+    \item
+      $\alpha \R \beta$ if and only if $\colsp(\alpha) = \colsp(\beta)$; and
+    \item
+      $\alpha \H \beta$ if and only if $\rowsp(\alpha) = \rowsp(\beta)$ and
+      $\colsp(\alpha) = \colsp(\beta)$.
+  \end{enumerate}
+\end{lem}
+
+\begin{proof}
+  It suffices to prove the first statement: the proof of the second statement is
+  dual, and the third statement holds since $\H = \L \cap \R$.  If $\alpha \L
+  \beta$, then there exist elements $\mu, \nu \in M_{k}(R)$ such
+  that $\alpha = \mu \beta$ and $\beta = \nu \alpha$. By
+  Lemma~\ref{lem-rowsp-mult},
+  %
+  $$\rowsp(\alpha) = \rowsp(\mu \beta) \subseteq \rowsp(\beta) = \rowsp(\nu
+  \alpha) \subseteq \rowsp(\alpha),$$
+  %
+  i.e.\ $\rowsp(\alpha) = \rowsp(\beta)$.  Conversely, suppose that
+  $\rowsp(\alpha) = \rowsp(\beta)$. We define a matrix $\gamma \in
+  M_{k}(R)$ that satisfies the equation $\gamma \alpha = \beta$.
+  Since $\rowsp(\alpha) = \rowsp(\beta)$, for each $i \in \{1, \ldots, k\}$, the
+  $i$\textsuperscript{th} row of $\beta$ is contained in $\rowsp(\alpha)$.  Thus
+  %
+  $$(\beta_{i, 1},\ \beta_{i, 2},\ \ldots,\ \beta_{i, k})
+  =
+  \displaystyle\sum_{m = 1}^{k} \gamma_{i, m} (\alpha_{m, 1},\ \alpha_{m, 2},\
+  \ldots,\ \alpha_{m, k})
+  $$
+  %
+  for some elements $\gamma_{i, 1}, \ldots, \gamma_{i, k} \in R$.  In this way,
+  define $\gamma_{i, j}$ for all $i, j \in \{1, \ldots, k\}$, and define $\gamma
+  = (\gamma_{i, j}) \in M_{k}(R)$.  Direct calculation shows that $\gamma \alpha
+  = \beta$. By symmetry, there exists a matrix $\delta \in M_{k}(R)$ such that
+  $\delta \beta = \alpha$, and so $\alpha \L \beta$.
+\end{proof}
+
+\begin{cor}
+  Let $s$ denote the number of submodules of $R^{k}$.  Then the
+  monoid $M_{k}(R)$ has $s$ $\L$-classes and $s$ $\R$-classes.
+\end{cor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{The general linear monoid of degree $k$ over $\mathbb{Z}_{n}$}
+
+Throughout this section, let $k, n \in \N$ be fixed.
+
+\begin{defn}
+  Let $\mathbb{Z}_{n}$ denote the ring $\{0, 1, \ldots, n - 1\}$ of integers
+  under addition and multiplication modulo $n$.
+\end{defn}
+
+The group $(\mathbb{Z}_{n}, +)$ is cyclic.  In general, $\mathbb{Z}_{n}$ is a
+commutative ring with one, and is a field if and only if $n$ is prime.  When $n$
+is prime, the semigroup-theoretic structure of the general linear monoid
+$M_{k}(\mathbb{Z}_{n})$ is well-understood; it's not so well-understood
+otherwise.
+
+\begin{defn}
+  Row operations:
+  \begin{itemize}
+    \item
+      Interchange two rows.
+    \item
+      Multiply one row by a unit.
+    \item
+      Add one row to another row.
+    \item
+      (Subtract one row from another row).
+  \end{itemize}
+\end{defn}
+
+\begin{lem}
+  Row operations correspond to multiplying by particular invertible matrices.
+\end{lem}
+
+\begin{lem}
+  Row operations preserve row space, and preserve column space up to
+  isomorphism.  Column operations preserve column space, and preserve row space
+  up to isomorphism. Therefore, overall, row and column operations preserve row
+  and column space up to isomorphism.
+\end{lem}
+
+\begin{thm}\label{thm-operations-diagonalise}
+  We can perform row operations to produce a canonical diagonal matrix.  This
+  procedure is essentially the Euclidean algorithm. You get $\alpha_{i, i} |
+  \alpha_{i + 1, i + 1}$ and then $\alpha_{i, i}$ is $0$ beyond a certain point.
+  This procedure tells you the isomorphism type of the rowspace/column space.
+\end{thm}
+
+\begin{cor}\label{cor-d}
+  $\rowsp(\alpha) \cong \colsp(\alpha)$.
+\end{cor}
+
+\begin{proof}
+  Perform column operations to diagonalise $\alpha$ to give $\alpha'$.  Then
+  $\rowsp(\alpha) \cong \rowsp(\alpha') = \colsp(\alpha') \cong \colsp(\alpha)$.
+\end{proof}
+
+\begin{cor}
+  $\alpha \D \beta \Leftrightarrow \rowsp(\alpha) \cong \rowsp(\beta)$.
+\end{cor}
+
+\begin{proof}
+  $(\Rightarrow)$
+  There exists $\gamma \in M_{k}(\mathbb{Z}_{n})$ such that $\alpha \L \gamma \R
+  \beta$.
+  By Lemma~\ref{lem-l-r} and Corollary~\ref{cor-d},
+  $\rowsp(\alpha) = \rowsp(\gamma) \cong \colsp(\gamma) = \colsp(\beta) \cong
+  \rowsp(\beta)$.
+
+  $(\Leftarrow)$
+  There exist invertible matrices such that $A \alpha A' = B \beta B' =
+  \gamma$, where $\gamma$ is a diagonal matrix of some special form. See the
+  proof of Theorem~\ref{thm-operations-diagonalise} for this. Therefore $\alpha
+  = A^{-1}B \beta B'A'^{-1}$ and $\beta = B^{-1}A \alpha A'B'^{-1}$, i.e.
+  $\alpha \J \beta$.  Since $\D = \J$, the result follows.
+\end{proof}
+
+\begin{cor}
+  Let $s$ denote the number of subgroups of $C_{n}^{k}$ up to
+  isomorphism. Then the monoid $M_{k}(\mathbb{Z}_{n})$ has $s$ $\D$-classes.
+\end{cor}
+
+\begin{cor}
+  Let $n = p_{1}^{q_{1}} \cdots p_{m}^{q_{m}}$.
+  Then $M_{k}(\mathbb{Z}_{n})$ has $\displaystyle\prod_{i = 1}^{m} {{q_{i} + k}
+  \choose k}$ $\D$-classes.
+\end{cor}
+
+\begin{proof}
+  Erm?
+\end{proof}
+
+\begin{lem}\label{lem-J-order}
+  $J_{x} \leq J_{y} \Leftrightarrow \rowsp(x) \hookrightarrow \rowsp(y)$.
+  In particular, the partial order of $\J$-classes is isomorphic to the quotient
+  of the subgroup lattice of $C_{n}^{k}$ by isomorphism of subgroups.
+\end{lem}
+
+\begin{lem}
+  $x$ is regular if and only if the isomorphism type of its rowspace contains,
+  in each factor, either all or none of the powers of each prime. I need to make
+  this more precise I know!
+\end{lem}
+
+\begin{cor}
+  Let $n = p_{1}^{q_{1}} \cdots p_{m}^{q_{m}}$.  The number of regular
+  $\D$-classes of $M_{k}(\mathbb{Z}_{n})$ is ${(k + 1)} ^ {m}$, the number of
+  non-regular $\D$-classes is the number of all $\D$-classes, minus this.
+\end{cor}
+
+\begin{cor}
+  The monoid $M_{k}(\mathbb{Z}_{n})$ is regular if and only if $n$ is a product
+  of distinct primes.
+\end{cor}
+
+\begin{lem}
+  $\rank(M_{k}(\mathbb{Z}_{n})) = \rank(GL_{k}(\mathbb{Z}_{n}))$ plus the number
+  of prime divisors of $n$.
+\end{lem}
+
+\begin{proof}
+We know that row and column operations correspond to pre- and
+post-multiplication by units.
+
+We know from our proof about $\D$-relation that any element in the same
+$\D$-class can mapped to any other by using row and column operations.
+Therefore, given the group of units, one generator in each $\D$-class is
+sufficient.
+
+Certainly, therefore, it is necessary to have a generator for each $\D$-class
+that is immediately below the group of units. However, I want to say that
+otherwise, I don't need a generator.
+
+Actually, I think this is pretty straightforward. I've done a proof on my board.
+\end{proof}
+
+\begin{conj}
+  Is the $\L$-order and $\R$-order isomorphic to the subgroup lattice of
+  $C_{n}^{k}$?
+\end{conj}
+
+$G_{k}(R)$ acts faithfully on $R^{k}$. An element in a subgroup acts faithfully
+on its rowspace.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Generating sets for the monoids}
+
+\begin{thm}[Botond]
+  The monoid $M_{2}(\mathbb{Z}_{n})$ is generated by the matrices
+  $\begin{pmatrix}
+    0 & 1\\
+    1 & 0
+   \end{pmatrix}$,
+  $\begin{pmatrix}
+    0 & 1\\
+    1 & 1
+   \end{pmatrix}$,
+   and
+  $\begin{pmatrix}
+    p & 0\\
+    1 & 1
+   \end{pmatrix}$,
+   where $p$ ranges through all primes in $\mathbb{Z}_{n}$.
+   (What does this mean?)
+\end{thm}
+
+\begin{thm}[Wilf]
+  The monoid $M_{k}(\mathbb{Z}_{n})$ is generated by $GL_{k}(\mathbb{Z}_{n})$ and
+  any one element from each of the $\D$-classes immediately below the group of
+  units. In particular, you could choose
+  the diagonal matrices
+  $$\begin{pmatrix}
+    n/p    & 0      & \cdots & 0  \\
+    0      & 1      &        & \vdots \\
+    \vdots &        & \ddots & 0 \\
+    0      & \cdots & 0      & 1  \\
+   \end{pmatrix},$$
+   for each prime divisor $p$ of $n$.
+\end{thm}
+
+\begin{lem}
+  The maximal subsemigroups of $M_{k}(\mathbb{Z}_{n})$ are those arising from
+  the group of units, and those formed by removing each of the
+  $\D$-classes immediately below the group of units in turn.
+\end{lem}
+
+\begin{conj}
+  The monoid $M_{3 \times 3}(\mathbb{Z}_{n})$ is generated by the matrices
+  $\begin{pmatrix}
+     0 & 0 & 1 \\
+     0 & 1 & 0 \\
+     1 & 1 & 0
+   \end{pmatrix}$,
+  $\begin{pmatrix}
+     0 & 0 & 1 \\
+     0 & 1 & 1 \\
+     1 & 0 & 0
+   \end{pmatrix}$,
+  $\begin{pmatrix}
+     p & 0 & 0 \\
+     0 & 1 & 0 \\
+     0 & 0 & 1
+   \end{pmatrix}$,
+   where $p$ ranges through all primes in $\mathbb{Z}_{n}$.
+\end{conj}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Tropical min-plus matrices}
+
+\subsection*{Results from James, Juilus, and James}
+
+\begin{thm}[J, J, J]\label{thm-min-plus}
+  The monoid $M_{2}(K^{\infty})$ of $2 \times 2$ min-plus matrices is
+  generated by the matrices:
+  \begin{equation*}
+          A_{i} = \mat{i}{0}{0}{\infty},
+    \quad B     = \mat{1}{\infty}{\infty}{0},
+    \quad \text{and}
+    \quad C     =  \mat{\infty}{\infty}{\infty}{0}
+  \end{equation*}
+  where $i \in \N \cup \{\infty\}$.
+\end{thm}
+
+\begin{cor}[J, J, J]\label{cor-finite-min-plus}
+  Let $t \in \N$ be arbitrary. Then the finite monoid $M_{2}(K^{\infty}_t)$ of
+  $2 \times 2$ min-plus matrices is generated by the $t + 4$ matrices:
+  \begin{equation*}
+          A_{i} = \mat{i}{0}{0}{\infty},
+    \quad B     = \mat{1}{\infty}{\infty}{0},
+    \quad \text{and}
+    \quad C     =  \mat{\infty}{\infty}{\infty}{0}
+  \end{equation*}
+  where $i \in \{0, 1, \ldots, t, \infty\}$.
+\end{cor}
+
+\subsection*{The results I think are needed to prove minimality}
+
+\begin{lem}\label{lem-all-contain}
+  Let $R \in \{K^{\infty}\} \cup \set{K_{t}^{\infty}}{t \in \N}$.  Then
+  any generating set for $M_{2}(R)$ contains an associate of $A_{i}$
+  (i.e. $A_{i}$ with its rows/columns possibly permuted), for each possible $i$,
+  and the same for $B$.
+\end{lem}
+
+\begin{cor}\label{cor-rank-infinite}
+  The generating set given in Theorem~\ref{thm-min-plus} is minimal,
+  i.e.\ $\rank(M_{2}^{\infty})$ is countable.
+\end{cor}
+
+\begin{cor}\label{cor-irredundant}
+  The generating sets given in Theorem~\ref{thm-min-plus} and
+  Corollary~\ref{cor-finite-min-plus} are irredundant.
+\end{cor}
+
+\begin{lem}\label{lem-non-D}
+  The generating sets given in Theorem~\ref{thm-min-plus} and
+  Corollary~\ref{cor-finite-min-plus} consist of $\D$-non-equivalent elements.
+\end{lem}
+
+\begin{prop}[Wilf, elsewhere]\label{prop-wilf}
+  Let $S$ be a finite semigroup.  Suppose that $X$ is an irredundant generating
+  subset of $S$ that contains at most one element from each $\D$-class of $S$.
+  Then $X$ has minimal cardinality, i.e. $\rank(S) = |X|$.
+\end{prop}
+
+\begin{cor}\label{cor-rank-finite}
+  The generating sets given in Corollary~\ref{cor-finite-min-plus} are minimal,
+  i.e.\ $\rank\left(M_{2}(K_{t}^{\infty})\right) = t + 4$ for all $t \in \N$, $n
+  \geq 1$.
+\end{cor}
+
+\subsection*{Proofs}
+
+\textit{Proof of Lemma~\ref{lem-all-contain}}.
+Suppose that $A_{i}$ is written as the product of two matrices in $M_{2}(R)$,
+i.e.\ suppose that
+$$\mat{i}{0}{0}{\infty} = \mat{a}{b}{c}{d} \mat{u}{v}{w}{x}$$
+where $a,b,c,d,u,v,w,x \in R$. It follows by the definitions
+of matrix multiplication, $\oplus$, and $\otimes$ that
+\begin{enumerate}
+  \item
+    ($a + u = i$ and $b + w \geq i$) or ($b + w = i$ and $a + u \geq i$),
+  \item
+    $a = v = 0$ or $b = x = 0$,
+  \item
+    $c = u = 0$ or $d = w = 0$, and
+  \item
+    ($c = \infty$ or $v = \infty$) and ($d = \infty$ or $x = \infty$).
+\end{enumerate}
+Suppose that $(2)$ is satisfied by $a = v = 0$. Then $c = \infty$ by $(4)$.  It
+follows that $d = w = 0$ by $(3)$, and so $x = \infty$ by $(4)$.  Thus by $(1)$,
+either $u = i$ and $b \geq i$, or $b = i$ and $u \geq i$, i.e.\
+$$\mat{u}{v}{w}{x} = \mat{i}{0}{0}{\infty} \quad \text{or} \quad
+\mat{a}{b}{c}{d} = \mat{0}{i}{\infty}{0}.$$
+Instead, if we suppose that $(2)$ is satisfied by $b = x = 0$, then either
+$$\mat{u}{v}{w}{x} = \mat{0}{\infty}{i}{0} \quad \text{or} \quad
+\mat{a}{b}{c}{d} = \mat{i}{0}{0}{\infty}.$$
+In particular, if $A_{i}$ is written as the product of two matrices in
+$M_{2}(R)$, then one of those matrices is $A_{i}$ with its rows or columns
+possibly permuted.
+
+Define $A_{i}' = A_{\infty}^{k} A_{i} A_{\infty}^{l}$ for some $k, l \in \{0,
+1\}$ (i.e.\ $A_{i}'$ is $A_{i}$ with its rows and/or columns possibly permuted),
+and suppose that $A_{i}' = UV$ for some $U, V \in M_{2}(R)$. By rearranging, it
+follows that
+$$A_{i} = A_{\infty}^{k} U V A_{\infty}^{l} = U' V',$$
+where $U' = A_{\infty}^{k} U$ is equal to $U$ with its rows possibly permuted,
+and $V' = V A_{\infty}^{l}$ is equal to $V$ with its columns possibly permuted.
+By the preceding arguments, it follows that one of $U'$ and $V'$,
+and hence one of $U$ and $V$, is equal to $A_{i}$ with its rows and/or columns
+possibly permuted.
+
+Write $A_{i}$ as a product of the generators of $M_{2}(R)$ defined in the
+relevant theorem or corollary. By the preceding arguments, it follows that
+one of the generators is equal to $A_{i}$ with its rows and/or columns possibly
+permuted, i.e.\ an associate of $A_{i}$.
+
+Similarly, if you write $B$ as the product of two elements, then one of them is
+equal to $B$ with its rows or columns permuted, and the proof goes the same way.
+
+
+\quad\newline
+\textit{Proof of Corollary~\ref{cor-rank-infinite}.}
+By Lemma~\ref{lem-all-contain}, any generating set for $M_{2}(K^{\infty})$
+contains an associate of $A_{i}$ for each $i \in K^{\infty}$. Since an associate
+of $A_{i}$ is not an associate of $A_{j}$ for $i \neq j$, it follows that
+$\rank(M_{2}(K^{\infty}))$ is at least countable. The generating set for
+$M_{2}(K^{\infty})$ given in Theorem~\ref{thm-min-plus} is countable. Therefore
+it's minimal.
+
+\quad\newline
+\textit{Proof of Corollary~\ref{cor-irredundant}.}
+This is maybe more of a Lemma. By Lemma~\ref{lem-all-contain}, any generating
+set for $M_{2}(R)$ contains an associate of $A_{i}$ for each relevant $i$.
+Since the only such element in the given generating set is $A_{i}$ itself, it
+follows that the generators $A_{i}$ are irredundant.
+
+It's the same argument for $B$.
+
+How about $C$? We show that if you have a matrix with two
+infinities in one row, and write it as a product of two matrices, then
+one of those matrices has a row with two infinities in it. Therefore, to
+generate such matrices, you need a generator with two infinities in one row. $C$
+is the only such generator, so it is irredundant.
+
+\quad\newline
+\textit{Proof of Lemma~\ref{lem-non-D}.}
+Let $U, V$ be a pair of distinct generators. Consider any finite
+quotients that contains both $U$ and $V$. Then $U$ and $V$ have non-isomorphic
+rowspaces (this will require a lot more detail, and references), and so they're
+not $\D$-related in the finite semigroup. Therefore they're not $\D$-related in
+the infinite semigroup $M_{2}(K^{\infty})$, of which the finite semigroup is a
+quotient.
+
+\quad\newline
+\textit{Proof of Proposition~\ref{prop-wilf}.}
+I've proved this elsewhere. My proof uses ideas about maximal subsemigroups.
+
+\quad\newline
+\textit{Proof of Corollary~\ref{cor-rank-finite}.}
+Corollary~\ref{cor-irredundant} plus Lemma~\ref{lem-non-D} plus
+Proposition~\ref{prop-wilf}. I don't think we can allow $t = 0$ however.
+In that case do we get the semilattice of order $2$?
+
+\end{document}
