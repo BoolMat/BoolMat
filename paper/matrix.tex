@@ -14,6 +14,7 @@ tabu, enumitem, hyperref}
 \newtheorem{defi}[thm]{Definition}
 \newtheorem{exa}[thm]{Example}
 \newtheorem{algo}[thm]{Algorithm}
+\newtheorem{conj}[thm]{Conjecture}
 \newenvironment{de}[1][]{\begin{defi}[#1]\rm}{\end{defi}}
 \newenvironment{ex}{\begin{exa}\rm}{\end{exa}}
 \newenvironment{alg}{\begin{algo}\rm}{\end{algo}}
@@ -93,10 +94,10 @@ tabu, enumitem, hyperref}
 \begin{abstract}
   We compute the largest known ranks of the boolean matrix monoid and the
   submonoids $\Refn$ of reflexive boolean matrices, $\Halln$ of Hall matrices,
-  $\MTn$ of boolean matrices containing a transformation, and $\UTn$ and $\LTn$,
-  of triangular boolean matrices. We also determine the relationship between
-  minimal generating sets for $\Bn$, $\Halln$, and $\MTn$, and prove that the
-  rank of $\UTn$ and $\LTn$ are given by the triangular numbers.
+  and $\UTn$ and $\LTn$, of triangular boolean matrices. We also determine the
+  relationship between minimal generating sets for $\Bn$ and $\Halln$,
+  and prove that the rank of $\UTn$ and $\LTn$ are given by the triangular
+  numbers.
 \end{abstract}
 
 \section{Introduction}
@@ -383,7 +384,7 @@ $\mathbf{D}(S) \in \N$, then every generating set of cardinality $\mathbf{d}(S)$
 is irredundant and hence minimal; this does not hold when $\mathbf{d}(S)$ is not
 finite.
 
-\begin{de}[\textbf{Decomposable elements}]
+\begin{de}
   An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if $x$
   may be written as a product of elements not belonging to $\{e, x\}$, and
   \defn{indecomposable} otherwise.
@@ -392,6 +393,8 @@ Note that every indecomposable element of a monoid $M$ must be contained in
 every generating set for $M$; hence the minimal generating set of a monoid is a
 superset of the indecomposable elements.
 
+We will use the following straightforward lemma repeatedly to show that certain
+sets generate submonoids of $\Bn$.
 \begin{lemma}
   \thlabel{lem:GenSetDecomposition}
   Let $S$ be a finite semigroup and let $X$ be a subset of $S$, such that for
@@ -411,9 +414,11 @@ superset of the indecomposable elements.
   \in \genset{X}$.
 \end{proof}
 
+We also have the following lemma, used to prove that certain generating sets are
+minimal. 
 \begin{prop}[Wilf, elsewhere]
   \thlabel{prop-wilf}
-  Let $S$ be a finite semigroup.  Suppose that $X$ is an irredundant generating
+  Let $S$ be a finite semigroup. Suppose that $X$ is an irredundant generating
   subset of $S$ that contains at most one element from each $\D$-class of $S$.
   Then $X$ has minimal cardinality, i.e. $\rank(S) = |X|$.
 \end{prop}
@@ -438,7 +443,6 @@ We consider the submonoids:
 \begin{enumerate}[label={\rm (\roman*)}]
   \item $\Refn$, of matrices containing the identity (reflexive matrices),
   \item $\Halln$, of matrices containing a permutation matrix (Hall matrices),
-  \item $\MTn$, of matrices containing a transformation matrix, and
   \item $\UTn$ and $\LTn$, of upper- and lower-triangular boolean matrices.
 \end{enumerate}
 
@@ -450,9 +454,7 @@ $\Theta$, and this is the primary reason for studying $\Refn$. However, it may
 also be viewed as the monoid of matrices containing a certain pattern of $1$s -
 namely the identity matrix. Similarly, $\Halln$ arises as those matrices
 describing a family of subsets which satisfy Hall's marriage condition, but also
-as those matrices containing a permutation matrix. By increasing the number of
-permitted patterns, we obtain the monoid $\MTn$, consisting of those matrices
-containing a transformation. 
+as those matrices containing a permutation matrix.
 
 We compute the largest known ranks of these monoids, which are presented in
 Table~\ref{tab:BMatResults} along with whether that rank was previously known or
@@ -472,32 +474,23 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
     2 & *3         & *2& *2& *3& *3\\
     3 & *5         & *8& *4& *5& *6\\
     4 & *7         & *38& *6& *7& *10\\
-    5 & *13        & *1\ 415& *12& *13& *15\\
-    6 & 68         & 482\ 430& 67& 68& 21\\
-    7 & 2\ 143     & 1\ 034\ 972\ 230& 2\ 142& 2\ 143& 28\\
-    8 & 495\ 115   & ?& 495\ 114& 495\ 115 & 36\\
+    5 & *13        & *1\ 415& *12& 13& *15\\
+    6 & 68         & 482\ 430& 67& ?& 21\\
+    7 & 2\ 143     & 1\ 034\ 972\ 230& 2\ 142& ?& 28\\
+    8 & 495\ 115   & ?& 495\ 114& ?& 36\\
     9 & ?   & ?& ?& ? & 45
   \end{tabular}
   \vspace{1cm}
 
   \caption{The ranks of certain matrix monoids over $\B$; a * denotes that the
     rank was already known or is computable by brute force, and a ? indicates
-    that the value is unknown.}
+    that the value is unknown. See \thref{conj:TransGenSet} and the preceding
+    discussion for $\MTn$.}
   \label{tab:BMatResults}
 \end{table}
 There are several obvious relationships between columns in
 Table~\ref{tab:BMatResults}; we prove that these relationships hold for all $n
 \in \N$.
-
-There are a number of other submonoids of $\Bn$ that may be considered. If we
-define the \defn{containment closure} $\bar{S}$ of a subsemigroup $S \leq \Bn$
-to be the set of matrices $A \in \Bn$ containing some element of $S$, then for
-any choice of subsemigroup $S$, $S \leq \bar{S} \leq \Bn$. In
-particular, the submonoids $\Refn$, $\Halln$, and $\MTn$ are of this type. It
-remains an open problem to determine minimal generating sets for arbitrary
-containment closures. This problem seems difficult; a more tractable problem may
-be to restrict $S$ to subgroups of $S_n$ or submonoids of transformation
-matrices.
 
 Another submonoid of $\Bn$, which has attracted recent attention, is the Gossip
 monoid $G_n$; see~\cite{Brouwer2015aa, Fenner2018aa} for some recent results and
@@ -517,6 +510,44 @@ generating set for $G_n$: since every element of $G_n$ contains the identity
 matrix and at least $2$ more $1$s, the phone-call matrices are indecomposable,
 and hence contained in any generating set.
 
+There are a number of other submonoids of $\Bn$ that arise as generalisations of
+the Hall monoid. If we define the \defn{containment closure} $\bar{S}$ of a
+subsemigroup $S \leq \Bn$ to be the set of matrices $A \in \Bn$ containing some
+element of $S$, then for any choice of subsemigroup $S$, $S \leq \bar{S} \leq
+\Bn$. In particular, the submonoids $\Refn$ and $\Halln$ are of this
+type. It remains an open problem to determine minimal generating sets for
+arbitrary containment closures. This problem seems difficult; a more tractable
+problem may be to restrict $S$ to subgroups of $S_n$ or submonoids of
+transformation matrices. In particular, if we choose $S$ to be the set of
+transformation matrices, we obtain the monoid $\MTn$ of matrices containing a
+transformation matrix.
+
+\begin{conj}
+  \thlabel{conj:TransGenSet}
+  Every minimal generating set $G$ for $\MTn$ consists of a set of
+  representatives of the $\J$-classes of $\Bn$ which contain a prime matrix,
+  together with two elements which generate $S_n$, and two matrices similar to
+  \begin{align*}
+  \begin{pmatrix}
+    0 & 1 & 0 & 0 & \cdots & 0 \\
+    0 & 1 & 0 & 0 & \cdots & 0 \\
+    0 & 0 & 1 & 0 & \cdots & 0 \\
+    0 & 0 & 0 & 1 & \cdots & 0 \\
+    \vdots  & \vdots & \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & 0 & 0 & \cdots & 1
+  \end{pmatrix}\text{ and } 
+  \begin{pmatrix}
+    1 & 1 & 0 & 0 & \cdots & 0 \\
+    0 & 1 & 0 & 0 & \cdots & 0 \\
+    0 & 0 & 1 & 0 & \cdots & 0 \\
+    0 & 0 & 0 & 1 & \cdots & 0 \\
+    \vdots  & \vdots & \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & 0 & 0 & \cdots & 1
+  \end{pmatrix}.
+  \end{align*}
+\end{conj}
+\noindent This conjecture has been verified computatationally up to $n = 5$.
+
 
 The rest of this section is organised as follows. In
 Section~\ref{sec:BMatPrelim}, we introduce a number of concepts and results
@@ -525,8 +556,8 @@ Section~\ref{sec:boolmat}. In Section~\ref{sec:FullBoolMat}, we describe how to
 compute minimal generating sets for $\Bn$ based on a theorem of
 Devadze~\cite{Devadze1968aa}. In Section~\ref{sec:RefBoolMat}, we describe the
 unique minimal generating sets for $\Refn$ and how to compute it; in
-Sections~\ref{sec:HallBoolMat} and~\ref{sec:TransBoolMat} we describe how all
-minimal generating sets for $\Halln$ and $\MTn$ may be obtained from minimal
+Sections~\ref{sec:HallBoolMat} we describe how all
+minimal generating sets for $\Halln$ may be obtained from minimal
 generating sets for $\Bn$; and in Section~\ref{sec:TriBoolMat} we give a simple
 description of the unique minimal generating sets for $\UTn$ and $\LTn$.
 
@@ -1903,126 +1934,6 @@ We may now prove \thref{thm:HallGenSet}.
   matrices in any generating set for $\Halln$; hence $G$ is minimal. The same
   argument shows that every minimal generating set is obtained in this way.
 \end{proof}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Transformation Hall Matrices}
-\label{sec:TransBoolMat} 
-After considering the reflexive and Hall matrices, it
-is natural to consider the monoids obtained by relaxing the restrictions on
-which patterns must be contained. In this section, we consider the monoid $\MTn$
-of matrices which contain a transformation matrix; that is, have a $1$ in every
-row. As in the case of the Hall monoid, the minimal generating sets for $\MTn$
-are strongly related to minimal generating sets for $\Bn$.
-
-\begin{thm}
-  \thlabel{thm:TransGenSet}
-  All minimal generating sets $G$ for $\MTn$ are obtained by replacing the rank
-  $n - 1$ matrix in a minimal generating set for $\Bn$ by a matrix similar to
-  \begin{align*}
-  F' = \begin{pmatrix}
-    0 & 1 & 0 & 0 & \cdots & 0 \\
-    0 & 1 & 0 & 0 & \cdots & 0 \\
-    0 & 0 & 1 & 0 & \cdots & 0 \\
-    0 & 0 & 0 & 1 & \cdots & 0 \\
-    \vdots  & \vdots & \vdots & \vdots & \ddots & \vdots\\
-    0 & 0 & 0 & 0 & \cdots & 1
-  \end{pmatrix};
-  \end{align*}
-  That is, every minimal generating set $G$ for $\MTn$ consists of a set of
-  representatives $P$ of the prime $\J$-classes of $\Bn$ together with two
-  elements which generate $S_n$, an elementary matrix, and a matrix similar to
-  $F'$.
-\end{thm}
-
-\begin{proof}
-  TODO (as yet unproved since old proof was wrong), strategy is probably to
-  decompose into Hall matrix and F')
-\end{proof}
-
-%In order to prove this theorem, we require the following lemma:
-
-%\begin{lemma}
-%  \thlabel{lem:TransCover}
-%  For each element $x$ of a generating set $X$ as given in
-%  \thref{thm:TransGenSet}, the $\J$-class of $x$ in $\MTn$ is a subset of
-%  $\genset{X}$.
-%\end{lemma}
-%\begin{proof}
-%It is straightforward to show that $X \subseteq \MTn$, and that by the
-%definition of $X$, $S_n \subseteq \genset{X}$. That the elementary $\J$-class
-%and the prime $\J$-classes are a subset of $\genset{X}$ then follows from the
-%definition of elementary matrices and \thref{lem:PermutingReducedMatrices}
-%respectively. It remains to show that $J_{F'} \subseteq \genset{X}$, as this is
-%equivalent to the $\J$-class of the matrix similar to $F'$ in $X$ being a subset
-%of $\genset{X}$. In order to do so, we will determine the elements of $J_{F'}$
-%in $\MTn$.
-%
-%The row space $R(F')$ contains $n - 1$ minimal non-zero vectors with respect to
-%containment, and each of these is contained in a chain of length $n$ from the
-%zero vector to the maximal element, which contains $1$s in precisely $n-1$
-%positions.
-%
-%
-%First note that by the definition of $\MTn$, each element of $J_{F'}$ contains a
-%$1$ in every row.
-%
-%
-%
-%TODO????
-%\end{proof}
-%
-%\begin{lemma}
-%  \thlabel{lem:TransTrimDecomposable}
-%  If $A \in \MTn$ is a non-trim matrix and $G$ is a set of generators as defined
-%  in \thref{thm:TransGenSet}, then $A$ is the product of a trim matrix $A' \in
-%  \MTn$ with elements of $G$.
-%\end{lemma}
-%\begin{proof}
-%  Suppose that $A$ is not row-trim, and row $A_{i*}$ is contained in row
-%  $A_{j*}$. Then we we define a new matrix $A' \in \MTn$ where $A'_{k*} =
-%  A_{k*}$ for $k \neq j$, and $A'_{j*} = A_{j*} \setminus A_{i*}$.
-%  If row $A_{j*}$ contains no $1$s, we set $A_{j*}$ to be any row that is not in
-%  the row space of $A$. Now $A$ is the product $BA'$ of $A'$ with some matrix
-%  $B$ which is similar to $F'$. Replacing $A$ by $A'$, and repeating if
-%  necessary, we may assume that $A$ is row-trim; a dual procedure allows us to
-%  assume that $A$ is column-trim. 
-%\end{proof}
-%
-%\begin{proof}
-%  By \thref{lem:PrimeAreHall} and the definitions of elementary matrices and
-%  $F'$, such a set $G$ is contained in $\MTn$. To see that it is a generating
-%  set, consider a matrix $A$ which is not $\J$-related to any matrix in $G$. We
-%  wish to write $A$ as a product of matrices which lie strictly above $A$ in the
-%  $\J$-order. 
-%  
-%  
-%  Let $A_0 = A$. Then we write $A_0 = B_0C_0$ where $B_0, C_0 \in \Bn$, $B_0$ has a
-%  maximal row-space amongst non-permutation matrices, and $C_0$ is the greedy left
-%  multiplier. Since $B_0$ is Hall, it lies in $\MTn$; it is also $\J$-related to
-%  some matrix in $G$ and hence lies above $A_0$. 
-%  
-%  
-%  Since $A_0$ is trim, $C_0$ must also
-%  be trim, and similarly since $A_0$ contains no zero row neither does $C_0$.
-%  However, $B_0$ is not a permutation matrix, and therefore $A_0 = C_0B_0$ contains more
-%  $1$s than $C_0$ does. 
-%  
-%  Now either $C_0$ also lies strictly above $A_0$, in which case
-%  we are done, or we can repeat the process with $A_1 = C_0$. Since we
-%  cannot continue producing matrices with fewer and fewer ones forever,
-%  eventually we must decompose one of the $A_i$s as desired; then the product $A
-%  = C_i B_i B_{i - 1} \ldots B_1$ consists of matrices strictly above $A$ in the
-%  $\J$-order, which all lie in $\MTn$. By \thref{lem:GenSetDecomposition},
-%  $G$ generates $\MTn$.
-%
-%  
-%  
-%  Now, since every generating set for $\Bn$ must contain a representative of
-%  each prime $\J$-class and an elementary matrix, so too must every generating
-%  set for $\MTn$. Together with the permutation matrices, these matrices
-%  generate $\Halln$ by \thref{thm:HallGenSet}. Note that $F'$ is not Hall;
-%  hence $G$ is minimal.
-%\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Triangular Boolean Matrices}
