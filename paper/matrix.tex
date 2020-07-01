@@ -416,14 +416,28 @@ sets generate submonoids of $\Bn$.
 
 We also have the following lemma, used to prove that certain generating sets are
 minimal. 
-\begin{prop}[Wilf, elsewhere]
+\begin{prop}
   \thlabel{prop-wilf}
   Let $S$ be a finite semigroup. Suppose that $X$ is an irredundant generating
-  subset of $S$ that contains at most one element from each $\D$-class of $S$.
-  Then $X$ has minimal cardinality, i.e. $\rank(S) = |X|$.
+  subset of $S$ that contains at most one element from each $\J$-class of $S$.
+  Then $X$ has minimal cardinality, i.e.\ $\rank(S) = |X|$.
 \end{prop}
 \begin{proof}
-  Wilf claims to have proven this.
+  Let $x \in X$.
+  It suffices to show that any generating set for $S$ contains an
+  element of $J_{x}$.
+
+  Let $U$ be the union of the $\J$-classes of $S$ that lie strictly above
+  $J_{x}$ in the $\J$-order.  If $x$ is written as a product of elements of $S$,
+  then it is clear that those elements are contained in $J_{x} \cup U$.
+  Furthermore, since $X$ generates $S$, which contains $U$, and since no element
+  of $U$ can be written as a product involving $x$, it follows that $U \subseteq
+  \genset{X \setminus \{x\}}$.  Therefore $\genset{U} \leq \genset{X \setminus
+  \{x\}}$. The assumption that $X$ is irredundant implies that $x \not\in
+  \genset{X \setminus \{x\}}$, and so $x \not\in \genset{U}$.  Therefore, if $x$
+  is written as a product of elements of $S$, then at least one of those
+  elements is contained in $J_{x}$.  In other words, any generating set for $S$
+  contains an element of $J_{x}$.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
