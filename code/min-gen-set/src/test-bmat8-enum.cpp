@@ -571,7 +571,6 @@ namespace libsemigroups {
       using Perm = typename PermHelper<_dim>::type;
       HPCombi::epu8 cycle;
       HPCombi::epu8 transposition;
-      // TODO: fix for tiny perms
       transposition[0] = 1;
       transposition[1] = 0;
       cycle[0]         = 1;
@@ -593,7 +592,6 @@ namespace libsemigroups {
                                               HPCombi::BMat8>(p));
       }
 
-      // TODO evil copying
       if (_filterers.size() == 0) {
         _filterers = bmat_enum;
         _filterers.push_back(bmat8_helpers::elementary<HPCombi::BMat8>(_dim));
@@ -1078,12 +1076,9 @@ namespace libsemigroups {
     return reps;
   }
 
-  void minimal_generating_set(size_t n) {
-    auto           rg = ReportGuard();
-    std::vector<HPCombi::BMat8> reps = trim_bmats(n);
-    std::string rsn
-        = "build/output/row_space_numbers_" + detail::to_string(n) + ".txt";
-    std::ofstream o(rsn, std::ios::out | std::ios::trunc);
+  void write_row_spaces(std::string const &                 out,
+                        std::vector<HPCombi::BMat8> const &reps) {
+    std::ofstream o(out, std::ios::out | std::ios::trunc);
     for (auto const& x : reps) {
       std::vector<uint8_t> row_space = row_space_vector(x);
       o << "[";
@@ -1094,7 +1089,15 @@ namespace libsemigroups {
     }
     o.close();
     std::cout << reps.size() << " row spaces written to:";
-    std::cout << "       " << rsn << "\n";
+    std::cout << "       " << out << "\n";
+  }
+
+  void full_candidates_and_row_spaces(size_t n) {
+    auto           rg = ReportGuard();
+    std::vector<HPCombi::BMat8> reps = trim_bmats(n);
+    std::string rsn
+        = "build/output/row_space_numbers_" + detail::to_string(n) + ".txt";
+    write_row_spaces(rsn, reps);
   }
 
   template <size_t n>
@@ -1166,35 +1169,35 @@ namespace libsemigroups {
                           "3",
                           "enumerate minimal generating set for n = 3",
                           "[standard][enumerate]") {
-    minimal_generating_set(3);
+    full_candidates_and_row_spaces(3);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "4",
                           "enumerate minimal generating set for n = 4",
                           "[standard][enumerate]") {
-    minimal_generating_set(4);
+    full_candidates_and_row_spaces(4);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "5",
                           "enumerate minimal generating set for n = 5",
                           "[standard][enumerate]") {
-    minimal_generating_set(5);
+    full_candidates_and_row_spaces(5);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "6",
                           "enumerate minimal generating set for n = 6",
                           "[standard][enumerate]") {
-    minimal_generating_set(6);
+    full_candidates_and_row_spaces(6);
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "7",
                           "enumerate minimal generating set for n = 7",
                           "[standard][enumerate]") {
-    minimal_generating_set(7);
+    full_candidates_and_row_spaces(7);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -1249,30 +1252,6 @@ namespace libsemigroups {
                           "boolean mat monoid with n = 7",
                           "[standard][enumerate]") {
     reflexive_filter_and_orbit<7>();
-  }
-      
-  
-  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
-                          "19",
-                          "find out how large these intersections are - remove"
-                          "boolean mat monoid with n = 7",
-                          "[standard][enumerate]") {
-    std::vector<HPCombi::BMat8> bmats
-        = read_bmat_file("../output/bmat_reflexive_candidates_7.txt");
-    size_t count = 0;
-    for (HPCombi::BMat8 x : bmats) {
-      std::vector<std::vector<uint8_t>> intersects = intersections(x, 7);
-      size_t prod = 1;
-      for (auto x : intersects) {
-        prod *= (x.size() - 1);
-      }
-      if (prod > 100000000000) {
-        count++;
-        std::cout << prod << std::endl;
-      }
-    }
-    std::cout << count << " reps have very large intersection searches"
-              << std::endl;
   }
 
   LIBSEMIGROUPS_TEST_CASE(
@@ -1332,6 +1311,19 @@ namespace libsemigroups {
   // --help)
   //
   /////////////////////////////////////////////////////////////////////////////
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "550",
+                          "filter 8 by elementary containment - test Filterer",
+                          "[extreme][filter8]") {
+    BMatEnumerator enumerator(8, true);
+    std::string tf
+        = "build/output/bmat_enum_trim_8.txt";
+    write_bmat_file(tf, enumerator.reps());
+    append_bmat_file(tf, bmat8_helpers::elementary<HPCombi::BMat8>(8));
+    std::cout << enumerator.reps().size() + 1 << " trim matrices written to:";
+    std::cout << "    " << tf << "\n";
+  }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "551",
@@ -1615,8 +1607,6 @@ namespace libsemigroups {
     }
     f.close();
 
-    std::cout << "processing with " << bmat7_gens.size();
-
     Filterer<8> filterer("bmat_trim_8_filterered_11.txt",
                          "bmat_trim_8_filterered_12.txt",
                          bmat7_gens,
@@ -1624,6 +1614,13 @@ namespace libsemigroups {
                          true);
     filterer.run();
     REQUIRE(filterer.size() == 472207);
+    std::string tf
+        = "build/output/bmat_enum_trim_8.txt";
+    write_bmat_file(tf, filterer.reps());
+    append_bmat_file(tf, bmat8_helpers::elementary<HPCombi::BMat8>(8));
+    std::cout << filterer.reps().size() + 1 << " trim matrices written to:";
+    std::cout << "    " << tf << "\n";
+    write_row_spaces("build/output/row_space_numbers_8.txt", filterer.reps());
   }
 
   ///////////////////////////////////////////////////////////////////////
