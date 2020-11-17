@@ -53,8 +53,8 @@ tabu, enumitem, hyperref}
 \newcommand{\Bn}{M_n(\B)}
 \newcommand{\Bm}[1]{M_{#1}(\B)}
 \newcommand{\Bmn}{M_{m,n}(\B)}
-\newcommand{\Refn}{M_n^{\text{id}}(\B)}
-\newcommand{\Ref}[1]{M_{#1}^{\text{id}}(\B)}
+\newcommand{\Refln}{M_n^{\text{id}}(\B)}
+\newcommand{\Refl}[1]{M_{#1}^{\text{id}}(\B)}
 \newcommand{\Halln}{M_n^{\text{S}}(\B)}
 \newcommand{\Hall}[1]{M_{#1}^{\text{S}}(\B)}
 \newcommand{\MTn}{M_n^{\mathcal{T}}(\B)}
@@ -70,6 +70,7 @@ tabu, enumitem, hyperref}
 \newcommand{\Np}{\N^{+}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\rank}{\operatorname{rank}}
+\renewcommand{\d}{\mathbf{d}}
 
 \newcommand{\K}{\mathbb{K}}
 \newcommand{\Kmin}{\K^{\infty}}
@@ -118,6 +119,79 @@ tabu, enumitem, hyperref}
 
 \section{Introduction}
 
+In this paper we find minimum cardinality generating sets for several well-known
+finite monoids of matrices over certain semirings. The topic of determining such
+minimum cardinality generating sets for algebraic objects is classical, and has
+been studied extensively in the literature; see, for example,~\cite{}.  In this
+paper we are principally concerned with monoids of matrices over the boolean
+semiring $\B$; we also present some results about monoids of min-plus and
+max-plus matrices of dimension $2$. 
+
+If $S$ is a semigroup, then the least cardinality of a generating set for $S$ is
+often called the \defn{rank} of $S$ and is  denoted by $\mathbf{d}(S)$. 
+A \defn{semiring} is a set $\mathbb{S}$ with two operations, $\oplus$ and $\otimes$,
+such that $(\mathbb{S}, \oplus)$ forms a commutative monoid with identity $e$,
+$(\mathbb{S}, \otimes)$ forms a monoid, $e\otimes x = x\otimes e = e$ for all $x
+\in \mathbb{S}$, and multiplication distributes over addition.
+The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
+\begin{align*}
+  0 \oplus 1 = 1 \oplus 0 = 1 \oplus 1 = 1 \AND
+  0 \oplus 0 = 0
+\end{align*}
+and multiplication defined as usual for the real numbers $0$ and $1$. If $n\in
+\N$, then we denote by $\Bn$ the monoid consisting of all $n\times n$ matrices
+with entries in $\B$.
+The semiring $\B$ is one of the simplest examples of a semiring, and the matrix
+monoids $\Bn$ for $n \in \N$ have been widely studied in the literature since
+the 1960s to the present day;
+see, for example,~\cite{Breen2001aa, Breen1997aa, Butler1974aa, Caen1981aa, Cho1993aa,
+  Cho1993ab, Fenner2018aa, Kim1982aa, Konieczny1992aa, Li1995aa, Plemmons1970ab,
+  Plemmons1970aa, Roush1977aa, Schwarz1973aa, Shaofang1998aa, Tan2000aa,
+  Zivkovic2006aa}. If $\alpha$ is a binary relation on the set $\{1, \ldots,
+  n\}$, then we can define an $n\times n$ matrix $A_{\alpha}$ with entries in
+the boolean semiring $\B$ such that the $ij$-th entry in $A_{\alpha}$ is $1$ if
+and only if $(i, j) \in \alpha$. The function that maps every binary relation
+$\alpha$ to the corresponding $A_{\alpha}$ is an isomorphism  between the monoid
+of binary relations on $\{1,  \ldots, n\}$ and $\Bn$. Functions are a special
+type of binary relations, and composition of functions coincides with
+composition of binary relations when applied to functions.  As such the monoid
+$\Bn$ can be thought of as a natural generalisation of the full transformation
+monoid $T_n$ consisting of all functions from $\{1, \ldots, n\}$ to itself,
+under composition of functions.  In comparison to the full transformation monoid
+and its peers, such as the symmetric inverse monoid or the so-called diagram
+monoids, whose structures are straightforward to describe, $\Bn$ has a rich and
+complex structure.  For example, every finite group appears as a maximal
+subgroup of $\Bn$ for some $n \in \N$ (see~\cite{Clifford1970aa, Montague1969aa,
+  Plemmons1970ab}), and the Green's structure of $\Bn$ is highly complicated;
+neither the number of $\J$-classes of $\Bn$ nor the largest length of a chain of
+$\J$-classes is known for $n\geq 9$. In this landscape it is perhaps not
+surprising that the minimum size $\mathbf{d}(\Bn)$ of generating sets for the
+monoids $\Bn$ was not previously known for $n \geq 6$. On the other hand, a
+description of a minimal generating set for $\Bn$ was given by  Devadze in
+1968~\cite{Devadze1968aa} (see Theorem~\ref{thm:DevadzeKon}). There is no proof
+in~\cite{Devadze1968aa} that the given generating sets are minimal, a gap that
+was filled by Konieczny in 2011~\cite{Konieczny2011aa}. The minimal generating
+sets given by Devadze and Konieczny are specified in terms of representatives of
+certain $\J$-classes of $\Bn$, the exact number of which is difficult to
+compute, and grows very quickly with $n$; see~\thref{cor:ExponentialGenSets}.
+The monoid $\Bn$ has several natural submonoids that we also consider. 
+
+These are the monoids: $\Refln$ consisting of the \defn{reflexive boolean matrices} (that is matrices containing the identity matrix);
+$\Halln$ consisting of all \defn{Hall matrices} (matrices containing a permutation); 
+and $\UTn$ of \defn{upper triangular boolean matrices}. Each of these submonoids has been extensively studied in their own right; see, for example, \cite{}. Unlike $\Bn$, $\Refln$ is $\J$-trivial (see \cite{}), and so its number of $\J$-classes is the same as $|\Refln| = 2 ^ {n ^ 2 - n}$. Similarly, $A, B\in \Halln$ are $\J$-related if and only if one can be obtained from the other by permuting the rows and columns. 
+However, the size of $\Halln$ is not known for $n\geq 8$; see \cite{OEIS}. 
+% TODO(FLS) write a sentence or two about the upper triangular matrices. 
+% TODO(FLS) write a sentence or two about the tropical matrices, i.e. here are lots of papers about tropical matrices, these are less studied in the classical semigroup theoretic sense (Greens-relations, minimal generating set etc), perhaps because they are intractable and complex.
+
+
+% TODO summarise the sections of the paper. 
+In Section~\ref{sec:FullBoolMat}, we will show one method for computing minimal
+generating sets of the form described by Devadze and Konieczny, and we apply
+this method to show that $\d(M_6(\B)) = 68$, $\d(M_7(\B)) = 2142$, and
+$\d(M_8(\B)) = 495115$. 
+% TODO include the table 1?
+
+In Section~\ref{} we show that the generating sets for (tropical) given in~\cite{JJJ} are, in fact, minimal, and so, in particular, $\d(??)) = t + 4$. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,7 +232,7 @@ tabu, enumitem, hyperref}
 %shrouded in mystery. The purpose of this article is to cast some light on the
 %problems of determining the minimum cardinality $\mathbf{d}(\Bn)$ of a
 %generating set for $\Bn$ and certain submonoids of $\Bn$ such as the reflexive
-%boolean matrix monoid $\Refn$, and other submonoids where the matrices contain
+%boolean matrix monoid $\Refln$, and other submonoids where the matrices contain
 %particular matrices.
 %% The time and space complexity of determining any of these value is exponential
 %% in $n$. 
@@ -167,8 +241,6 @@ tabu, enumitem, hyperref}
 %and the output of our implementation~\cite{} of these algorithms. The latter
 %are summarised in Tables~\ref{figure-table-1} and \ref{tab:reflexiverank}.
 %
-
-We'll write this once we know what the content of the paper is.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
@@ -457,7 +529,7 @@ minimal.
   \thlabel{prop:Wilf}
   Let $S$ be a finite semigroup. Suppose that $X$ is an irredundant generating
   subset of $S$ that contains at most one element from each $\J$-class of $S$.
-  Then $X$ has minimal cardinality, i.e.\ $\rank(S) = |X|$.
+  Then $X$ has minimal cardinality, i.e.\ $\mathbf{d}(S) = |X|$.
 \end{prop}
 \begin{proof}
   Let $x \in X$.
@@ -480,7 +552,7 @@ minimal.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Boolean Matrix Monoids}
+\section{Boolean matrix monoids}
 \label{sec:boolmat}
 
 In this section, we compute minimal generating sets for the full boolean matrix
@@ -492,7 +564,7 @@ a $1$ in every position in which $A$ does.
 
 We consider the submonoids:
 \begin{enumerate}[label={\rm (\roman*)}]
-  \item $\Refn$, of matrices containing the identity (reflexive matrices),
+  \item $\Refln$, of matrices containing the identity (reflexive matrices),
   \item $\Halln$, of matrices containing a permutation matrix (Hall matrices),
   \item $\UTn$ and $\LTn$, of upper- and lower-triangular boolean matrices.
 \end{enumerate}
@@ -500,8 +572,8 @@ We consider the submonoids:
 There is a natural isomorphism $\Theta$ between binary relations on $\{1,
   \ldots, n\}$ and $\Bn$, which maps a binary relation $\mu$ to the matrix $M
 \in \Bn$ such that $M_{ij} = 1$ if and only if $(i, j) \in \mu$.
-The monoid $\Refn$ arises as the image of the reflexive binary relations under
-$\Theta$, and this is the primary reason for studying $\Refn$. However, it may
+The monoid $\Refln$ arises as the image of the reflexive binary relations under
+$\Theta$, and this is the primary reason for studying $\Refln$. However, it may
 also be viewed as the monoid of matrices containing a certain pattern of $1$s -
 namely the identity matrix. Similarly, $\Halln$ arises as those matrices
 describing a family of subsets which satisfy Hall's marriage condition, but also
@@ -518,7 +590,7 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
 \begin{table}
   \centering
   \begin{tabular}{l|r|r|r|r|r}
-    $n$ & $\mathbf{d}(\Bn)$ & $\mathbf{d}(\Refn)$ & $\mathbf{d}(\Halln)$ &
+    $n$ & $\mathbf{d}(\Bn)$ & $\mathbf{d}(\Refln)$ & $\mathbf{d}(\Halln)$ &
     $\mathbf{d}(\MTn)$ & $\mathbf{d}(\UTn)$ \\ 
     \hline
     1 & *2         & *1& *1& *1& *2\\
@@ -527,7 +599,7 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
     4 & *7         & *38& *6& *7& *10\\
     5 & *13        & *1\ 415& *12& 13& *15\\
     6 & 68         & 482\ 430& 67& ?& 21\\
-    7 & 2\ 143     & 1\ 034\ 972\ 230& 2\ 142& ?& 28\\
+    7 & 2\ 142     & 1\ 034\ 972\ 230& 2\ 141& ?& 28\\
     8 & 495\ 115   & ?& 495\ 114& ?& 36\\
     9 & ?   & ?& ?& ? & 45
   \end{tabular}
@@ -565,7 +637,7 @@ There are a number of other submonoids of $\Bn$ that arise as generalisations of
 the Hall monoid. If we define the \defn{containment closure} $\bar{S}$ of a
 subsemigroup $S \leq \Bn$ to be the set of matrices $A \in \Bn$ containing some
 element of $S$, then for any choice of subsemigroup $S$, $S \leq \bar{S} \leq
-\Bn$. In particular, the submonoids $\Refn$ and $\Halln$ are of this
+\Bn$. In particular, the submonoids $\Refln$ and $\Halln$ are of this
 type. It remains an open problem to determine minimal generating sets for
 arbitrary containment closures. This problem seems difficult; a more tractable
 problem may be to restrict $S$ to subgroups of $S_n$ or submonoids of
@@ -606,7 +678,7 @@ particular to matrices over $\B$. These are used throughout the rest of
 Section~\ref{sec:boolmat}. In Section~\ref{sec:FullBoolMat}, we describe how to
 compute minimal generating sets for $\Bn$ based on a theorem of
 Devadze~\cite{Devadze1968aa}. In Section~\ref{sec:RefBoolMat}, we describe the
-unique minimal generating sets for $\Refn$ and how to compute it; in
+unique minimal generating sets for $\Refln$ and how to compute it; in
 Sections~\ref{sec:HallBoolMat} we describe how all
 minimal generating sets for $\Halln$ may be obtained from minimal
 generating sets for $\Bn$; and in Section~\ref{sec:TriBoolMat} we give a simple
@@ -616,21 +688,6 @@ description of the unique minimal generating sets for $\UTn$ and $\LTn$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Preliminaries}
 \label{sec:BMatPrelim}
-The semiring $\B$ is one of the simplest examples of a semiring, and the matrix
-monoids $\Bn$ for $n \in \N$ have been widely studied in the literature;
-see~\cite{Breen2001aa, Breen1997aa, Butler1974aa, Caen1981aa, Cho1993aa,
-  Cho1993ab, Fenner2018aa, Kim1982aa, Konieczny1992aa, Li1995aa, Plemmons1970ab,
-  Plemmons1970aa, Roush1977aa, Schwarz1973aa, Shaofang1998aa, Tan2000aa,
-  Zivkovic2006aa}. A particular highlight is that every finite group appears as
-a maximal subgroup of $\Bn$ for some $n \in \N$, and indeed an analogous result
-holds for infinite groups; see~\cite{Clifford1970aa, Montague1969aa,
-  Plemmons1970ab}. An early unproven result of Devadze in
-1968~\cite{Devadze1968aa} provides a description of a minimal generating set for
-$\Bn$; this result was proven correct by Konieczny in
-2011~\cite{Konieczny2011aa}. However, these generating sets are difficult to
-compute and so explicit generating sets, even for $n = 6$, were unknown. It was
-known that the size of a minimal generating set for $\Bn$ grows very quickly
-with $n$; see~\thref{cor:ExponentialGenSets}.
 
 In contrast, the subsemigroup of $\Bn$ generated by all the regular elements can
 be generated by the four matrices
@@ -907,7 +964,7 @@ We may now prove a slightly stronger form of Devadze's Theorem.
 \end{proof} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The Full Boolean Matrix Monoid}
+\subsection{The full boolean matrix monoid}
 \label{sec:FullBoolMat}
 As mentioned above, in order to compute minimal generating sets for $\Bn$ it is
 sufficient to compute sets of representatives of the prime $\J$-classes of
@@ -1366,27 +1423,27 @@ algorithm are obtainable at \cite{Results2020aa}, along with code to produce
 them.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Reflexive Boolean Matrices}
+\subsection{Reflexive boolean matrices}
 \label{sec:RefBoolMat}
-An interesting submonoid of $\Bn$ is the monoid $\Refn$ of reflexive boolean
+An interesting submonoid of $\Bn$ is the monoid $\Refln$ of reflexive boolean
 matrices, that is, boolean matrices with $1$s on the main diagonal. Minimal
-generating sets for $\Refn$ are significantly larger than those of $\Bn$.
+generating sets for $\Refln$ are significantly larger than those of $\Bn$.
 \begin{thm}
   \thlabel{thm:ReflexiveGenSet}
-  The unique minimal monoid generating set for $\Refn$ consists of the set of
-  elementary matrices in $\Refn$ together with the set of indecomposable trim
-  matrices in $\Refn$.
+  The unique minimal monoid generating set for $\Refln$ consists of the set of
+  elementary matrices in $\Refln$ together with the set of indecomposable trim
+  matrices in $\Refln$.
 \end{thm}
 
 In order to prove this theorem, we must understand the  $\J$-relation on
-$\Refn$. Let $A, B$ be two matrices belonging to $\Refn$. Observe that since $A,
+$\Refln$. Let $A, B$ be two matrices belonging to $\Refln$. Observe that since $A,
 B$ both contain the identity matrix, the product $AB$ must contain both every
 row of $A$ and every column of $B$; hence $A \leq AB$ and $B \leq AB$. This
 leads to the following well-known fact:
 
 \begin{lemma}
   \thlabel{lem:ReflexiveJRelation}
-  $\Refn$ is $\J$-trivial. 
+  $\Refln$ is $\J$-trivial. 
 \end{lemma}
 \begin{proof}
   If $A \J B$, then $A \leq B$ and $B \leq A$ with respect to containment. Hence
@@ -1397,15 +1454,15 @@ number of $1$s in $A$ or $B$. It also follows from the lemma that any
 decomposable element $A$ is decomposable into a product of elements not
 $\J$-related to $A$.
 
-We now prove several results relating to decomposability of elements in $\Refn$.
+We now prove several results relating to decomposability of elements in $\Refln$.
 
 \begin{lemma}
   \thlabel{lem:ReflexiveNonTrimDecomposable}
-  Every matrix in $\Refn$ that is neither trim nor elementary is decomposable in
-  $\Refn$.
+  Every matrix in $\Refln$ that is neither trim nor elementary is decomposable in
+  $\Refln$.
 \end{lemma}
 \begin{proof}
-  Let $A \in \Refn$ be neither trim nor elementary.
+  Let $A \in \Refln$ be neither trim nor elementary.
   Since $A$ is not trim, it is either not row-trim or not column-trim (or both).
   Suppose that $A$ is not row-trim; then there exist some $1 \leq i, j
   \leq n$ such that the $i$th row $A_{i*}$ is contained in the $j$th row
@@ -1427,11 +1484,11 @@ We now prove several results relating to decomposability of elements in $\Refn$.
 
 \begin{lemma}
   \thlabel{lem:reflexiveelementaryindecomposable}
-  Elementary matrices are indecomposable in $\Refn$.
+  Elementary matrices are indecomposable in $\Refln$.
 \end{lemma}
 \begin{proof}
-  Elementary matrices are precisely those matrices in $\Refn$ containing $n + 1$
-  ones. As noted above, the product of two matrices in $\Refn$ contains at least
+  Elementary matrices are precisely those matrices in $\Refln$ containing $n + 1$
+  ones. As noted above, the product of two matrices in $\Refln$ contains at least
   as many $1$s as the maximum number of $1$s in a factor. It follows that if an
   elementary matrix is decomposable it is decomposable into other elementary
   matrices. However, it is routine to verify that the number of $1$s in a
@@ -1442,7 +1499,7 @@ We now prove several results relating to decomposability of elements in $\Refn$.
 
 \begin{cor}
   \thlabel{cor:reflexiveindecomposable}
-  An indecomposable element of $\Refn$ is either trim or elementary.
+  An indecomposable element of $\Refln$ is either trim or elementary.
 \end{cor}
 
 \begin{proof}[Proof of \thref{thm:ReflexiveGenSet}]
@@ -1450,27 +1507,27 @@ We now prove several results relating to decomposability of elements in $\Refn$.
   denote the set of reflexive elementary matrices. By
   \thref{lem:ReflexiveJRelation} and \thref{cor:reflexiveindecomposable}, it follows
   from \thref{lem:GenSetDecomposition} that $\genset{T \cup \mathcal{E}} =
-  \Refn$. Since each element of $T \cup \mathcal{E}$ is decomposable, $T \cup
-  \mathcal{E}$ must be contained in any generating set for $\Refn$, and hence is
+  \Refln$. Since each element of $T \cup \mathcal{E}$ is decomposable, $T \cup
+  \mathcal{E}$ must be contained in any generating set for $\Refln$, and hence is
   minimal.
 \end{proof}
 
-We now discuss how we may compute minimal generating sets for $\Refn$. Since it
+We now discuss how we may compute minimal generating sets for $\Refln$. Since it
 is easy to enumerate the reflexive elementary matrices, the problem is
-determining the set of indecomposable trim matrices in $\Refn$. The next two
+determining the set of indecomposable trim matrices in $\Refln$. The next two
 lemmas give a method for testing indecomposability.
 
 \begin{lemma}
   \thlabel{lem:decomposeintersection}
-  Let $A \in \Refn$ be a trim matrix. Then $A$ can be decomposed as $A = BC$,
-  where $B, C \in \Refn\setminus\{I, A\}$, if and only if $A = B'C'$ where $B'$
+  Let $A \in \Refln$ be a trim matrix. Then $A$ can be decomposed as $A = BC$,
+  where $B, C \in \Refln\setminus\{I, A\}$, if and only if $A = B'C'$ where $B'$
   is the greedy multiplier of $(C', A)$, $C'$ is the matrix whose $i$th row
   $C_{i*}$ is the intersection 
   \[\bigcap_{j \in K_i} A_{j*} \]
   and $K_i$ is the set of positions of the $1$s in the $i$th column. If $A$
   admits a decomposition admits a decomposition $A = BC$ where $B, C \in
-  \Refn\setminus\{I, A\}$, then the corresponding matrices  $B', C'$ belong to
-  $\Refn \setminus\{I, A\}$.
+  \Refln\setminus\{I, A\}$, then the corresponding matrices  $B', C'$ belong to
+  $\Refln \setminus\{I, A\}$.
 \end{lemma}
 \begin{proof}
   ($\Rightarrow$)
@@ -1479,8 +1536,8 @@ lemmas give a method for testing indecomposability.
   $C_{i*} \leq C'_{i*} = \bigcap_{K_i} A_{j*} \leq A_{j*}$. This implies that $A
   = BC'$, since $A = BC \leq BC' \leq A$. By \thref{lem:GreedyMultipliers}, $A =
   B'C'$.  Observe that since $A = BC'$, by the definition of the greedy left
-  multiplier we must have $B \leq B'$. Hence $B' \in \Refn$. Since $C_{i*} \leq
-  C'_{i*}$ for all $i$, $C'$ is also in $\Refn$. It remains to show that neither
+  multiplier we must have $B \leq B'$. Hence $B' \in \Refln$. Since $C_{i*} \leq
+  C'_{i*}$ for all $i$, $C'$ is also in $\Refln$. It remains to show that neither
   $B'$ nor $C'$ belongs to $\{I, A\}$. Note that since $B \leq B'$ and $C \leq
   C'$, $B', C'$ are not the identity matrix. Since $A$ is trim, if $B'$ or $C'$
   were equal to $A$ the product $B'C'$ would have more ones than $A$ does, but
@@ -1497,14 +1554,14 @@ whether a trim matrix $A$ is decomposable it suffices to:
 \end{enumerate}
 If no such matrices $B, C$ are found, then $A$ is indecomposable. This method
 avoids computing unnecessary products, but still quickly becomes infeasible to
-use for all trim matrices in $\Refn$.\\
+use for all trim matrices in $\Refln$.\\
 
 In order to reduce the time spent checking matrices using
 \thref{lem:decomposeintersection}, we would like to only check the smallest
 necessary set of representatives of some equivalence relation. The most obvious
 choice is to take canonical representatives in $\Bn$. However, the following
 example illustrates that two reduced reflexive matrices can belong to the same
-$\J$-class of $\Bn$ while only one of them is decomposable in $\Refn$; hence we
+$\J$-class of $\Bn$ while only one of them is decomposable in $\Refln$; hence we
 can not use the same canonical forms $\Phi_n$ as were used in the algorithms in
 Section~\ref{sec:FullBoolMat}.
 \begin{ex}
@@ -1525,7 +1582,7 @@ Section~\ref{sec:FullBoolMat}.
     0 & 1 & 1 & 0 & 1 
   \end{pmatrix}.&\\
 \end{align*}
-Then $A$ and $B$ belong to $\Ref{5}$, and $B$ may be obtained by
+Then $A$ and $B$ belong to $\Refl{5}$, and $B$ may be obtained by
 exchanging columns $3$ and $5$ of $A$. However, it can be shown that $A$ is
 indecomposable whilst
 \begin{align*}
@@ -1552,14 +1609,14 @@ matrices that must be checked.
 
 \begin{lemma}
   \thlabel{lem:reflexivecanonical}
-  Let $A, B \in \Refn$ be such that $A = P^{-1} B P$ for some permutation matrix
+  Let $A, B \in \Refln$ be such that $A = P^{-1} B P$ for some permutation matrix
   $P \in S_n$ (i.e. $A$ is obtained by permuting the rows and columns of $B$ by
-  the same permutation). Then $A$ is decomposable in $\Refn$ if and only if $B$
-  is decomposable in $\Refn$.
+  the same permutation). Then $A$ is decomposable in $\Refln$ if and only if $B$
+  is decomposable in $\Refln$.
 \end{lemma}
 \begin{proof}
-  Suppose that $B = XY$ for $X, Y \in \Refn\setminus \{I, A\}$. Then $P^{-1}XP,
-  P^{-1}YP \in \Refn\setminus\{I, A\}$ and $P^{-1}XPP^{-1}YP = A$. The proof of
+  Suppose that $B = XY$ for $X, Y \in \Refln\setminus \{I, A\}$. Then $P^{-1}XP,
+  P^{-1}YP \in \Refln\setminus\{I, A\}$ and $P^{-1}XPP^{-1}YP = A$. The proof of
   the other direction is dual, since $PAP^{-1} = B$.
 \end{proof}
 
@@ -1568,7 +1625,7 @@ which relates any two matrices which are similar under the same row and column
 permutation. In order to compute these representatives, we modify the
 construction of the bipartite graphs $\Gamma$ of Section~\ref{sec:FullBoolMat}.
 
-Given a matrix $A \in \Refn$, we form the vertex-coloured tripartite graph
+Given a matrix $A \in \Refln$, we form the vertex-coloured tripartite graph
 $\Gamma_\text{id}(A)$ with vertices $\{1, \ldots, 3n\}$, colours 
 \[\mathbf{col}(v) = \begin{cases}
     0 \qquad &\text{if } 1 \leq v \leq n, \\
@@ -1593,7 +1650,7 @@ are similar under permuting rows and columns by the same permutation.
 As in Section~\ref{sec:FullBoolMat}, we wish only to enumerate matrices of a
 certain form. A similar argument to \cite[Proposition~3.6]{Breen1997aa} shows
 that by permuting the rows and columns of matrices by the same permutation,
-matrices in $\Refn$ can be put in the following \defn{reflexive Breen form}:
+matrices in $\Refln$ can be put in the following \defn{reflexive Breen form}:
 
 \begin{enumerate}[label={\rm (\roman*)}]
   \item{all $1$s in the first row of $A$ are on the left,}
@@ -1609,12 +1666,12 @@ Now, given $\Xi_n$, a similar backtrack search to \thref{alg:canonicalbacktrack}
 allows appropriate representatives of matrices to be enumerated.
 
 We then have the following algorithm for finding a minimal generating set for
-$\Refn$:
+$\Refln$:
 \begin{alg}
   \thlabel{alg:ReflexiveGenSet}
-  Computing the minimal generating set for $\Refn$ \\
+  Computing the minimal generating set for $\Refln$ \\
   \textbf{Input}: A natural number $n$.\\
-  \textbf{Output}: A minimal generating set for $\Refn$.
+  \textbf{Output}: A minimal generating set for $\Refln$.
 \begin{enumerate}
   \item
     Enumerate the trim reflexive boolean matrices in reflexive Breen form using
@@ -1631,7 +1688,7 @@ $\Refn$:
 Using this algorithm, we can calculate the sizes of minimal generating sets up
 to $n = 6$; these are contained in Table~\ref{tab:BMatResults}.
 
-There are a small number of matrices in $\Ref{7}$ for which the approach based on
+There are a small number of matrices in $\Refl{7}$ for which the approach based on
 \thref{lem:decomposeintersection} is too inefficient; we chose to use a
 different method to test $12$ matrices in total. Observe that a matrix $A$ is
 decomposable into a product of generators $X_1 X_2 \ldots X_k$ from some minimal
@@ -1660,7 +1717,7 @@ roughly $10\ 000$ times more).
 %0111001
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Hall Matrices}
+\subsection{Hall matrices}
 \label{sec:HallBoolMat}
 
 The \emph{Hall monoid} is the submonoid of $\Bn$ consisting of matrices which
@@ -1673,7 +1730,7 @@ simply say that a Hall matrix contains a permutation when it contains the
 corresponding permutation matrix.
 
 The main result of this section is the following theorem. Unlike the monoid of
-reflexive boolean matrices $\Refn$, the Hall monoid $\Halln$ has minimal
+reflexive boolean matrices $\Refln$, the Hall monoid $\Halln$ has minimal
 generating sets that are strongly related to the minimal generating sets for
 $\Bn$.
 \begin{thm}
@@ -1987,7 +2044,7 @@ We may now prove \thref{thm:HallGenSet}.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Triangular Boolean Matrices}
+\subsection{Triangular boolean matrices}
 \label{sec:TriBoolMat}
 We now turn our attention to the monoids of upper and lower triangular boolean
 matrices, denoted by $\UTn$ and $\LTn$ respectively. These matrices have a
