@@ -23,9 +23,8 @@ end;
 FileOfIntsToListOfBMats := function(n, process_id, sublist, p)
   local x, cycle, id;
 
-  x := StringFile(Concatenation("build/output/bmat_full_",
-                                String(n),
-                                "_prefiltered.txt"));
+  x := StringFile(Concatenation("build/output/bmat_enum_trim_",
+                                String(n), ".txt"));
   x := EvalString(Concatenation("[", ReplacedString(x, "\n", ","), "]"));
   x := x{OnTuples(sublist, p ^ -1)};
   x := List(x, y -> BooleanMat(IntToBMat(n, y)));
@@ -36,7 +35,6 @@ FileOfIntsToListOfBMats := function(n, process_id, sublist, p)
     Add(x, AsBooleanMat(PermList(cycle)));
     id := List([1 .. n - 1], x -> BlistList([1 .. n], [x]));
     Add(x, BooleanMat(Concatenation(id, [BlistList([1 .. n], [])])));
-    #Add(x, BooleanMat(Concatenation(id, [BlistList([1 .. n], [n-1, n])])));
   fi;
 
   if not IsEmpty(x) then

@@ -787,36 +787,82 @@ namespace libsemigroups {
           _discarded(disc),
           _filtered(0),
           _finished(false),
-          _mtx() {}
-    void run_impl() {
-      std::vector<HPCombi::BMat8> bmat_enum;
-      std::ifstream               f(_in);
-      std::string                 line;
+          _mtx(),
+          _remaining() {
+      std::ifstream f(_in);
+      std::string   line;
       while (std::getline(f, line)) {
-        bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
+        _remaining.insert(HPCombi::BMat8(std::stoul(line)));
       }
       f.close();
+    }
+    void run_impl() {
+      auto rg = ReportGuard();
+
+      std::vector<HPCombi::BMat8> bmat_enum(_remaining.begin(),
+                                            _remaining.end());
+      REPORT_DEFAULT("read " + std::to_string(bmat_enum.size())
+                     + " matrices to filter from " + _in + "\n");
+      HPCombi::BMat8 one = bmat8_helpers::one<HPCombi::BMat8>(_dim);
 
       // clear the files
       write_bmat_file(_out, _filtered);
       write_bmat_file(_discarded, _filtered);
 
+
+      // shuffle so the hardest matrices aren't clumped together
       std::random_device rd;
       std::mt19937       g(rd());
-
       std::shuffle(bmat_enum.begin(), bmat_enum.end(), g);
 
       std::atomic<size_t> count{0};
-#pragma omp parallel for
+      bool break_flag = false;
+#pragma omp parallel for schedule(dynamic, 1)
       for (size_t i = 0; i < bmat_enum.size(); ++i) {
+        // can't break in omp loops
+        if (break_flag) {
+          continue;
+        }
         HPCombi::BMat8 bm = bmat_enum[i];
-        if (is_maximal_reflexive_bmat(bm, _dim)) {
+        if (bm == one) {
+          count++;
+          continue;
+        }
+
+        std::vector<uint8_t>              tup(_dim, 0);
+        std::vector<std::vector<uint8_t>> intersects = intersections(bm, _dim);
+        std::vector<size_t>               maxes(0);
+        bool                              is_maximal = true;
+        for (auto x : intersects) {
+          maxes.push_back(x.size() - 1);
+        }
+        do {
+          size_t o = 0;
+          for (size_t i = 0; i < _dim; ++i) {
+            o |= (static_cast<size_t>(intersects[i][tup[i]]) << ((7 - i) * 8));
+          }
+          HPCombi::BMat8 bm2(o);
+          HPCombi::BMat8 mult = left_reflexive_multiplier(bm2, bm, _dim);
+          if (mult != bm && bm2 != bm && mult * bm2 == bm) {
+            is_maximal = false;
+            break;
+          }
+        } while (increment_tuple(tup, maxes) && !stopped());
+
+        if (stopped()) {
+          break_flag = true;
+          continue;
+        }
+
+        if (is_maximal) {
           std::lock_guard<std::mutex> lg(_mtx);
           _filtered.push_back(bm);
           append_bmat_file(_out, bm);
+          _remaining.erase(bm);
         } else {
           std::lock_guard<std::mutex> lg(_mtx);
           append_bmat_file(_discarded, bm);
+          _remaining.erase(bm);
         }
         count++;
         if (report()) {
@@ -850,13 +896,23 @@ namespace libsemigroups {
       return _finished;
     }
 
+    size_t nr_remaining() {
+      std::lock_guard<std::mutex> lg(_mtx);
+      return _remaining.size();
+    }
+
+    std::vector<HPCombi::BMat8> unprocessed_reps() {
+      return std::vector<HPCombi::BMat8>(_remaining.begin(), _remaining.end());
+    }
+
    private:
-    std::string                 _in;
-    std::string                 _out;
-    std::string                 _discarded;
-    std::vector<HPCombi::BMat8> _filtered;
-    bool                        _finished;
-    std::mutex                  _mtx;
+    std::string                        _in;
+    std::string                        _out;
+    std::string                        _discarded;
+    std::vector<HPCombi::BMat8>        _filtered;
+    bool                               _finished;
+    std::mutex                         _mtx;
+    std::unordered_set<HPCombi::BMat8> _remaining;
   };
 
   template <size_t _dim>
@@ -867,7 +923,8 @@ namespace libsemigroups {
         : _filtees(filtees),
           _filters(filters),
           _filtered(0),
-          _finished(false) {}
+          _finished(false),
+          _mtx() {}
 
     void run_impl() {
       using Perm = typename PermHelper<_dim>::type;
@@ -913,15 +970,12 @@ namespace libsemigroups {
             if ((z.to_int() | y.to_int() == z.to_int())
                 && left_reflexive_multiplier(y, z, _dim) * y == z) {
               found = true;
-              std::cout << "discarding " << x.to_int() << " as " << z.to_int()
-                        << " can be decomposed by " << y.to_int() << std::endl;
               break;
             }
           }
         }
         if (!found) {
           _filtered.push_back(x);
-          std::cout << "keeping " << x.to_int() << std::endl;
         }
         if (report()) {
           REPORT_DEFAULT("On %d out of %d, keeping %d.\n",
@@ -957,6 +1011,7 @@ namespace libsemigroups {
     std::vector<HPCombi::BMat8> _filters;
     std::vector<HPCombi::BMat8> _filtered;
     bool                        _finished;
+    std::mutex                  _mtx;
   };
 
   template <size_t _dim>
@@ -965,6 +1020,7 @@ namespace libsemigroups {
     ReflexiveOrbiter(std::string in, std::string out_pref)
         : _in(in), _out_pref(out_pref), _out(0), _finished() {}
     void run_impl() {
+      auto rg = ReportGuard();
       std::vector<HPCombi::BMat8> bmat_enum;
       std::ifstream               f(_in);
       std::string                 line;
@@ -972,6 +1028,9 @@ namespace libsemigroups {
         bmat_enum.push_back(HPCombi::BMat8(std::stoul(line)));
       }
       f.close();
+
+      REPORT_DEFAULT("read " + std::to_string(bmat_enum.size())
+                     + " matrices to orbit from " + _in + "\n");
 
       using Perm = typename PermHelper<_dim>::type;
       HPCombi::epu8 cycle;
@@ -1016,7 +1075,7 @@ namespace libsemigroups {
         }
         count++;
         write_bmat_file(
-            _out_pref + "_associates_of_" + std::to_string(i) + ".txt", tmp);
+            _out_pref + "_" + std::to_string(i) + ".txt", tmp);
 
         if (report()) {
           REPORT_DEFAULT("Orbited %d (overall %d out of %d).\n",
@@ -1028,10 +1087,9 @@ namespace libsemigroups {
 
       for (size_t i = 0; i < bmat_enum.size(); ++i) {
         std::vector<HPCombi::BMat8> tmp = read_bmat_file(
-            _out_pref + "_associates_of_" + std::to_string(i) + ".txt");
+            _out_pref + "_" + std::to_string(i) + ".txt");
         _out.insert(_out.end(), tmp.begin(), tmp.end());
-        std::remove((_out_pref + "_associates_of_" + std::to_string(i) + ".txt")
-                        .c_str());
+        std::remove((_out_pref + "_" + std::to_string(i) + ".txt").c_str());
         if (report()) {
           REPORT_DEFAULT("Gathered %d out of %d; %d generators found.\n",
                          i + 1,
@@ -1039,7 +1097,7 @@ namespace libsemigroups {
                          _out.size());
         }
       }
-
+      write_bmat_file(_out_pref + ".txt", _out);
       _finished = true;
       report_why_we_stopped();
     }
@@ -1111,7 +1169,6 @@ namespace libsemigroups {
     write_row_spaces(rsn, reps);
   }
 
-  // Don't try to use this on 
   template <size_t n>
   std::vector<HPCombi::BMat8> full_prefilter() {
     auto rg = ReportGuard();
@@ -1184,32 +1241,113 @@ namespace libsemigroups {
 
     return filterer4.reps();
   }
-
+  
   template <size_t n>
-  void full_run() {
-    trim_bmats(n);
+  void full_run_no_enum() {
+    std::string strn = detail::to_string(n);
+    std::string logf
+        = "build/output/log-full-" + strn + ".txt";
+    std::ofstream o(logf, std::ios::out | std::ios::app);
+
+    auto timer = detail::Timer();
     std::vector<HPCombi::BMat8> reps = full_prefilter<n>();
-    std::string rsn = "build/output/row_space_numbers_" + detail::to_string(n)
-                      + "_prefiltered.txt";
-    write_row_spaces(rsn, reps);
+    std::string timestr = timer.string();
+    std::string                 logstr
+        = "prefiltered and wrote "
+          + detail::to_string(read_bmat_file("build/output/bmat_full_" + strn
+                                             + "_prefiltered.txt")
+                                  .size())
+          + " candidates to build/output/bmat_full_" + strn
+          + "_prefiltered.txt in " + timestr + "\n";
+    o << logstr << std::endl;
+    ;
+    std::cout << logstr;
+
+    std::string rsn = "build/output/row_space_numbers_" + detail::to_string(n);
+    write_row_spaces(rsn + "_prefiltered.txt", reps);
+    write_row_spaces(
+        rsn + ".txt",
+        read_bmat_file("build/output/bmat_enum_trim_" + strn + ".txt"));
+    o << "row spaces written" << std::endl
+      << "CPP done" << std::endl
+      << std::endl;
   }
 
   template <size_t n>
-  void reflexive_minimal_generating_set() {
-    auto        rg    = ReportGuard();
-    std::string candf = "../output/bmat_reflexive_candidates_"
+  void full_run() {
+    auto rg = ReportGuard();
+    std::string strn = detail::to_string(n);
+    std::string logf
+        = "build/output/log-full-" + strn + ".txt";
+    std::ofstream o(logf, std::ios::out | std::ios::trunc);
+    o << "computing candidates for generators of B_" + strn << std::endl;
+    auto timer = detail::Timer();
+    trim_bmats(n);
+    std::string timestr = timer.string();
+    std::string logstr
+        = "wrote "
+          + detail::to_string(
+                read_bmat_file("build/output/bmat_enum_trim_" + strn + ".txt")
+                    .size())
+          + " trim reps to build/output/bmat_enum_trim_" + strn + ".txt in "
+          + timestr + "\n";
+    o << logstr;
+    std::cout << logstr;
+    o.close();
+    full_run_no_enum<n>();
+  }
+
+  template <size_t n>
+  void reflexive_run_no_enum() {
+    std::string strn = detail::to_string(n);
+    std::string logf
+        = "build/output/log-reflexive-" + strn + ".txt";
+    std::ofstream o(logf, std::ios::out | std::ios::app);
+    std::string   candf = "build/output/bmat_reflexive_candidates_"
                         + detail::to_string(n) + ".txt";
     std::string filtf
-        = "../output/bmat_reflexive_filtered_" + detail::to_string(n) + ".txt";
+        = "build/output/bmat_reflexive_filtered_" + detail::to_string(n) + ".txt";
     std::string discf
-        = "../output/bmat_reflexive_discarded_" + detail::to_string(n) + ".txt";
+        = "build/output/bmat_reflexive_discarded_" + detail::to_string(n) + ".txt";
     std::string gensf
-        = "../output/bmat_reflexive_gens_" + detail::to_string(n) + ".txt";
-    std::string                         asocf = "../output/bmat_reflexive";
-    BMatReflexiveTrimStraightEnumerator enumerator(n);
-    write_bmat_file(candf, enumerator.reps());
+        = "build/output/bmat_reflexive_gens_" + detail::to_string(n) + ".txt";
+    std::string asocf = "build/output/bmat_reflexive_associates_" + strn;
+
+    std::string timestr;
     ReflexiveFilterer<n> filterer(candf, filtf, discf);
-    ReflexiveOrbiter<n>  orbiter(filtf, asocf);
+    auto timer = detail::Timer();
+    if (n < 6) {
+      filterer.run();
+    } else {
+      filterer.run_until(
+          [&filterer]() { return filterer.nr_remaining() < 12; });
+      std::vector<HPCombi::BMat8> remainders = filterer.unprocessed_reps();
+      std::cout << "processing " << detail::to_string(remainders.size())
+                << " leftovers" << std::endl;
+      std::vector<HPCombi::BMat8> filters = read_bmat_file(filtf);
+      filters.insert(filters.end(), remainders.begin(), remainders.end());
+      ReflexiveBruteFilterer<n> brute_filterer(remainders, filters);
+      std::vector<HPCombi::BMat8> extra_reps = brute_filterer.reps();
+      for (auto it = extra_reps.begin(); it != extra_reps.end(); ++it) {
+        append_bmat_file(filtf, *it);
+      }
+    }
+    timestr = timer.string();
+    std::string logstr
+        = "filtered " + detail::to_string(read_bmat_file(filtf).size())
+          + " reflexive reps in " + timestr + ", written to " + filtf + "\n";
+    o << logstr;
+    std::cout << logstr;
+    timer.reset();
+    ReflexiveOrbiter<n> orbiter(filtf, asocf);
+    orbiter.run();
+    timestr = timer.string();
+    logstr  = "orbited "
+             + detail::to_string(read_bmat_file(asocf + ".txt").size())
+             + " reflexive associates in " + timestr + ", written to " + asocf
+             + ".txt\n";
+    o << logstr;
+    std::cout << logstr;
     write_bmat_file(gensf, orbiter.reps());
     for (size_t i = 0; i < n; ++i) {
       for (size_t j = 0; j < n; ++j) {
@@ -1220,23 +1358,52 @@ namespace libsemigroups {
         }
       }
     }
-    std::cout << orbiter.size() << std::endl;
-    std::cout << orbiter.size() + (n * n - n) << " generators written to:";
-    std::cout << "    " << gensf << "\n";
+    logstr = "wrote " + detail::to_string(read_bmat_file(gensf).size())
+             + " reflexive generators to " + gensf + "\n";
+    o << logstr;
+    std::cout << logstr;
   }
 
   template <size_t n>
+  void reflexive_minimal_generating_set() {
+    auto        rg    = ReportGuard();
+    std::string strn = detail::to_string(n);
+    std::string logf
+        = "build/output/log-reflexive-" + strn + ".txt";
+    std::ofstream o(logf, std::ios::out | std::ios::trunc);
+    o << "computing orbit representatives for reflexive maximal elements of B_"
+             + strn
+      << std::endl;
+    std::string candf = "build/output/bmat_reflexive_candidates_"
+                        + detail::to_string(n) + ".txt";
+    auto                                timer = detail::Timer();
+    BMatReflexiveTrimStraightEnumerator enumerator(n);
+    enumerator.run();
+    std::string                         timestr = timer.string();
+    write_bmat_file(candf, enumerator.reps());
+    std::string logstr
+        = "computed " + detail::to_string(read_bmat_file(candf).size())
+          + " reflexive reps in " + timestr + ", written to " + candf + "\n";
+    o << logstr;
+    std::cout << logstr;
+    o.close();
+    reflexive_run_no_enum<n>();
+  }
+  
+
+  /*
+  template <size_t n>
   void reflexive_filter_and_orbit() {
     auto        rg    = ReportGuard();
-    std::string candf = "../output/bmat_reflexive_candidates_"
+    std::string candf = "build/output/bmat_reflexive_candidates_"
                         + detail::to_string(n) + ".txt";
-    std::string filtf = "../output/bmat_reflexive_filtered_"
+    std::string filtf = "build/output/bmat_reflexive_filtered_"
                         + detail::to_string(n) + "_filt1.txt";
-    std::string discf = "../output/bmat_reflexive_discarded_"
+    std::string discf = "build/output/bmat_reflexive_discarded_"
                         + detail::to_string(n) + "_filt1.txt";
     std::string gensf
-        = "../output/bmat_reflexive_gens_" + detail::to_string(n) + ".txt";
-    std::string          asocf = "../output/bmat_reflexive";
+        = "build/output/bmat_reflexive_gens_" + detail::to_string(n) + ".txt";
+    std::string          asocf = "build/output/bmat_reflexive";
     ReflexiveFilterer<n> filterer(candf, filtf, discf);
     filterer.run();
     ReflexiveOrbiter<n> orbiter(filtf, asocf);
@@ -1250,10 +1417,10 @@ namespace libsemigroups {
         }
       }
     }
-    std::cout << orbiter.size() << std::endl;
     std::cout << orbiter.size() + (n * n - n) << " generators written to:";
     std::cout << "    " << gensf << "\n";
   }
+  */
 
   ////////////////////////////////////////////////////////////////////////
 
@@ -1296,9 +1463,8 @@ namespace libsemigroups {
                           "8",
                           "enumerate minimal generating set for n = 8",
                           "[standard][enumerate]") {
-    std::vector<HPCombi::BMat8> reps = full_prefilter<8>();
-    std::string rsn = "build/output/row_space_numbers_8_prefiltered.txt";
-    write_row_spaces(rsn, reps);
+    //TODO: change this after timings
+    full_run_no_enum<8>();
   }
 
   /////////////////////////////////////////////////////////////////////////////

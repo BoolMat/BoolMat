@@ -20,8 +20,8 @@ filter() {
   $GAP_SH << GAP_COMMANDS
   LoadPackage("semigroups", false);;
   Read("src/gap.g");;
-  WriteAugmentedDigraphs("build/output/row_space_numbers_$1_prefiltered.txt",
-                         "build/output/digraphs_$1_prefiltered.d6.gz",
+  WriteAugmentedDigraphs("build/output/row_space_numbers_$1.txt",
+                         "build/output/digraphs_$1.d6.gz",
                          $1);;
   QUIT;
 GAP_COMMANDS
@@ -31,13 +31,12 @@ GAP_COMMANDS
   for ((rem=1;rem<=$2;rem++)); do
       ($GAP_SH << GAP_COMMANDS
       LoadPackage("semigroups");;
-      Read("src/gap.g");;
+      Read("src/gap-no-prefilter.g");;
       FilterByHomomorphisms($1,
-                            "build/output/digraphs_$1_prefiltered.d6.gz",
+                            "build/output/digraphs_$1.d6.gz",
                             "build/output/max_digraphs_$1_$rem.d6.gz",
                             $2,
                             $rem);;
-      Print("time taken:", time, "ms\n");
       QUIT;
 GAP_COMMANDS
 ) &
@@ -53,11 +52,10 @@ finish() {
   xbold $((nr+3)) "min. gen. set written to:    build/output/bmat-gens-$1.gz ************"
   $GAP_SH << GAP_COMMANDS
     LoadPackage("semigroups");;
-    Read("src/gap.g");;
+    Read("src/gap-no-prefilter.g");;
     FileOfBoolMatsToFileOfInts($1,
                                "build/output/bmat-gens-$1.gz",
                                "build/output/bmat-int-gens-$1.txt");;
-    QUIT;
 GAP_COMMANDS
   xbold $((nr+3)) "min. gen. set written to:    build/output/bmat-int-gens-$1.txt *******"
 }
@@ -81,9 +79,8 @@ fi
 sh/build.sh
 
 if [[ "$1" =~ ^[3-8]$ ]]; then
-  libsemi $1
-  (time filter $1 $nr_cores) |& tee -a "build/output/log-full-$1.txt"
-  finish $1  |& tee -a "build/output/log-full-$1.txt"
+  (time filter $1 $nr_cores) |& tee -a "build/output/log-full-no-prefilter-$1.txt"
+  finish $1  |& tee -a "build/output/log-full-no-prefilter-$1.txt"
 else
   bold "error: expected a value between 3 and 8 (inclusive), got $1"
 fi

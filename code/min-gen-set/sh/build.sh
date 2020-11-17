@@ -37,6 +37,7 @@ if [ ! -d  build ]; then
   bold "* copying files from src/ to build/ *******************************************"
   cp ../../src/Makefile.am .
   cp ../../src/test-bmat8-enum.cpp tests
+  cp ../../src/bmat-int-gens-2.txt ../output
 
   bold "* running autoconf on libsemigroups *******************************************"
   ./autogen.sh && ./configure CXXFLAGS="-fopenmp"
