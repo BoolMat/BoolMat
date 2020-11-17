@@ -13,6 +13,7 @@ GAP_SH="gap -b -A -m 512m -T -q"
 
 run() {
   if [ $1 -eq 8 ]; then
+    build/libsemigroups/test_bmat8_enum "[generate8]"
     build/libsemigroups/test_bmat8_enum "[filter8]"
   else
     build/libsemigroups/test_bmat8_enum "[$1]"
@@ -21,8 +22,8 @@ run() {
   $GAP_SH << GAP_COMMANDS
   LoadPackage("semigroups", false);;
   Read("src/gap.g");;
-  WriteAugmentedDigraphs("build/output/row_space_numbers_$1.txt",
-                         "build/output/digraphs_$1.d6.gz",
+  WriteAugmentedDigraphs("build/output/row_space_numbers_$1_prefiltered.txt",
+                         "build/output/digraphs_$1_prefiltered.d6.gz",
                          $1);;
   QUIT;
 GAP_COMMANDS
@@ -47,7 +48,16 @@ GAP_COMMANDS
   nr=$(cat build/output/max_digraphs_$1.d6.gz | gzip -d | wc -l)
   xbold $nr "maximal digraphs written to: build/output/max_digraphs_$1.d6.gz ******"
   cat build/output/bmat-gens-$1-*.gz > build/output/bmat-gens-$1.gz
-  xbold $((nr+3)) "min. gen. set written to:    build/output/bmat-gens-$1.gz ************"
+  xbold $((nr+4)) "min. gen. set written to:    build/output/bmat-gens-$1.gz ************"
+  $GAP_SH << GAP_COMMANDS
+    LoadPackage("semigroups");;
+    Read("src/gap.g");;
+    FileOfBoolMatsToFileOfInts($1,
+                               "build/output/bmat-gens-$1.gz",
+                               "build/output/bmat-int-gens-$1.txt");;
+GAP_COMMANDS
+  xbold $((nr+4)) "min. gen. set written to:    build/output/bmat-int-gens-$1.txt *******"
+
 }
 
 if [[ $# -gt 2 || $# -lt 1 ]]; then

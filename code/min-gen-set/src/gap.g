@@ -23,9 +23,9 @@ end;
 FileOfIntsToListOfBMats := function(n, process_id, sublist, p)
   local x, cycle, id;
 
-  x := StringFile(Concatenation("build/output/bmat_enum_trim_",
+  x := StringFile(Concatenation("build/output/bmat_full_",
                                 String(n),
-                                ".txt"));
+                                "_prefiltered.txt"));
   x := EvalString(Concatenation("[", ReplacedString(x, "\n", ","), "]"));
   x := x{OnTuples(sublist, p ^ -1)};
   x := List(x, y -> BooleanMat(IntToBMat(n, y)));
@@ -35,8 +35,9 @@ FileOfIntsToListOfBMats := function(n, process_id, sublist, p)
     Add(cycle, 1);
     Add(x, AsBooleanMat(PermList(cycle)));
     id := List([1 .. n - 1], x -> BlistList([1 .. n], [x]));
-    Add(id, BlistList([1 .. n], []));
-    Add(x, BooleanMat(id));
+    Add(x, BooleanMat(Concatenation(id, [BlistList([1 .. n], [])])));
+    Add(x, BooleanMat(Concatenation(id, [BlistList([1 .. n], [n-1, n])])));
+  
   fi;
 
   if not IsEmpty(x) then
@@ -46,6 +47,24 @@ FileOfIntsToListOfBMats := function(n, process_id, sublist, p)
                                   String(process_id),
                                   ".gz"), x);
   fi;
+end;
+
+FileOfBoolMatsToFileOfInts := function(n, fin, fout)
+  local x, f, padded, blist, mat, i;
+  x := ReadGenerators(fin);  
+  f := IO_CompressedFile(fout, "w");
+  for mat in x do
+    padded := [];
+    for i in [1 .. 8] do
+      blist := BlistList([1 .. 8], []);
+      if i <= n then
+        blist{[1 .. n]} := mat[i];
+      fi;
+      Add(padded, blist);
+    od;
+    IO_WriteLine(f, String(NumberBooleanMat(BooleanMat(padded)) - 1));
+  od;
+  IO_Close(f);
 end;
 
 # TODO(FLS) what is this?
