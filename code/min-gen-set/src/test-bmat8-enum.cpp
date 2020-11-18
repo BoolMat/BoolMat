@@ -517,6 +517,10 @@ namespace libsemigroups {
    public:
     void run_impl() {
       dive(0);
+      HPCombi::BMat8 one = bmat8_helpers::one<HPCombi::BMat8>(_n);
+      if (!_set.count(one)) {
+        _out.push_back(one);
+      }
       _finished = true;
       report_why_we_stopped();
     }
@@ -824,10 +828,6 @@ namespace libsemigroups {
           continue;
         }
         HPCombi::BMat8 bm = bmat_enum[i];
-        if (bm == one) {
-          count++;
-          continue;
-        }
 
         std::vector<uint8_t>              tup(_dim, 0);
         std::vector<std::vector<uint8_t>> intersects = intersections(bm, _dim);
@@ -849,12 +849,13 @@ namespace libsemigroups {
           }
         } while (increment_tuple(tup, maxes) && !stopped());
 
+
         if (stopped()) {
           break_flag = true;
           continue;
         }
 
-        if (is_maximal) {
+        if (is_maximal || bm == one) {
           std::lock_guard<std::mutex> lg(_mtx);
           _filtered.push_back(bm);
           append_bmat_file(_out, bm);
@@ -1427,42 +1428,42 @@ namespace libsemigroups {
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "3",
                           "enumerate minimal generating set for n = 3",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][full-3]") {
     full_run<3>();
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "4",
                           "enumerate minimal generating set for n = 4",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][full-4]") {
     full_run<4>();
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "5",
                           "enumerate minimal generating set for n = 5",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][full-5]") {
     full_run<5>();
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "6",
                           "enumerate minimal generating set for n = 6",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][full-6]") {
     full_run<6>();
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "7",
                           "enumerate minimal generating set for n = 7",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][full-7]") {
     full_run<7>();
   }
 
   LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
                           "8",
                           "enumerate minimal generating set for n = 8",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][full-8]") {
     //TODO: change this after timings
     full_run_no_enum<8>();
   }
@@ -1477,7 +1478,7 @@ namespace libsemigroups {
                           "13",
                           "enumerate minimal generating set for reflexive "
                           "boolean mat monoid with n = 3",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][ref-3]") {
     reflexive_minimal_generating_set<3>();
   }
 
@@ -1485,7 +1486,7 @@ namespace libsemigroups {
                           "14",
                           "enumerate minimal generating set for reflexive "
                           "boolean mat monoid with n = 4",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][ref-4]") {
     reflexive_minimal_generating_set<4>();
   }
 
@@ -1493,7 +1494,7 @@ namespace libsemigroups {
                           "15",
                           "enumerate minimal generating set for reflexive "
                           "boolean mat monoid with n = 5",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][ref-5]") {
     reflexive_minimal_generating_set<5>();
   }
 
@@ -1501,8 +1502,16 @@ namespace libsemigroups {
                           "16",
                           "enumerate minimal generating set for reflexive "
                           "boolean mat monoid with n = 6",
-                          "[standard][enumerate]") {
+                          "[standard][enumerate][ref-6]") {
     reflexive_minimal_generating_set<6>();
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "16",
+                          "enumerate minimal generating set for reflexive "
+                          "boolean mat monoid with n = 7",
+                          "[standard][enumerate][ref-7]") {
+    reflexive_minimal_generating_set<7>();
   }
 
   /*

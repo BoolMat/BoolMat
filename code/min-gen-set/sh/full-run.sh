@@ -12,7 +12,7 @@ xbold() {
 GAP_SH="gap -b -A -m 512m -T -q"
 
 libsemi() {
-  build/libsemigroups/test_bmat8_enum "[$1]"
+  build/libsemigroups/test_bmat8_enum "[full-$1]"
 }
 
 filter() {

@@ -23,16 +23,19 @@ full-8:
 	@sh/full-run.sh 8 
 
 ref-3: 
-	@sh/ref-run.sh 3
+	build/libsemigroups/test_bmat8_enum "[ref-3]"
 
 ref-4: 
-	@sh/ref-run.sh 4
+	build/libsemigroups/test_bmat8_enum "[ref-4]"
 
 ref-5: 
-	@sh/ref-run.sh 5
+	build/libsemigroups/test_bmat8_enum "[ref-5]"
 
 ref-6: 
-	@sh/ref-run.sh 6
+	build/libsemigroups/test_bmat8_enum "[ref-6]"
+
+ref-7: 
+	build/libsemigroups/test_bmat8_enum "[ref-7]"
 
 clean:  
 	rm -rf build
