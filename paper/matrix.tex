@@ -595,8 +595,8 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
     \hline
     1 & *2         & *1& *1& *1& *2\\
     2 & *3         & *2& *2& *3& *3\\
-    3 & *5         & *8& *4& *5& *6\\
-    4 & *7         & *38& *6& *7& *10\\
+    3 & *5         & *9& *4& *5& *6\\
+    4 & *7         & *39& *6& *7& *10\\
     5 & *13        & *1\ 415& *12& 13& *15\\
     6 & 68         & 482\ 430& 67& ?& 21\\
     7 & 2\ 142     & 1\ 034\ 972\ 230& 2\ 141& ?& 28\\
@@ -608,7 +608,8 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
   \caption{The ranks of certain matrix monoids over $\B$; a * denotes that the
     rank was already known or is computable by brute force, and a ? indicates
     that the value is unknown. See \thref{conj:TransGenSet} and the preceding
-    discussion for $\MTn$.}
+    discussion for $\MTn$. Note that the ranks given are to generate the monoids
+    as semigroups.}
   \label{tab:BMatResults}
 \end{table}
 There are several obvious relationships between columns in
@@ -1318,9 +1319,9 @@ the following lemma.
 \end{proof}
 
 For $n=8$ prefiltering by some of the large row spaces and extended prime
-matrices is enough to obtain a minimal generating set, though the computation is
-lengthy; see Table~\ref{tab:runtimestats} for some details. A significant
-improvement can be obtained by using Zaretskii's Theorem.
+matrices is enough to obtain a minimal generating set, although the computation
+is extremely lengthy; see Table~\ref{tab:runtimestats} for some details. A
+significant improvement can be obtained by using Zaretskii's Theorem.
 
 \begin{table}
   \centering
@@ -1329,23 +1330,26 @@ improvement can be obtained by using Zaretskii's Theorem.
     \thref{alg:filter2} & prefiltering & \thead{\thref{alg:filter1} with \\
       prefiltering}  & \thead{\thref{alg:filter2} with \\ prefiltering} \\
     \hline
-    1 & ? & ? & ? & ? & ? \\
-    2 & ? & ? & ? & ? & ? \\
-    3 & ? & ? & ? & ? & ? \\
-    4 & ? & ? & ? & ? & ? \\
-    5 & ? & ? & ? & ? & ? \\
-    6 & ? & ? & ? & ? & ? \\
-    7 & ? & ? & ? & ? & ? \\
-    8 & ? & ? & ? & ? & ?
+    3 && 5.4ms & 6.5s & 23ms & ? & 6.5s \\
+    4 && 5.6ms & 7.0s & 25ms & ? & 6.7s \\
+    5 && 9.2ms & 7.2s & 33ms & ? & 7.3s \\
+    6 && 150ms & ? & 80ms & ? & 8.7s \\
+    7 && 55s & 1m11s & 28s & ? & 1m8s \\
+    8 && 30h52m & & ? & ? & ~30 days 
   \end{tabular}
-\vspace{1cm}
 
-% include prefiltering stats (choose x% of the largest row spaces?)
-\caption{Runtime of different filtering approaches; executed on TODO - we'll run
-  all these computations once the paper is otherwise done}
+\caption{Runtimes of the algorithms described in this section, for $3 \leq n
+  \leq 8$. Runtimes for $n = 1,2$ were excluded as they are essentially
+  immediate after accounting for system factors. Matrices were prefiltered by
+  generators of $\Bm{n - 1}$ extended as in
+  \thref{lem:ExtendingPrimeMatrices}; in particular a good balance was found
+  to be taking those extended matrices with the 13 largest row spaces amongst
+  the extended row spaces. Each algorithm was executed on a cluster of 60 2.3GHz
+  AMD Opteron 6376 cores with 512GB of ram. \thref{alg:filter2} involves
+  launching GAP multiple times, which took approximately 6s in each run. For
+  $n=8$, \thref{alg:filter} with prefiltering was run on TODO}
 \label{tab:runtimestats}
 \end{table}
-
 
 Let $A \in \Bn$. The \defn{graph} of $R(A)$ is the directed graph with vertices
 $R(A)$ and an edge from $v$ to $w$ if $v \leq w$. The graph of $C(A)$ is defined

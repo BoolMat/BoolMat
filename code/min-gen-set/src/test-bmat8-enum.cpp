@@ -613,19 +613,36 @@ namespace libsemigroups {
 
       std::vector<std::vector<std::bitset<256>>> spaces(
           (1 << _dim) + 1, std::vector<std::bitset<256>>());
-      for (HPCombi::BMat8 x : _filterers) {
+      
+      std::atomic<size_t> count{0};
+#pragma omp parallel for
+      for (size_t i = 0; i < _filterers.size(); ++i) {
+        HPCombi::BMat8 x = _filterers[i];
+        std::vector<std::bitset<256>> thread_bitsets;
         std::bitset<256> bitset = _bit_func(x);
-        size_t           count  = bitset.count();
-        spaces[count].push_back(bitset);
+        size_t           bit_count  = bitset.count();
+        thread_bitsets.push_back(bitset);
         if (_permute) {
           for (HPCombi::BMat8 y : S_bmats) {
             bitset = _bit_func(_act(x, y));
-            spaces[count].push_back(bitset);
+            thread_bitsets.push_back(bitset);
           }
+        }
+        {
+          std::lock_guard<std::mutex> lg(_mtx);
+          spaces[bit_count].insert(spaces[bit_count].end(),
+                                   thread_bitsets.begin(),
+                                   thread_bitsets.end());
+        }
+        count++;
+        if (report()) {
+          REPORT_DEFAULT("Generating bitsets: on %d out of %d.\n",
+                         count.load(),
+                         _filterers.size());
         }
       }
 
-      std::atomic<size_t> count{0};
+      count = 0;
 #pragma omp parallel for
       for (size_t i = 0; i < bmat_enum.size(); ++i) {
         HPCombi::BMat8   bm     = bmat_enum[i];
@@ -1579,6 +1596,187 @@ namespace libsemigroups {
     std::cout << "    " << gensf << "\n";
   }
 */
+
+
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  //
+  // Filter the trim matrices in Bn by brute force
+  //
+  /////////////////////////////////////////////////////////////////////////////
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "33",
+                          "brute filter B3 - with prefiltering",
+                          "[extreme][brute-filter-3]") {
+    std::string bmatf = "build/output/bmat_full_3_prefiltered.txt";
+    std::string outf = "build/output/bmat_full_3_brute_prefiltered.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<3> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+  
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "34",
+                          "brute filter B4 - with prefiltering",
+                          "[extreme][brute-filter-4]") {
+    std::string bmatf = "build/output/bmat_full_4_prefiltered.txt";
+    std::string outf = "build/output/bmat_full_4_brute_prefiltered.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<4> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+  
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "35",
+                          "brute filter B5 - with prefiltering",
+                          "[extreme][brute-filter-5]") {
+    std::string bmatf = "build/output/bmat_full_5_prefiltered.txt";
+    std::string outf = "build/output/bmat_full_5_brute_prefiltered.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<5> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+  
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "36",
+                          "brute filter B6 - with prefiltering",
+                          "[extreme][brute-filter-6]") {
+    std::string bmatf = "build/output/bmat_full_6_prefiltered.txt";
+    std::string outf = "build/output/bmat_full_6_brute_prefiltered.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<6> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "37",
+                          "brute filter B7 - with prefiltering",
+                          "[extreme][brute-filter-7]") {
+    auto                        rg   = ReportGuard();
+    std::string bmatf = "build/output/bmat_full_7_prefiltered.txt";
+    std::string outf = "build/output/bmat_full_7_brute_prefiltered.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<7> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "43",
+                          "brute filter B3 - with prefiltering",
+                          "[extreme][brute-filter-3]") {
+    std::string bmatf = "build/output/bmat_enum_trim_3.txt";
+    std::string outf = "build/output/bmat_full_3_brute.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<3> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+  
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "44",
+                          "brute filter B4 - with prefiltering",
+                          "[extreme][brute-filter-4]") {
+    std::string bmatf = "build/output/bmat_enum_trim_4.txt";
+    std::string outf = "build/output/bmat_full_4_brute.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<4> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+  
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "45",
+                          "brute filter B5 - with prefiltering",
+                          "[extreme][brute-filter-5]") {
+    std::string bmatf = "build/output/bmat_enum_trim_5.txt";
+    std::string outf = "build/output/bmat_full_5_brute.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<5> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+  
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "46",
+                          "brute filter B6 - with prefiltering",
+                          "[extreme][brute-filter-6]") {
+    std::string bmatf = "build/output/bmat_enum_trim_6.txt";
+    std::string outf = "build/output/bmat_full_6_brute.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<6> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
+
+  LIBSEMIGROUPS_TEST_CASE("BMat8 enum",
+                          "47",
+                          "brute filter B7 - with prefiltering",
+                          "[extreme][brute-filter-7]") {
+    auto                        rg   = ReportGuard();
+    std::string bmatf = "build/output/bmat_enum_trim_7.txt";
+    std::string outf = "build/output/bmat_full_7_brute.txt";
+    std::vector<HPCombi::BMat8> filts = read_bmat_file(bmatf);
+
+    Filterer<7> filterer(bmatf,
+                         outf,
+                         filts,
+                         true);
+    filterer.run();
+    std::cout << filterer.reps().size() << " trim matrices written to:";
+    std::cout << "    " << outf << "\n";
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   //
