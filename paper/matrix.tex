@@ -128,7 +128,7 @@ semiring $\B$; we also present some results about monoids of min-plus and
 max-plus matrices of dimension $2$. 
 
 If $S$ is a semigroup, then the least cardinality of a generating set for $S$ is
-often called the \defn{rank} of $S$ and is  denoted by $\mathbf{d}(S)$. 
+often called the \defn{rank} of $S$ and is denoted by $\mathbf{d}(S)$. 
 A \defn{semiring} is a set $\mathbb{S}$ with two operations, $\oplus$ and $\otimes$,
 such that $(\mathbb{S}, \oplus)$ forms a commutative monoid with identity $e$,
 $(\mathbb{S}, \otimes)$ forms a monoid, $e\otimes x = x\otimes e = e$ for all $x
@@ -174,24 +174,100 @@ was filled by Konieczny in 2011~\cite{Konieczny2011aa}. The minimal generating
 sets given by Devadze and Konieczny are specified in terms of representatives of
 certain $\J$-classes of $\Bn$, the exact number of which is difficult to
 compute, and grows very quickly with $n$; see~\thref{cor:ExponentialGenSets}.
-The monoid $\Bn$ has several natural submonoids that we also consider. 
 
-These are the monoids: $\Refln$ consisting of the \defn{reflexive boolean matrices} (that is matrices containing the identity matrix);
-$\Halln$ consisting of all \defn{Hall matrices} (matrices containing a permutation); 
-and $\UTn$ of \defn{upper triangular boolean matrices}. Each of these submonoids has been extensively studied in their own right; see, for example, \cite{}. Unlike $\Bn$, $\Refln$ is $\J$-trivial (see \cite{}), and so its number of $\J$-classes is the same as $|\Refln| = 2 ^ {n ^ 2 - n}$. Similarly, $A, B\in \Halln$ are $\J$-related if and only if one can be obtained from the other by permuting the rows and columns. 
-However, the size of $\Halln$ is not known for $n\geq 8$; see \cite{OEIS}. 
-% TODO(FLS) write a sentence or two about the upper triangular matrices. 
-% TODO(FLS) write a sentence or two about the tropical matrices, i.e. here are lots of papers about tropical matrices, these are less studied in the classical semigroup theoretic sense (Greens-relations, minimal generating set etc), perhaps because they are intractable and complex.
+The monoid $\Bn$ has several natural submonoids that we consider, namely the
+monoids: $\Refln$ consisting of the \defn{reflexive boolean
+  matrices} (that is matrices containing the identity matrix); $\Halln$
+consisting of all \defn{Hall matrices} (matrices containing a permutation); and
+$\UTn$ of \defn{upper triangular boolean matrices}. Each of these submonoids has
+been extensively studied in their own right; see, for example,
+\cite{Butler1974aa, Cho1993ab, Kim1977aa, Li2011aa, Pin1985aa, Schwarz1973aa,
+  Tan2000aa, Zhang2020aa}. Unlike $\Bn$, $\Refln$ is $\J$-trivial, and so its
+number of $\J$-classes is the same as $|\Refln| = 2 ^ {n ^ 2 - n}$. Similarly,
+$A, B\in \Halln$ are $\J$-related if and only if one can be obtained from the
+other by permuting the rows and columns. However, the size of $\Halln$ is not
+known for $n\geq 8$; see \cite{OEISHall}. In contrast, the size of the
+upper-triangular boolean matrix monoid $\UTn$ is simply $2^{\frac{n(n+1)}{2}}$.
+The monoid $\UTn$ appears to have been primarily studied in the context of
+varieties, but has a particularly straightforward minimal generating set (see
+Section~\ref{sec:TriBoolMat}).
 
+We also consider monoids of matrices over certain \defn{tropical} semirings. 
+The \defn{min-plus semiring} $\Kmin$ is the set $\N \cup \{\infty\}$, with
+$\oplus = \min$ and $\otimes$ extending the usual addition on $\N$ so that
+$x\otimes\infty = \infty\otimes x = \infty$ for all $x \in \Kmin$. For our
+purposes, $0 \in \N$; this is the one of $\Kmin$ is $0$. The zero is $\infty$.
 
-% TODO summarise the sections of the paper. 
-In Section~\ref{sec:FullBoolMat}, we will show one method for computing minimal
-generating sets of the form described by Devadze and Konieczny, and we apply
-this method to show that $\d(M_6(\B)) = 68$, $\d(M_7(\B)) = 2142$, and
-$\d(M_8(\B)) = 495115$. 
-% TODO include the table 1?
+The \defn{max-plus semiring} $\Kmax$ is the set $\N \cup \{-\infty\}$ with
+$\oplus = \max$ and $\otimes$ extending the usual addition on $\N$ so that
+$x\otimes-\infty = -\infty\otimes x = -\infty$ for all $x \in \Kmax$. The
+one of $\Kmax$ is $0$ and the zero is $-\infty$.
 
-In Section~\ref{} we show that the generating sets for (tropical) given in~\cite{JJJ} are, in fact, minimal, and so, in particular, $\d(??)) = t + 4$. 
+These semirings give rise to two infinite families of finite quotients. The
+\defn{min-plus semiring with threshold $t$}, denoted $\Kmint$, is the set $\{0,
+  1, \ldots, t, \infty\}$ with operations $\oplus = \min$ and $\otimes$ defined
+by
+\begin{align*}
+  a \otimes b = \begin{cases}
+    \min(t, a + b) \quad &\text{$a \neq \infty$ and $b \neq \infty$} \\
+    \infty \quad &\text{$a = \infty$ or $b = \infty$}.
+  \end{cases}
+\end{align*}
+
+The \defn{max-plus semiring with threshold $t$}, denoted $\Kmaxt$, is
+constructed analogously; its elements are $\{-\infty, 0, 1, \ldots, t\}$,
+addition is $\max$, and multiplication is defined by $a \otimes b = \min(t, a +
+b)$ for all $a, b \in \Kmaxt$.
+These finite semirings with threshold $t$ may also be defined as the quotient of
+the corresponding infinite semirings by the congruence generated by $(t, t +
+1)$. Tropical semirings are usuallly defined in the literature to contain
+$\mathbb{R}$ rather than $\N$, however from a computational semigroup theory
+standpoint this is somewhat impractical. Note that under the standard
+definition, the min-plus and max-plus semirings are isomorphic under the map $x
+\to -x$; this is not the case under our definition. There is a significant
+amount of literature on matrices over the tropical semirings; see for example
+\cite{Hollings2012aa, Izhakian2010aa, Johnson2013aa, Johnson2014aa,
+  Johnson2019aa, Laure2018aa, Shitov2014aa, Simon1994aa, Shen2016aa}. However,
+there is relatively little literature on the classical semigroup-theoretic
+properties of the tropical matrix monoids like Green's relations or generating
+sets; indeed descriptions of the Green's relations were only published
+relatively recently (see \cite{Hollings2012aa, Johnson2013aa}). This may simply
+be because the monoids are rather complex and difficult to work with.  
+
+The final semiring that we are concerned with is $\Z_n$, the integers modulo $n$.
+The monoid of matrices over $\Z_n$ has received relatively little attention as a
+semigroup. As an example of an \defn{exact semiring} as defined in
+\thref{Wilding2013aa}, there is a characterisation of Green's relations on
+$M_k(\Z_n)$ in terms of row and column spaces, but there appears to be little
+more known about the structure of $M_k(\Z_n)$.
+
+In Section~\ref{sec:Preliminaries} we provide the well-known but necessary
+preliminaries on Green's relations and matrix monoids; this is followed in
+Section~\ref{sec:MinimalGenSets} by some elementary lemmas on generating sets
+and their minimality.
+
+In Section~\ref{sec:boolmat} we describe and compute minimal generating sets for
+the minimal generating sets of $\Bn$, $\Refln$, $\Halln$, and $\UTn$;
+the section is organised as follows. In Section~\ref{sec:BMatPrelim} we
+introduce the necessary background, which will be used throughout
+Section~\ref{sec:boolmat}. In Section~\ref{sec:FullBoolMat}, we describe two
+methods for computing minimal generating sets of the form described by Devadze
+and Konieczny, and apply these methods to compute $\d(M_6(\B))$, $\d(M_7(\B))$,
+and $\d(M_8(\B))$. In Section~\ref{sec:RefBoolMat}, we describe the unique
+minimal generating set for $\Refln$ and a method for computing it, and apply
+this method to compute $\d(\Refln)$ for $n \leq 7$. In
+Section~\ref{sec:HallBoolMat}, we describe how minimal generating sets for
+$\Halln$ arise from minimal generating sets for $\Bn$. Finally, in
+Section~\ref{sec:TriBoolMat} we describe the unique minimal generating sets for
+$\UTn$ and show that $\d(\UTn) = T_n$, the $n$-th triangular number, for all
+$n$.
+
+In Section~\ref{sec:Tropical} we show that the generating sets for the dimension
+$2$ tropical matrix monoids given in~\cite{East2020aa} are minimal, and so, in
+particular, $\d(M_2(\Kmint)) = t + 4$ and $\d(M_2(\Kmaxt)) = (t^2 + 3t + 8)/2$.
+
+Finally, in Section~\ref{sec:IntegersModN} we describe generating sets for
+$M_k(\Z_n)$, and prove that these generating sets are minimal.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,7 +320,7 @@ In Section~\ref{} we show that the generating sets for (tropical) given in~\cite
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
-\label{section-preliminaries}
+\label{sec:Preliminaries}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Green's relations}
@@ -268,72 +344,72 @@ There is a natural partial order on certain Green's classes
 Further background on Green's relations can be found in~\cite{Howie1995aa}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Semirings}
-\label{sec:Semirings}
-The theory of matrices over fields is familiar and well-studied, but we are
-concerned with matrices over more general objects, semirings. For our purposes,
-a semiring is a set $\mathbb{S}$ with two operations, $\oplus$ and $\otimes$,
-such that $(\mathbb{S}, \oplus)$ forms a commutative monoid with identity $e$,
-$(\mathbb{S}, \otimes)$ forms a monoid, $e\otimes x = x\otimes e = e$ for all $x
-\in \mathbb{S}$, and multiplication distributes over addition. We call the
-additive identity the \defn{zero} of the semiring and the multiplicative identity
-the \defn{one}. Throughout, semirings will be denoted by blackboard bold
-symbols. We are particularly interested in several special types of semiring.
-
-The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
-\begin{align*}
-  0 \oplus 1 = 1 \oplus 0 &= 1 \oplus 1 = 1 \\
-  0 \oplus 0 &= 0
-\end{align*}
-and multiplication defined as usual for the real numbers $0$ and $1$. This
-semiring, and the matrices over it, have been studied since at least Zaretskii's
-foundational paper~\cite{Zaretskii1963aa} in 1963. \\
-
-The \defn{min-plus semiring} $\Kmin$ is the set $\N \cup \{\infty\}$, with
-$\oplus = \min$ and $\otimes$ extending the usual addition on $\N$ so that
-$x\otimes\infty = \infty\otimes x = \infty$ for all $x \in \Kmin$. For our
-purposes, $0 \in \N$, and so the one of $\Kmin$ is $0$ and the zero is
-$\infty$. \\ 
-%The min-plus semiring was first introduced by
-%Simon~\cite{Simon1978aa} in the context of automata theory; see also
-%Pin~\cite{Pinab}. 
-The \defn{max-plus semiring} $\Kmax$ is the set $\N \cup \{-\infty\}$ with
-$\oplus = \max$ and $\otimes$ extending the usual addition on $\N$ so that
-$x\otimes-\infty = -\infty\otimes x = -\infty$ for all $x \in \Kmax$. The
-one of $\Kmax$ is $0$ and the zero is $-\infty$.
-
-We are also interested in certain finite quotients of these semirings. The
-\defn{min-plus semiring with threshold $t$}, denoted $\Kmint$, is the set
-$\{0, 1, \ldots, t, \infty\}$ with operations $\oplus = \min$ and $\otimes$
-defined by
-\begin{align*}
-  a \otimes b = \begin{cases}
-    \min(t, a + b) \quad &\text{$a \neq \infty$ and $b \neq \infty$} \\
-    \infty \quad &\text{$a = \infty$ or $b = \infty$}.
-  \end{cases}
-\end{align*}
-
-The \defn{max-plus semiring with threshold $t$}, denoted $\Kmaxt$, is
-constructed analogously; its elements are $\{-\infty, 0, 1, \ldots, t\}$,
-addition is $\max$, and multiplication is defined by $a \otimes b = \min(t, a +
-b)$ for all $a, b \in \Kmaxt$.
-These finite semirings with threshold $t$ may also be defined as the quotient of
-the corresponding infinite semirings by the congruence generated by $(t, t +
-1)$.
-The min-plus and max-plus semirings are known as \defn{tropical} semirings.
-Tropical semirings have attracted significant attention recently, in diverse
-contexts such as scheduling theory~\cite{Butkovic2003aa} and tropical
-geometry~\cite{Maclagan2015aa}. Typically they are defined to contain
-$\mathbb{R}$ rather than $\N$, however from a computational semigroup theory
-standpoint the standard definition is extremely challenging to work with in
-practice. Note that under the standard definition, the min-plus and max-plus
-semirings are isomorphic under the map $x \to -x$; this is not the case under
-our definition.
-
-The final semirings that we are concerned with are the \defn{modular integers}
-$\Z_n$; given $n \in \N$, $\Z_n$ consists of the set $\{0, 1, \ldots, n - 1\}$
-where $\oplus$ is addition modulo $n$, and $\otimes$ is multiplication modulo
-$n$.
+%\subsection{Semirings}
+%
+%\label{sec:Semirings}
+%The theory of matrices over fields is familiar and well-studied, but we are
+%concerned with matrices over more general objects, semirings. For our purposes,
+%a semiring is a set $\mathbb{S}$ with two operations, $\oplus$ and $\otimes$,
+%such that $(\mathbb{S}, \oplus)$ forms a commutative monoid with identity $e$,
+%$(\mathbb{S}, \otimes)$ forms a monoid, $e\otimes x = x\otimes e = e$ for all $x
+%\in \mathbb{S}$, and multiplication distributes over addition. We call the
+%additive identity the \defn{zero} of the semiring and the multiplicative identity
+%the \defn{one}. Throughout, semirings will be denoted by blackboard bold
+%symbols. We are particularly interested in several special types of semiring.
+%
+%The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
+%\begin{align*}
+%  0 \oplus 1 = 1 \oplus 0 &= 1 \oplus 1 = 1 \\
+%  0 \oplus 0 &= 0
+%\end{align*}
+%and multiplication defined as usual for the real numbers $0$ and $1$. This
+%semiring, and the matrices over it, have been studied since at least Zaretskii's
+%foundational paper~\cite{Zaretskii1963aa} in 1963. \\
+%
+%The \defn{min-plus semiring} $\Kmin$ is the set $\N \cup \{\infty\}$, with
+%$\oplus = \min$ and $\otimes$ extending the usual addition on $\N$ so that
+%$x\otimes\infty = \infty\otimes x = \infty$ for all $x \in \Kmin$. For our
+%purposes, $0 \in \N$, and so the one of $\Kmin$ is $0$ and the zero is
+%$\infty$. \\ 
+%%The min-plus semiring was first introduced by
+%%Simon~\cite{Simon1978aa} in the context of automata theory; see also
+%%Pin~\cite{Pinab}. 
+%The \defn{max-plus semiring} $\Kmax$ is the set $\N \cup \{-\infty\}$ with
+%$\oplus = \max$ and $\otimes$ extending the usual addition on $\N$ so that
+%$x\otimes-\infty = -\infty\otimes x = -\infty$ for all $x \in \Kmax$. The
+%one of $\Kmax$ is $0$ and the zero is $-\infty$.
+%
+%We are also interested in certain finite quotients of these semirings. The
+%\defn{min-plus semiring with threshold $t$}, denoted $\Kmint$, is the set
+%$\{0, 1, \ldots, t, \infty\}$ with operations $\oplus = \min$ and $\otimes$
+%defined by
+%\begin{align*}
+%  a \otimes b = \begin{cases}
+%    \min(t, a + b) \quad &\text{$a \neq \infty$ and $b \neq \infty$} \\
+%    \infty \quad &\text{$a = \infty$ or $b = \infty$}.
+%  \end{cases}
+%\end{align*}
+%
+%The \defn{max-plus semiring with threshold $t$}, denoted $\Kmaxt$, is
+%constructed analogously; its elements are $\{-\infty, 0, 1, \ldots, t\}$,
+%addition is $\max$, and multiplication is defined by $a \otimes b = \min(t, a +
+%b)$ for all $a, b \in \Kmaxt$.
+%These finite semirings with threshold $t$ may also be defined as the quotient of
+%the corresponding infinite semirings by the congruence generated by $(t, t +
+%1)$.
+%The min-plus and max-plus semirings are known as \defn{tropical} semirings.
+%Tropical semirings have attracted significant attention recently, in diverse
+%contexts such as scheduling theory~\cite{Butkovic2003aa} and tropical
+%geometry~\cite{Maclagan2015aa}. Typically they are defined to contain
+%$\mathbb{R}$ rather than $\N$, however from a computational semigroup theory
+%standpoint the standard definition is impractical. Note that under the standard
+%definition, the min-plus and max-plus semirings are isomorphic under the map $x
+%\to -x$; this is not the case under our definition.
+%
+%The final semirings that we are concerned with are the \defn{modular integers}
+%$\Z_n$; given $n \in \N$, $\Z_n$ consists of the set $\{0, 1, \ldots, n - 1\}$
+%where $\oplus$ is addition modulo $n$, and $\otimes$ is multiplication modulo
+%$n$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Matrix semigroups}
@@ -341,11 +417,10 @@ $n$.
 Given a semiring $\mathbb{S}$ and $m, n \in \N$, we may study the set of $m
 \times n$ matrices over $\mathbb{S}$; we will denote this by $M_{m,
   n}(\mathbb{S})$. In particular, we are interested in the multiplicative monoid
-of square matrices of dimension $n \in
-\N$ over $\mathbb{S}$, denoted by $M_n(\mathbb{S})$.
-There are a number of common features of such matrix monoids. As usual, we let
-$0$ denote the additive identity of $\mathbb{S}$ and $1$ denote the
-multiplicative identity.
+of square matrices of dimension $n \in \N$ over $\mathbb{S}$, denoted by
+$M_n(\mathbb{S})$.  There are a number of common features of such matrix
+monoids. As usual, we let $0$ denote the additive identity of $\mathbb{S}$ and
+$1$ denote the multiplicative identity.
 
 Let $A \in M_n(\mathbb{S})$. We write $A_{i*}$ to denote the $i$th row of $A$,
 $A_{*i}$ to denote the $i$th column, and $A_{ij}$ to denote the $j$th entry of
@@ -438,7 +513,7 @@ well-known results:
 \end{proof}
 
 The following lemma provides a useful connection between the $\J$-relation and row
-spaces; see \thref{thm:Zaretskii} for a strengthening in the case $\Bn$.
+spaces; see \thref{thm:Zaretskii} for a strengthening in the case of $\Bn$.
 The proof of this lemma is essentially the same as for boolean matrices,
 as found in~\cite[Theorem 1.3.3, forward direction]{Kim1982aa}, noting that in
 the finite monoids $M_{n}(\mathbb{S})$, $\D = \J$.
@@ -482,6 +557,7 @@ below the group of units in the $\J$-order.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Minimal generating sets}
+\label{sec:MinimalGenSets}
 
 Given a semigroup $S$, we may ask what the minimum cardinality is of a
 generating set for $S$. This is known as the \defn{rank} of $S$ and is denoted
@@ -550,7 +626,6 @@ minimal.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \section{Boolean matrix monoids}
 \label{sec:boolmat}
@@ -671,7 +746,6 @@ transformation matrix.
   \end{align*}
 \end{conj}
 \noindent This conjecture has been verified computatationally up to $n = 5$.
-
 
 The rest of this section is organised as follows. In
 Section~\ref{sec:BMatPrelim}, we introduce a number of concepts and results
@@ -1330,12 +1404,12 @@ significant improvement can be obtained by using Zaretskii's Theorem.
     \thref{alg:filter2} & prefiltering & \thead{\thref{alg:filter1} with \\
       prefiltering}  & \thead{\thref{alg:filter2} with \\ prefiltering} \\
     \hline
-    3 && 5.4ms & 6.5s & 23ms & ? & 6.5s \\
-    4 && 5.6ms & 7.0s & 25ms & ? & 6.7s \\
-    5 && 9.2ms & 7.2s & 33ms & ? & 7.3s \\
-    6 && 150ms & ? & 80ms & ? & 8.7s \\
-    7 && 55s & 1m11s & 28s & ? & 1m8s \\
-    8 && 30h52m & & ? & ? & ~30 days 
+    3 &5.4ms  & 12ms & 6.5s & 23ms & 11ms & 6.5s \\
+    4 &5.6ms  & 13ms & 7.0s & 25ms & 11ms & 6.7s \\
+    5 &9.2ms  & 16ms & 7.2s & 33ms & 16ms & 7.3s \\
+    6 &150ms  & 216ms & 8.6s & 80ms & 171ms & 8.7s \\
+    7 &55s    & 1h20m & 1m11s & 28s & 1h9m & 1m8s \\
+    8 &30h52m & - & & ? & ~30 days & ? 
   \end{tabular}
 
 \caption{Runtimes of the algorithms described in this section, for $3 \leq n
@@ -1347,7 +1421,7 @@ significant improvement can be obtained by using Zaretskii's Theorem.
   the extended row spaces. Each algorithm was executed on a cluster of 60 2.3GHz
   AMD Opteron 6376 cores with 512GB of ram. \thref{alg:filter2} involves
   launching GAP multiple times, which took approximately 6s in each run. For
-  $n=8$, \thref{alg:filter} with prefiltering was run on TODO}
+  $n=8$, \thref{alg:filter1} with prefiltering was run on TODO}
 \label{tab:runtimestats}
 \end{table}
 
@@ -1443,7 +1517,7 @@ In order to prove this theorem, we must understand the  $\J$-relation on
 $\Refln$. Let $A, B$ be two matrices belonging to $\Refln$. Observe that since $A,
 B$ both contain the identity matrix, the product $AB$ must contain both every
 row of $A$ and every column of $B$; hence $A \leq AB$ and $B \leq AB$. This
-leads to the following well-known fact:
+leads to the following well-known lemma:
 
 \begin{lemma}
   \thlabel{lem:ReflexiveJRelation}
@@ -2097,6 +2171,7 @@ particularly simple minimal generating set:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Tropical matrices}
+\label{sec:Tropical}
 Other classes of semirings which generalise the boolean semiring and have
 attracted significant recent attention (see ~\cite{Butkovic2003aa,
   Maclagan2015aa} and the references therein) are the min-plus and max-plus
@@ -2121,7 +2196,7 @@ $\phi: \Kmint \to \B$ which maps $\phi(\infty) = 0$ and $\phi(0) = 1$. Finding
 minimal generating sets for $\Bn$ is the subject of
 Section~\ref{sec:FullBoolMat}, and it seems reasonable to say that this is
 somewhat difficult. In particular, any general theorem on minimal generating
-sets for $M_2(\Kmint)$ must include Devadze's Theorem (\thref{thm:Devadzefull})
+sets for $M_n(\Kmint)$ must include Devadze's Theorem (\thref{thm:Devadzefull})
 as a special case, and so it seems likely that any such theorem would not
 provide explicit generators but rather would require the computation of those
 $\J$-classes immediately below the group of units as in
@@ -2136,7 +2211,7 @@ Section~\ref{sec:FullBoolMat}.
     \quad \text{and}
     \quad C     =  \mat{\infty}{\infty}{\infty}{0}
   \end{equation*}
-  where $i \in \N_{0} \cup \{\infty\}$.
+  where $i \in \N \cup \{\infty\}$.
 \end{thm}
 
 \begin{cor}[{\cite[Corollary 1.2]{East2020aa}}]\thlabel{cor:FiniteMinPlusGenSet}
@@ -2148,7 +2223,7 @@ Section~\ref{sec:FullBoolMat}.
     \quad \text{and}
     \quad C     =  \mat{\infty}{\infty}{\infty}{0}
   \end{equation*}
-  where $i \in \{0, 1, \ldots, t, \infty\}$.
+  where $i \in \Kmint$.
 \end{cor}
 
 \begin{thm}\thlabel{thm:MinPlusMinimality}
@@ -2513,8 +2588,9 @@ By \thref{prop:Wilf}, this completes the proof of
 previous lemma is that the generating set given in \thref{thm:MinPlusGenSet}
 also consists of $\J$-non-equivalent elements.
 
-\section{Matrices over $\mathbb{Z}_n$}
 
+\section{Matrices over $\mathbb{Z}_n$}
+\label{sec:IntegersModN}
 % TODO: Do we need to require k >= 2?
 
 \begin{thm}
