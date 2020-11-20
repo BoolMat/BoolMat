@@ -122,7 +122,9 @@ tabu, enumitem, hyperref}
 In this paper we find minimum cardinality generating sets for several well-known
 finite monoids of matrices over certain semirings. The topic of determining such
 minimum cardinality generating sets for algebraic objects is classical, and has
-been studied extensively in the literature; see, for example,~\cite{}.  In this
+been studied extensively in the literature; see, for
+example,~\cite{Branco2019aa, Colarte2020aa, DallaVolta1995aa, Dimitrova2020aa,
+  Gelander2020aa, Holt2013aa, Moori1993aa, Rosenberger1988aa}.  In this
 paper we are principally concerned with monoids of matrices over the boolean
 semiring $\B$; we also present some results about monoids of min-plus and
 max-plus matrices of dimension $2$. 
@@ -227,7 +229,7 @@ definition, the min-plus and max-plus semirings are isomorphic under the map $x
 \to -x$; this is not the case under our definition. There is a significant
 amount of literature on matrices over the tropical semirings; see for example
 \cite{Hollings2012aa, Izhakian2010aa, Johnson2013aa, Johnson2014aa,
-  Johnson2019aa, Laure2018aa, Shitov2014aa, Simon1994aa, Shen2016aa}. However,
+  Johnson2019aa, Laure2018aa, Shitov2014aa, Simon1994aa}. However,
 there is relatively little literature on the classical semigroup-theoretic
 properties of the tropical matrix monoids like Green's relations or generating
 sets; indeed descriptions of the Green's relations were only published
@@ -267,7 +269,8 @@ $2$ tropical matrix monoids given in~\cite{East2020aa} are minimal, and so, in
 particular, $\d(M_2(\Kmint)) = t + 4$ and $\d(M_2(\Kmaxt)) = (t^2 + 3t + 8)/2$.
 
 Finally, in Section~\ref{sec:IntegersModN} we describe generating sets for
-$M_k(\Z_n)$, and prove that these generating sets are minimal.
+$M_k(\Z_n)$ relative to the group of units $GL_k(Z_n)$, and prove that these
+generating sets are minimal.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -564,7 +567,7 @@ generating set for $S$. This is known as the \defn{rank} of $S$ and is denoted
 by $\mathbf{d}(S)$. A generating set $X$ for $S$ is \defn{irredundant} if no
 subset of $X$ generates $S$, and we say that any irredundant generating set of
 cardinality $\mathbf{d}(S)$ is a \defn{minimal generating set}. If
-$\mathbf{D}(S) \in \N$, then every generating set of cardinality $\mathbf{d}(S)$
+$\mathbf{d}(S) \in \N$, then every generating set of cardinality $\mathbf{d}(S)$
 is irredundant and hence minimal; this does not hold when $\mathbf{d}(S)$ is not
 finite. We will also say that a generator $x \in X$ is irredundant if $X
 \setminus \{x\}$ does not generate $S$.
@@ -644,15 +647,14 @@ We consider the submonoids:
   \item $\UTn$ and $\LTn$, of upper- and lower-triangular boolean matrices.
 \end{enumerate}
 
-There is a natural isomorphism $\Theta$ between binary relations on $\{1,
-  \ldots, n\}$ and $\Bn$, which maps a binary relation $\mu$ to the matrix $M
-\in \Bn$ such that $M_{ij} = 1$ if and only if $(i, j) \in \mu$.
-The monoid $\Refln$ arises as the image of the reflexive binary relations under
-$\Theta$, and this is the primary reason for studying $\Refln$. However, it may
-also be viewed as the monoid of matrices containing a certain pattern of $1$s -
-namely the identity matrix. Similarly, $\Halln$ arises as those matrices
-describing a family of subsets which satisfy Hall's marriage condition, but also
-as those matrices containing a permutation matrix.
+As mentioned above, there is a natural isomorphism between binary relations on
+$\{1, \ldots, n\}$ and $\Bn$.  The monoid $\Refln$ arises as the image of the
+reflexive binary relations under this isomorphism, and this is the primary
+reason for studying $\Refln$. However, it may also be viewed as the monoid of
+matrices containing a certain pattern of $1$s - namely the identity matrix.
+Similarly, $\Halln$ arises as those matrices describing a family of subsets
+which satisfy Hall's marriage condition, but also as those matrices containing a
+permutation matrix.
 
 We compute the largest known ranks of these monoids, which are presented in
 Table~\ref{tab:BMatResults} along with whether that rank was previously known or
@@ -747,25 +749,14 @@ transformation matrix.
 \end{conj}
 \noindent This conjecture has been verified computatationally up to $n = 5$.
 
-The rest of this section is organised as follows. In
-Section~\ref{sec:BMatPrelim}, we introduce a number of concepts and results
-particular to matrices over $\B$. These are used throughout the rest of
-Section~\ref{sec:boolmat}. In Section~\ref{sec:FullBoolMat}, we describe how to
-compute minimal generating sets for $\Bn$ based on a theorem of
-Devadze~\cite{Devadze1968aa}. In Section~\ref{sec:RefBoolMat}, we describe the
-unique minimal generating sets for $\Refln$ and how to compute it; in
-Sections~\ref{sec:HallBoolMat} we describe how all
-minimal generating sets for $\Halln$ may be obtained from minimal
-generating sets for $\Bn$; and in Section~\ref{sec:TriBoolMat} we give a simple
-description of the unique minimal generating sets for $\UTn$ and $\LTn$.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Preliminaries}
 \label{sec:BMatPrelim}
 
-In contrast, the subsemigroup of $\Bn$ generated by all the regular elements can
-be generated by the four matrices
+It is known that $\d(\Bn)$ grows super-exponentially with $n$; see
+\thref{lem:ExponentialGenSets}. In contrast, the subsemigroup of $\Bn$ generated
+by all the regular elements can be generated by the four matrices
 
 \begin{align}
   \label{eq:RegularGens}
@@ -978,7 +969,8 @@ The previous lemma also implies that the $\J$-class of any prime matrix $P$
 consists of prime matrices similar to $P$, and we refer to such a $\J$-class as
 a \defn{prime $\J$-class}. Note that a prime $\J$-class therefore contains at
 most $(n!)^2$ elements. This observation, combined with Devadze's Theorem, has
-the following corollary.
+the following corollary, which was previously known but does not appear to have
+been published.
 
 \begin{cor}
   \thlabel{cor:ExponentialGenSets}
@@ -991,13 +983,13 @@ the following corollary.
   prime $\J$-class contains at most $(n!)^2$ elements; hence there are
   super-exponentially many prime $\J$-classes.
 \end{proof}
-%TODO: add lower bounds here - can only do once can access book
 
 The prime matrices of $M_n(\mathbb{S})$ sit directly below the group of units in
-the $\J$-order on $M_n(\mathbb{S})$ for any semiring $\mathbb{S}$. In the case of
-$\Bn$, there is an additional $\J$-class immediately below $S_n$: the $\J$-class
-$J_E$ of the elementary matrix $E$ from \eqref{eq:RegularGens}. The next result shows that in
-fact these are all of the $\J$-classes immediately below $S_n$.
+the $\J$-order on $M_n(\mathbb{S})$ for any semiring $\mathbb{S}$. In the case
+of $\Bn$, there is an additional $\J$-class immediately below $S_n$: the
+$\J$-class $J_E$ of the elementary matrix $E$ from \eqref{eq:RegularGens}. The
+next result shows that in fact these are all of the $\J$-classes immediately
+below $S_n$.
 
 Let $\beta_n$ denote the set $\set{R(A)}{A\in \Bn\setminus S_n}$ of all
 possible proper row subspaces of elements of $\Bn$, and let $\B^n$ denote
@@ -1764,7 +1756,25 @@ $\Refln$:
 \end{enumerate}
 \end{alg}
 Using this algorithm, we can calculate the sizes of minimal generating sets up
-to $n = 6$; these are contained in Table~\ref{tab:BMatResults}.
+to $n = 6$; these are contained in Table~\ref{tab:BMatResults}. The time taken
+to compute the minimal generating sets is given in
+Table~\ref{tab:ReflexiveRuntimes}.
+
+\begin{table}
+  \centering
+  \begin{tabular}{r|r|r|r|r|r|r}
+    $n$ & 3 & 4 & 5 & 6 & 7 & 8 \\
+    \hline
+     Runtime & 75ms & 85ms & 730ms & 12m47s & ? & - 
+  \end{tabular}
+
+\vspace{1cm}
+\caption{Time taken to compute the minimal generating set of $\Refln$ ($3 \leq n
+  \leq 7)$ using \thref{alg:ReflexiveGenSet} and a brute-force approach for the
+  hardest matrices. The algorithm was executed on a cluster of 60 2.3GHz AMD
+  Opteron 6376 cores with 512GB of ram.}
+\label{tab:runtimestats}
+\end{table}
 
 There are a small number of matrices in $\Refl{7}$ for which the approach based on
 \thref{lem:decomposeintersection} is too inefficient; we chose to use a
@@ -2172,21 +2182,13 @@ particularly simple minimal generating set:
 
 \section{Tropical matrices}
 \label{sec:Tropical}
-Other classes of semirings which generalise the boolean semiring and have
-attracted significant recent attention (see ~\cite{Butkovic2003aa,
-  Maclagan2015aa} and the references therein) are the min-plus and max-plus
-semirings, although a different definition is used in the literature as
-mentioned in Section\ref{sec:Semirings}.
-The monoids of square matrices over these semirings over these semirings have
-also been recently studied; see, for example,~\cite{Alessandro2003aa, Laure2018aa,
-  Hollings2012aa, Johnson2013aa}.
-\subsection{Min-plus matrices}
-
-Recall from Section~\ref{sec:Semirings} that $\Kmin$ denotes the min-plus
-semiring where addition is $\min$ and multiplication is $+$, and the min-plus
-semiring with threshold $\Kmint$ is the quotient of $\Kmin$ by the least
-congruence containing $t = t+ 1$.  Generating sets for $M_2(\Kmin)$ and
-$M_2(\Kmint)$ were found in \cite{East2020aa}, see also \thref{thm:MinPlusGenSet} and
+Recall that $\Kmin$ denotes the min-plus semiring where addition is $\min$ and
+multiplication is $+$, and the min-plus semiring with threshold $\Kmint$ is the
+quotient of $\Kmin$ by the least congruence containing $t = t+ 1$. Similarly,
+$\Kmax$ denotes the max-plus semiring and $\Kmaxt$ is the quotient of $\Kmax$ by
+the least congruence containing $t = t + 1$. Generating
+sets for $M_2(\Kmin)$, $M_2(\Kmint)$, $M_2(\Kmax)$ and $M_2(\Kmaxt)$ were found
+in \cite{East2020aa}; see also \thref{thm:MinPlusGenSet} and
 \thref{cor:FiniteMinPlusGenSet}. In this section, we show that the generating
 sets from \cite{East2020aa} are, in fact, minimal. Minimal generating sets are
 not known for such matrices of arbitrary dimension, and results in this
@@ -2201,6 +2203,12 @@ as a special case, and so it seems likely that any such theorem would not
 provide explicit generators but rather would require the computation of those
 $\J$-classes immediately below the group of units as in
 Section~\ref{sec:FullBoolMat}.
+
+% TODO: this prompts further questions. Aren't the results in that paper just
+% Devadze's theorem for a different semiring? And isn't the integers mod n
+% result also just Devadze's theorem???
+
+\subsection{Min-plus matrices}
 
 \begin{thm}[{\cite[Theorem 1.1]{East2020aa}}]\thlabel{thm:MinPlusGenSet}
   The monoid $M_{2}(\Kmin)$ of $2 \times 2$ min-plus matrices is
@@ -2377,7 +2385,7 @@ The semirings $\Kmin$ and $\Kmax$ are in certain ways similar to each other; it
 is only in the interaction of their respective additions and multiplication
 operations that they display significantly different behaviour. The result of
 this is that the process of proving that certain generating sets for
-$M_2(\Kmax)$ and $M_2(\Kmaxt$ are minimal is essentially the same as in the case
+$M_2(\Kmax)$ and $M_2(\Kmaxt)$ are minimal is essentially the same as in the case
 of $M_2(\Kmin)$ and $M_2(\Kmint)$; it only differs in some details.
 
 \begin{thm}[\cite{East2020aa}]\thlabel{thm:MaxPlusGenSet}
@@ -2588,9 +2596,12 @@ By \thref{prop:Wilf}, this completes the proof of
 previous lemma is that the generating set given in \thref{thm:MinPlusGenSet}
 also consists of $\J$-non-equivalent elements.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Matrices over $\mathbb{Z}_n$}
 \label{sec:IntegersModN}
+% TODO: define relative generation/rank
 % TODO: Do we need to require k >= 2?
 
 \begin{thm}
