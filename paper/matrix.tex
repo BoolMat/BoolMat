@@ -91,6 +91,8 @@ tabu, enumitem, hyperref}
 \usepackage[backend=biber, bibencoding=utf8]{biblatex}
 \bibliography{matrix}
 
+% TODO: define isomorphism of row spaces properly
+
 \title{Minimal generating sets for matrix monoids}
 \author{F. Hivert, J. D. Mitchell, F. L. Smith, and W. A. Wilson}
 \date{\today}
@@ -120,14 +122,14 @@ tabu, enumitem, hyperref}
 \section{Introduction}
 
 In this paper we find minimum cardinality generating sets for several well-known
-finite monoids of matrices over certain semirings. The topic of determining such
+finite monoids of matrices over semirings. The topic of determining such
 minimum cardinality generating sets for algebraic objects is classical, and has
 been studied extensively in the literature; see, for
 example,~\cite{Branco2019aa, Colarte2020aa, DallaVolta1995aa, Dimitrova2020aa,
   Gelander2020aa, Holt2013aa, Moori1993aa, Rosenberger1988aa}.  In this
 paper we are principally concerned with monoids of matrices over the boolean
 semiring $\B$; we also present some results about monoids of min-plus and
-max-plus matrices of dimension $2$. 
+max-plus matrices of dimension $2$, and matrices of arbitrary dimension over the rings $\Z / n\Z$, $n\in \N$.
 
 If $S$ is a semigroup, then the least cardinality of a generating set for $S$ is
 often called the \defn{rank} of $S$ and is denoted by $\mathbf{d}(S)$. 
@@ -167,8 +169,8 @@ subgroup of $\Bn$ for some $n \in \N$ (see~\cite{Clifford1970aa, Montague1969aa,
   Plemmons1970ab}), and the Green's structure of $\Bn$ is highly complicated;
 neither the number of $\J$-classes of $\Bn$ nor the largest length of a chain of
 $\J$-classes is known for $n\geq 9$. In this landscape it is perhaps not
-surprising that the minimum size $\mathbf{d}(\Bn)$ of generating sets for the
-monoids $\Bn$ was not previously known for $n \geq 6$. On the other hand, a
+surprising that the minimum sizes $\mathbf{d}(\Bn)$ of generating sets for the
+monoids $\Bn$ were previously unknown for $n \geq 6$. On the other hand, a
 description of a minimal generating set for $\Bn$ was given by  Devadze in
 1968~\cite{Devadze1968aa} (see Theorem~\ref{thm:DevadzeKon}). There is no proof
 in~\cite{Devadze1968aa} that the given generating sets are minimal, a gap that
@@ -177,28 +179,29 @@ sets given by Devadze and Konieczny are specified in terms of representatives of
 certain $\J$-classes of $\Bn$, the exact number of which is difficult to
 compute, and grows very quickly with $n$; see~\thref{cor:ExponentialGenSets}.
 
-The monoid $\Bn$ has several natural submonoids that we consider, namely the
+The monoid $\Bn$ has several natural submonoids, such as the
 monoids: $\Refln$ consisting of the \defn{reflexive boolean
   matrices} (that is matrices containing the identity matrix); $\Halln$
 consisting of all \defn{Hall matrices} (matrices containing a permutation); and
 $\UTn$ of \defn{upper triangular boolean matrices}. Each of these submonoids has
 been extensively studied in their own right; see, for example,
 \cite{Butler1974aa, Cho1993ab, Kim1977aa, Li2011aa, Pin1985aa, Schwarz1973aa,
-  Tan2000aa, Zhang2020aa}. Unlike $\Bn$, $\Refln$ is $\J$-trivial, and so its
-number of $\J$-classes is the same as $|\Refln| = 2 ^ {n ^ 2 - n}$. Similarly,
+  Tan2000aa, Zhang2020aa}. Unlike $\Bn$, $\Refln$ is $\J$-trivial, and so has
+precisely $|\Refln| = 2 ^ {n ^ 2 - n}$ $\J$-classes. Similarly,
 $A, B\in \Halln$ are $\J$-related if and only if one can be obtained from the
 other by permuting the rows and columns. However, the size of $\Halln$ is not
-known for $n\geq 8$; see \cite{OEISHall}. In contrast, the size of the
-upper-triangular boolean matrix monoid $\UTn$ is simply $2^{\frac{n(n+1)}{2}}$.
+known for $n\geq 8$; see \cite{OEISHall}. In contrast, the
+upper-triangular boolean matrix monoid $\UTn$ is easily seen to have size
+$2^{\frac{n(n+1)}{2}}$.
 The monoid $\UTn$ appears to have been primarily studied in the context of
-varieties, but has a particularly straightforward minimal generating set (see
+varieties; see for instance, \cite{Li2011aa, Zhang2020aa}. It is somewhat surprising that there appears to be no description of the unique minimal generating set of $\UTn$ in the literature, in particular, because this minimal generating set is more straightforward to determine than that of the other submonoids of $\Bn$ we consider (see
 Section~\ref{sec:TriBoolMat}).
 
 We also consider monoids of matrices over certain \defn{tropical} semirings. 
 The \defn{min-plus semiring} $\Kmin$ is the set $\N \cup \{\infty\}$, with
 $\oplus = \min$ and $\otimes$ extending the usual addition on $\N$ so that
 $x\otimes\infty = \infty\otimes x = \infty$ for all $x \in \Kmin$. For our
-purposes, $0 \in \N$; this is the one of $\Kmin$ is $0$. The zero is $\infty$.
+purposes, $0 \in \N$. The multiplicative identity of $\Kmin$ is $0$, and the additive identity is $\infty$.
 
 The \defn{max-plus semiring} $\Kmax$ is the set $\N \cup \{-\infty\}$ with
 $\oplus = \max$ and $\otimes$ extending the usual addition on $\N$ so that
@@ -220,16 +223,26 @@ The \defn{max-plus semiring with threshold $t$}, denoted $\Kmaxt$, is
 constructed analogously; its elements are $\{-\infty, 0, 1, \ldots, t\}$,
 addition is $\max$, and multiplication is defined by $a \otimes b = \min(t, a +
 b)$ for all $a, b \in \Kmaxt$.
-These finite semirings with threshold $t$ may also be defined as the quotient of
-the corresponding infinite semirings by the congruence generated by $(t, t +
-1)$. Tropical semirings are usuallly defined in the literature to contain
-$\mathbb{R}$ rather than $\N$, however from a computational semigroup theory
-standpoint this is somewhat impractical. Note that under the standard
+If $t\in \N$ is arbitrary, then the semiring $\Kmaxt$ with threshold $t$ can
+also be defined as the quotient of the corresponding infinite semiring $\Kmax$
+by the congruence generated by $(t, t + 1)$. The max-plus and min-plus tropical
+semirings are often defined in the literature to be $\R\cup\{-\infty\}$ or
+$\R\cup\{\infty\}$, respectively. The monoids $M$ of matrices over these
+semirings are uncountably infinite, and so every generating set for such a
+monoid $M$ has cardinality $|M|$. This is one rationale for considering the
+semirings $\Kmax$ and $\Kmin$ in this paper. Another reason we consider this
+unorthodox definition is that the results in this paper concerning monoids of
+matrices over $\Kmax$ and $\Kmin$ arose initially from computational experiments
+in a reimplementation of the Froidure-Pin Algorithm~\cite{Froidure1997aa,
+  Semigroupe} in \cite{libsemigroups}, and the original implementation by
+Jean-Eric Pin in \cite{Semigroupe} included support for the monoids
+we consider here. 
+Note that under the standard
 definition, the min-plus and max-plus semirings are isomorphic under the map $x
 \to -x$; this is not the case under our definition. There is a significant
 amount of literature on matrices over the tropical semirings; see for example
-\cite{Hollings2012aa, Izhakian2010aa, Johnson2013aa, Johnson2014aa,
-  Johnson2019aa, Laure2018aa, Shitov2014aa, Simon1994aa}. However,
+\cite{Daviaud2018aa, Hollings2012aa, Izhakian2010aa, Johnson2013aa, Johnson2014aa,
+  Johnson2019aa, Shitov2014aa, Simon1994aa}. However,
 there is relatively little literature on the classical semigroup-theoretic
 properties of the tropical matrix monoids like Green's relations or generating
 sets; indeed descriptions of the Green's relations were only published
@@ -239,7 +252,7 @@ be because the monoids are rather complex and difficult to work with.
 The final semiring that we are concerned with is $\Z_n$, the integers modulo $n$.
 The monoid of matrices over $\Z_n$ has received relatively little attention as a
 semigroup. As an example of an \defn{exact semiring} as defined in
-\thref{Wilding2013aa}, there is a characterisation of Green's relations on
+\cite{Wilding2013aa}, there is a characterisation of Green's relations on
 $M_k(\Z_n)$ in terms of row and column spaces, but there appears to be little
 more known about the structure of $M_k(\Z_n)$.
 
@@ -677,7 +690,7 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
     5 & *13        & *1\ 415& *12& 13& *15\\
     6 & 68         & 482\ 430& 67& ?& 21\\
     7 & 2\ 142     & 1\ 034\ 972\ 230& 2\ 141& ?& 28\\
-    8 & 495\ 115   & ?& 495\ 114& ?& 36\\
+    8 & 459\ 153   & ?& 459 152& ?& 36\\
     9 & ?   & ?& ?& ? & 45
   \end{tabular}
   \vspace{1cm}
@@ -755,7 +768,7 @@ transformation matrix.
 \label{sec:BMatPrelim}
 
 It is known that $\d(\Bn)$ grows super-exponentially with $n$; see
-\thref{lem:ExponentialGenSets}. In contrast, the subsemigroup of $\Bn$ generated
+\thref{cor:ExponentialGenSets}. In contrast, the subsemigroup of $\Bn$ generated
 by all the regular elements can be generated by the four matrices
 
 \begin{align}
@@ -1401,7 +1414,7 @@ significant improvement can be obtained by using Zaretskii's Theorem.
     5 &9.2ms  & 16ms & 7.2s & 33ms & 16ms & 7.3s \\
     6 &150ms  & 216ms & 8.6s & 80ms & 171ms & 8.7s \\
     7 &55s    & 1h20m & 1m11s & 28s & 1h9m & 1m8s \\
-    8 &30h52m & - & & ? & ~30 days & ? 
+    8 &30h52m & - & - & 5h30m & 30 days & 3.9 days  
   \end{tabular}
 
 \caption{Runtimes of the algorithms described in this section, for $3 \leq n
@@ -1758,7 +1771,7 @@ $\Refln$:
 Using this algorithm, we can calculate the sizes of minimal generating sets up
 to $n = 6$; these are contained in Table~\ref{tab:BMatResults}. The time taken
 to compute the minimal generating sets is given in
-Table~\ref{tab:ReflexiveRuntimes}.
+Table~\ref{tab:ReflexiveRuntimeStats}.
 
 \begin{table}
   \centering
@@ -1773,7 +1786,7 @@ Table~\ref{tab:ReflexiveRuntimes}.
   \leq 7)$ using \thref{alg:ReflexiveGenSet} and a brute-force approach for the
   hardest matrices. The algorithm was executed on a cluster of 60 2.3GHz AMD
   Opteron 6376 cores with 512GB of ram.}
-\label{tab:runtimestats}
+\label{tab:ReflexiveRuntimeStats}
 \end{table}
 
 There are a small number of matrices in $\Refl{7}$ for which the approach based on
@@ -2604,6 +2617,17 @@ also consists of $\J$-non-equivalent elements.
 % TODO: define relative generation/rank
 % TODO: Do we need to require k >= 2?
 
+Perhaps surprisingly, there appears to be no known general characterisation of a
+minimal generating set of the multiplicative group $U_n$ of integers coprime to
+$n$, modulo $n$. Any description of a minimal generating set for $M_k(\Z_N)$ for
+general $k$ would provide such a minimal generating set for $U_n$, by taking $k
+= 1$ and restricting the generators to those of the group of units. This leads
+us to consider the so-called \defn{relative rank} of $M_k(\Z_n)$ with respect to
+the group of units $GL_k(\Z_n)$. For a semigroup $S$ and subset $A \subseteq S$,
+the relative rank of $S$ with respect to $A$, denoted $\d(S:A)$ is defined to
+be the minimum cardinality of any subset $B$ such that $A \cup B$ generates $S$.
+In this section, we will determine $\d(M_k(\Z_n):GL_k(\Z_n))$.
+
 \begin{thm}
   \thlabel{thm:ZnGenSet}
     Let $k,n \in \N$.
@@ -2630,7 +2654,19 @@ also consists of $\J$-non-equivalent elements.
      % entry should be p mod n (which gives 0).
 \end{thm}
 
-Since the generating sets defined in \thref{thm:ZnGenSet} contain precisely one
+For each prime divisor $p$ of $n$ in $\N$, we write
+  $$X_p =
+    \begin{pmatrix}
+      p \operatorname{mod} n & 0      & \cdots & 0      \\
+      0       & 1      &        & \vdots \\
+      \vdots  &        & \ddots & 0      \\
+      0       & \cdots & 0      & 1      \\
+    \end{pmatrix}$$
+and denote by $\mathcal{X}_n$ the set $\set{X_p}{p \text{ is a prime divisor of
+  } n}$.
+
+Note that the entry $p$ mod $n$ is, of course, simply $p$ unless $p = n$. Since
+the generating sets defined in \thref{thm:ZnGenSet} contain precisely one
 element from each $\J$-class immediately below the group of units, those
 elements are irredundant. By \thref{prop:Wilf}, this proves the following
 theorem:
@@ -2641,41 +2677,36 @@ theorem:
   $\J$-classes immediately below $GL_k(\Z_n)$ in the $\J$-order of
   $M_k(\Z_n)$. Then $G \cup P$ is a minimal generating set for $M_k(\Z_n)$.
   In particular,
-  $$\rank(M_k(\Z_n)) = \rank(GL_k(\Z_n))
-                       +
+  $$\d(M_k(\Z_n) : GL_k(\Z_n))
+                       =
                        |\set{p}{p\ \text{is a prime divisor of}\ n}|.
   $$
 \end{thm}
 
-\subsection{Outline of the argument for Theorem~\ref{thm:ZnGenSet}}
+In order to prove \thref{thm:ZnGenSet}, we will show that each $\J$-class of
+$M_k(\Z_n)$ contains a matrix in a certain standard form; it is straightforward
+to see how to generate these standard forms and hence generate the full matrix
+monoid.
 
-Some notation: for each prime divisor $p$ of $n$ in $\N$, define
-  $$X_p =
-    \begin{pmatrix}
-      p \operatorname{mod} n & 0      & \cdots & 0      \\
-      0       & 1      &        & \vdots \\
-      \vdots  &        & \ddots & 0      \\
-      0       & \cdots & 0      & 1      \\
-    \end{pmatrix}.$$
-
-Note sure if we're actually going to use this:
-
+We first note that in $M_k(\Z_n)$, an analogous result to Zaretskii's Theorem
+for $\Bn$ holds for the $\J$-relation.
 \begin{prop}
   \thlabel{prop:ZnJ}
   For all $A, B \in M_k(\Z_n)$, $A \J B$ if and only if $R(A) \cong R(B)$ if and
   only if $C(A) \cong C(B)$.
 \end{prop}
-
 \begin{proof}
-  Follows from~\cite[Corollary~4.5]{Wilding2013aa}
+  This is an immediate consequence of~\cite[Corollary~4.5]{Wilding2013aa}
   and~\cite[Theorem~7.1]{Wilding2013aa}. 
 \end{proof}
 
+We now demonstrate that standard ``diagonal forms'' exist in $M_k(\Z_n)$.
 \begin{lemma}
   \thlabel{lem:Wilf1}
-  Every element $Y \in M_k(\Z_n)$ can be written as a product $AXB$, for some
-  units $A, B \in GL_k(\Z_n)$ and a matrix $X$ of the form:
-    $$\begin{pmatrix}
+  Every matrix $Y \in M_k(\Z_n)$ can be written as a product $AXB$, for two
+  matrices $A, B \in \genset{GL_k(\Z_n) \cup \mathcal{X}_n}$ and a diagonal
+  matrix $X \in J_Y$ of the form 
+  $$\begin{pmatrix}
       0      &        & \cdots &        &        & 0       \\
              & \ddots &        &        &        &         \\
       \vdots &        & 0      &        &        & \vdots  \\
@@ -2686,9 +2717,47 @@ Note sure if we're actually going to use this:
     for some $d_1, \ldots, d_m \in \Z_n \setminus \{0\}$,
     where $d_1, \ldots, d_m | n$ in $\mathbb{N}$,
     and $d_1 \geq \cdots \geq d_m$.
-  % Wilf: Not sure whether the following sentence is useful.
-    In particular $X \J Y$ and $R(X) \cong R(Y)$.
 \end{lemma}
+
+\begin{proof}
+  It is straightforward to show that there are units in $GL_k(\Z_n)$ which, via
+  left multiplication, apply the elementary row operations of adding one row to
+  another, subtracting one row from another, or exchanging rows in any matrix $Y
+  \in M_k(\Z_n)$. This is familiar from linear algebra; the only ``missing''
+  standard row operation is scaling by an arbitrary scalar, which is not
+  represented by a unit in $M_k(\Z_n)$. However, scaling some row by a element
+  of the group $U_n$ is still valid; recall that $U_n$ consists of those
+  elements in $\Z_n$ coprime to $n$. The dual statements also hold for column
+  operations. Fix $Y \in M_K(\Z_n)$. It is sufficient to show that elementary
+  row operations can ``diagonalise'' $Y$ to obtain $X$; this will imply that $Y
+  = AXB$ for $A, B \in GL_k(\Z_n)$, and, since multiplication by units preserves
+  $\J$-classes, this implies that $X \in J_Y$.
+
+  We will diagonalise $Y$ in a manner similar to that of Gaussian elimination.
+  Suppose that entry $Y_{ij}$ is non-zero. Define $g$ to be the greatest
+  common divisor of the entries of $Y_{i*}$. By repeatedly subtracting one
+  column from another to obtain a new matrix $Y'$, we may apply the Euclidean
+  algorithm so that some entry $Y'_{ik}$ in the $i$-th row is equal to $g$. By
+  subtracting column $k$ from column $j$ an appropriate number of times, we may
+  assume that $Y'_{ij} = g$. Similarly, if $h$ is defined as the greatest common
+  divisor of $g$ and the entries of $Y_{*j}$, by repeatedly subtracting
+  appropriate rows we may produce a matrix $Y''$ with $Y''_{ij} = h$. Since $h$
+  divides every entry in row $i$ and column $j$ of $Y''$, we may then use row and
+  column subtractions to clear each non-zero entry in row $i$ and column $j$ of
+  $Y''$ other than $Y''_{ij}$. Repeating this process produces a matrix $V$ with
+  at most one non-zero entry in each row and column. For each row of $V$ with a
+  non-zero entry $x$ coprime to $n$, we may scale that row by the inverse of $x$
+  in $U_n$; this produces a matrix $W$ with each entry either $1$ or non-coprime
+  with $n$. By Bezout's Lemma, there exist
+  
+  doing so for each row and then permuting rows and columns produces
+  the matrix $X$ with the required diagonal form. 
+
+
+  TODO: we haven't done the entries not coprime to n???
+
+\end{proof}
+
 
 \begin{proof}
   Should go something like this:
