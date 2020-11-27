@@ -91,7 +91,6 @@ tabu, enumitem, hyperref}
 \usepackage[backend=biber, bibencoding=utf8]{biblatex}
 \bibliography{matrix}
 
-% TODO: define isomorphism of row spaces properly
 
 \title{Minimal generating sets for matrix monoids}
 \author{F. Hivert, J. D. Mitchell, F. L. Smith, and W. A. Wilson}
@@ -436,20 +435,24 @@ Given a semiring $\mathbb{S}$ and $m, n \in \N$, we may study the set of $m
 of square matrices of dimension $n \in \N$ over $\mathbb{S}$, denoted by
 $M_n(\mathbb{S})$.  There are a number of common features of such matrix
 monoids. As usual, we let $0$ denote the additive identity of $\mathbb{S}$ and
-$1$ denote the multiplicative identity.
+$1$ denote the multiplicative identity. The following definitions are entirely
+analogous to those from the standard linear algebra of vector spaces over
+fields.
 
 Let $A \in M_n(\mathbb{S})$. We write $A_{i*}$ to denote the $i$th row of $A$,
 $A_{*i}$ to denote the $i$th column, and $A_{ij}$ to denote the $j$th entry of
 the $i$th row. A \defn{linear combination} of rows is a sum of scalar multiples
 of the rows, where both operations are defined componentwise in the usual way.
 The \defn{row space} $R(A)$ of $A$ is the set of all linear combinations of the
-rows of $A$.  A set of rows is \defn{linearly independent} if some row can be
-written as a linear combination of other rows; this coincides with the usual
-definition when $\mathbb{S}$ is a field. \defn{Spanning sets} are defined
-exactly as for matrices over fields: a spanning set for a row space is a set of
-rows which every element of the row space may be written as a linear combination
-of. A \defn{row basis} of $A$ is then a linearly independent spanning set for
-the row space of $A$. \defn{Column spaces} and \defn{column bases} are defined
+rows of $A$. An \defn{isomorphism} of row spaces is a linear bijection; that is,
+a bijection $T: R(A) \to R(B)$ such that $T(\alpha x + \beta y) = \alpha T(x) +
+\beta T(y)$ for all $x, y \in R(A)$ and for all $\alpha, \beta \in \mathbb{S}$.
+A set of rows is \defn{linearly independent} if some row can be written as a
+linear combination of other rows; this coincides with the usual definition when
+$\mathbb{S}$ is a field. A \defn{spanning set} for a row space is a set of rows
+which every element of the row space may be written as a linear combination of.
+A \defn{row basis} of $A$ is then a linearly independent spanning set for the
+row space of $A$. \defn{Column spaces} and \defn{column bases} are defined
 dually. The importance of row and column bases arises from the following
 well-known results:
 
@@ -901,7 +904,6 @@ problem of digraph embedding, but it should be noted that the size of $R(A)$ is
 bounded above by $2^n$, and equality is possible. Computing the $\J$-structure of
 $\Bn$ is challenging; see \cite{Breen1997aa}. The largest $n$ for which the
 number of $\J$-classes of $\Bn$ is known is $8$; see \cite{Breen2001aa}.
-
 
 Considering rows as subsets of $\{1, \ldots, n\}$, it is natural to consider
 when rows of a matrix $A \in \Bn$ are contained in other rows of $A$. We will
@@ -2624,9 +2626,10 @@ general $k$ would provide such a minimal generating set for $U_n$, by taking $k
 = 1$ and restricting the generators to those of the group of units. This leads
 us to consider the so-called \defn{relative rank} of $M_k(\Z_n)$ with respect to
 the group of units $GL_k(\Z_n)$. For a semigroup $S$ and subset $A \subseteq S$,
-the relative rank of $S$ with respect to $A$, denoted $\d(S:A)$ is defined to
+the relative rank of $S$ with respect to $A$, denoted $\d(S:A)$, is defined to
 be the minimum cardinality of any subset $B$ such that $A \cup B$ generates $S$.
-In this section, we will determine $\d(M_k(\Z_n):GL_k(\Z_n))$.
+In this section, we will determine $\d(M_k(\Z_n):GL_k(\Z_n))$ by proving the
+following analogues to Devadze's Theorem (see \thref{thm:Devadzefull}).
 
 \begin{thm}
   \thlabel{thm:ZnGenSet}
@@ -2650,9 +2653,8 @@ In this section, we will determine $\d(M_k(\Z_n):GL_k(\Z_n))$.
      p\ \text{is a prime divisor of}\ n\ \text{in}\ \mathbb{N}
      \right\}.
      $$
-     % For this to apply when n itself is prime, then the matrix
-     % entry should be p mod n (which gives 0).
 \end{thm}
+
 
 For each prime divisor $p$ of $n$ in $\N$, we write
   $$X_p =
@@ -2684,24 +2686,11 @@ theorem:
 \end{thm}
 
 In order to prove \thref{thm:ZnGenSet}, we will show that each $\J$-class of
-$M_k(\Z_n)$ contains a matrix in a certain standard form; it is straightforward
-to see how to generate these standard forms and hence generate the full matrix
-monoid.
+$M_k(\Z_n)$ contains a matrix in a certain standard form; we will then show how
+to generate these standard forms and hence generate the full matrix monoid.
 
-We first note that in $M_k(\Z_n)$, an analogous result to Zaretskii's Theorem
-for $\Bn$ holds for the $\J$-relation.
-\begin{prop}
-  \thlabel{prop:ZnJ}
-  For all $A, B \in M_k(\Z_n)$, $A \J B$ if and only if $R(A) \cong R(B)$ if and
-  only if $C(A) \cong C(B)$.
-\end{prop}
-\begin{proof}
-  This is an immediate consequence of~\cite[Corollary~4.5]{Wilding2013aa}
-  and~\cite[Theorem~7.1]{Wilding2013aa}. 
-\end{proof}
-
-In order to demonstrate that standard ``diagonal forms'' exist in $M_k(\Z_n)$,
-we first prove the following elementary but useful lemma, without any claim of
+In order to demonstrate that these standard forms exist in $M_k(\Z_n)$, we first
+prove the following elementary but useful lemma, without any claim of
 originality.
 
 \begin{lemma}
@@ -2752,8 +2741,10 @@ originality.
   can ``diagonalise'' $Y$ to obtain $X$; this implies that $Y = AXB$ for $A,
   B \in GL_k(\Z_n)$, and, since multiplication by units preserves $\J$-classes,
   that $X \in J_Y$.
+  The diagonalisation procedure applied is essentially that of Gaussian
+  elimination, but it is not altogher obvious that such a process applies in
+  this case. This is what we now demonstrate.
 
-  We will diagonalise $Y$ in a manner similar to that of Gaussian elimination.
   Suppose that entry $Y_{ij}$ is non-zero. Define $g$ to be the greatest
   common divisor of the entries of $Y_{i*}$. By repeatedly subtracting one
   column from another to obtain a new matrix $Y'$, we may apply the Euclidean
@@ -2800,7 +2791,8 @@ following lemma.
   and $X_{p_2}$ are not $\J$-related.
 \end{cor}
 
-TODO: some words here
+In the following two lemmas, we demonstrate that the example generating set
+given in \thref{thm:ZnGenSet} does generate $M_k(\Z_n)$.
 
 \begin{lemma}
   \thlabel{lem:Wilf2}
@@ -2852,27 +2844,33 @@ TODO: some words here
   result now follows by \thref{lem:Wilf1}.
 \end{proof}
 
-In order to complete the proof, it remains to show that the $\J$-classes
-$J_{X_p}$ lie immediately below the group of units for all $X_p \in
-\mathcal{X}$. Observe that as an additive group, $R(X_p)$ is a maximal subgroup
-of $R(I)$, where $I$ is the identity matrix. Let $J$ be a $\J$-class with
-$J_{X_p} \leq J \leq GL_k(\Z_n)$; we wish to show that $J = J_{X_p}$ or $J =
-GL_k(\Z_n)$. By \thref{lem:ZnGenSet} $J \in \set{J_{X_q}}{X_q \in \mathcal{X}_n}
-\cup \{GL_k(\Z_n)\}$ as otherwise $J$ would not be generated by $\mathcal{X}_n
-\cup GL_k(\Z_n)$. Assume that $J = J_{X_q}$ for some prime divisor $q \neq p$ of
-$n$; otherwise we are done. It follows that $X_p = AX_qB$ for some matrices $A,
-B \in M_k(\Z_n)$. The row space $R(AX_qB) = R(X_p)$ is an additive subgroup of
-$R(X_qB)$; since $R(X_p)$ is a maximal subgroup, and $|R(X_qB)| < R(I)$, it
-follows that $R(X_p) = R(X_qB)$. Right multiplication by $B$ is therefore a
-surjective homomorphism from $R(X_q)$ to $R(X_p)$, but by Lagrange's Theorem no
-such homomorphism exists for $p \neq q$. This proves the following lemma, and
-with it \thref{thm:ZnGenSet} and \thref{thm:ZnMinimal}.
+In order to complete the proof of \thref{thm:ZnGenSet}, it remains to show that
+the $\J$-classes $J_{X_p}$ lie immediately below the group of units for all $X_p
+\in \mathcal{X}_n$. Since any generating set for $M_k(\Z_n)$ must contain a
+representative of each $\J$-class immediately below the group of units, the set
+$\mathcal{X}_n$ must contain a representative of each $\J$-class immediately
+below the group of units. It only remains to prove that all elements of
+$\mathcal{X}_n$ lie in such a maximal $\J$-class.
 
 \begin{lemma}
   \label{lem:ZnImmediatelyBelow}
   The $\J$-classes $J_{X_p}$ are precisely the $\J$-classes immediately below
   the group of units in the $\J$-order.
 \end{lemma}
+\begin{proof}
+Observe that as an additive group, $R(X_p)$ is a maximal subgroup
+of $R(I)$, where $I$ is the identity matrix. Let $J$ be a $\J$-class with
+$J_{X_p} \leq J \leq GL_k(\Z_n)$, and suppose that $J$ lies immediately below
+$GL_k(\Z_n)$. W wish to show that $J = J_{X_p}$. By \thref{lem:ZnGenSet} $J \in
+\set{J_{X_q}}{X_q \in \mathcal{X}_n}$ as otherwise $J$ would not be generated by
+$\mathcal{X}_n \cup GL_k(\Z_n)$. Let $q$ be the prime divisor of $n$ such that
+$J = J_{X_q}$. It follows that $X_p = AX_qB$ for some matrices $A, B \in
+M_k(\Z_n)$. The row space $R(AX_qB) = R(X_p)$ is an additive subgroup of
+$R(X_qB)$; since $R(X_p)$ is a maximal subgroup, and $|R(X_qB)| < R(I)$, it
+follows that $R(X_p) = R(X_qB)$. Right multiplication by $B$ is therefore a
+surjective homomorphism from $R(X_q)$ to $R(X_p)$, but by Lagrange's Theorem no
+such homomorphism exists for $p \neq q$; hence $J = J_p$.
+\end{proof}
 
 % TODO: Make sure that the case (n is prime) is either excluded, or included
 % correctly.
