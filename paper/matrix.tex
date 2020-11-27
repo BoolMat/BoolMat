@@ -2700,12 +2700,32 @@ for $\Bn$ holds for the $\J$-relation.
   and~\cite[Theorem~7.1]{Wilding2013aa}. 
 \end{proof}
 
-We now demonstrate that standard ``diagonal forms'' exist in $M_k(\Z_n)$.
+In order to demonstrate that standard ``diagonal forms'' exist in $M_k(\Z_n)$,
+we first prove the following elementary but useful lemmma, without any claim of
+originality.
+
+\begin{lemma}
+  \thlabel{lem:ModularProducts}
+  Let $a \in \Z_n \setminus U_n$, with $gcd(a, n) = d > 1$. Then there exists $b
+  \in U_n$ such that $ab = d$ mod $n$.
+\end{lemma}
+\begin{proof}
+  By Bezout's identity, there exist some $x, y \in \Z$ such that $ax + ny = d$;
+  equivalently $\frac{a}{d}x + \frac{n}{d}y = 1$. It follows that
+  $\frac{n}{d}$ and $x$ are coprime. For every $k \in \Z$, we also have
+  $\frac{a}{d}(x + k\frac{n}{d}) + \frac{n}{d}(y - k\frac{a}{d}) = 1$. It is
+  therefore sufficient to find a value of $x + k\frac{n}{d}$ which is coprime to
+  $n$. Since $x$ and $\frac{n}{d}$ are coprime, by setting $k$ to be the product
+  of those prime factors of $n$ that do not appear in $x$ or in $\frac{n}{d}$ we
+  have that each prime factor of $n$ appears in precisely one of the terms $x$
+  and $k\frac{n}{d}$; hence no prime factor of $n$ divides the sum $x +
+  k\frac{n}{d}$.
+\end{proof}
+
 \begin{lemma}
   \thlabel{lem:Wilf1}
   Every matrix $Y \in M_k(\Z_n)$ can be written as a product $AXB$, for two
-  matrices $A, B \in \genset{GL_k(\Z_n) \cup \mathcal{X}_n}$ and a diagonal
-  matrix $X \in J_Y$ of the form 
+  matrices $A, B \in GL_k(\Z_n)$ and a diagonal matrix $X \in J_Y$ of the form 
   $$\begin{pmatrix}
       0      &        & \cdots &        &        & 0       \\
              & \ddots &        &        &        &         \\
@@ -2725,13 +2745,13 @@ We now demonstrate that standard ``diagonal forms'' exist in $M_k(\Z_n)$.
   another, subtracting one row from another, or exchanging rows in any matrix $Y
   \in M_k(\Z_n)$. This is familiar from linear algebra; the only ``missing''
   standard row operation is scaling by an arbitrary scalar, which is not
-  represented by a unit in $M_k(\Z_n)$. However, scaling some row by a element
-  of the group $U_n$ is still valid; recall that $U_n$ consists of those
-  elements in $\Z_n$ coprime to $n$. The dual statements also hold for column
-  operations. Fix $Y \in M_K(\Z_n)$. It is sufficient to show that elementary
-  row operations can ``diagonalise'' $Y$ to obtain $X$; this will imply that $Y
-  = AXB$ for $A, B \in GL_k(\Z_n)$, and, since multiplication by units preserves
-  $\J$-classes, this implies that $X \in J_Y$.
+  always represented by an element of $GL_k(\Z_n)$. However, scaling some row by
+  an element of the group $U_n$ does still correspond to left multiplication by
+  an element of $GL_k(\Z_n)$. The dual statements also hold for column operations.
+  Fix $Y \in M_K(\Z_n)$. It is sufficient to show that elementary row operations
+  can ``diagonalise'' $Y$ to obtain $X$; this implies that $Y = AXB$ for $A,
+  B \in GL_k(\Z_n)$, and, since multiplication by units preserves $\J$-classes,
+  that $X \in J_Y$.
 
   We will diagonalise $Y$ in a manner similar to that of Gaussian elimination.
   Suppose that entry $Y_{ij}$ is non-zero. Define $g$ to be the greatest
@@ -2747,119 +2767,100 @@ We now demonstrate that standard ``diagonal forms'' exist in $M_k(\Z_n)$.
   $Y''$ other than $Y''_{ij}$. Repeating this process produces a matrix $V$ with
   at most one non-zero entry in each row and column. For each row of $V$ with a
   non-zero entry $x$ coprime to $n$, we may scale that row by the inverse of $x$
-  in $U_n$; this produces a matrix $W$ with each entry either $1$ or non-coprime
-  with $n$. By Bezout's Lemma, there exist
-  
-  doing so for each row and then permuting rows and columns produces
-  the matrix $X$ with the required diagonal form. 
-
-
-  TODO: we haven't done the entries not coprime to n???
-
+  in $U_n$ by left multiplication by some unit; this produces a matrix $W$ with
+  each entry either $1$ or non-coprime with $n$. By \thref{lem:ModularProducts},
+  if row $i$ of $W$ contains the non-zero entry $a$ where $gcd(a, n) = d > 1$,
+  there exists some $b \in U_n$ with $ab = d$ mod $n$. We can therefore
+  left-multiply by some unit to scale row $i$ so that the non-zero entry in row
+  $i$ of the product is $d$. By repeating this for each such row, and then
+  permuting rows and columns, the matrix $X$ with the required diagonal form is
+  obtained.
 \end{proof}
 
+We say that matrices in the form of \thref{lem:Wilf1} are in ``standard
+diagonal form''.  The row space $R(X)$ of such a standard diagonal form matrix
+can easily be seen to be isomorphic (as an additive group) to the direct product
+$G(X) = \Z_{n/d_1} \times \cdots \times \Z_{n/d_m}$. Note that for any prime
+divisor $p$ of $n$, $X_p$ is in the form of \thref{lem:Wilf1}. Furthermore, by
+considering the prime power decomoposition of $G(X_p)$, it is straightforward to
+determine that there are no other matrices $X$ of the same form with $G(X) \cong
+G(X_p)$. Hence there are no other matrices $X$ of the same form with $R(X)
+\cong R(X_p)$. By \thref{prop:RowSpacesJRelation}, this observation yields the
+following lemma. 
 
-\begin{proof}
-  Should go something like this:
-  \begin{itemize}
-    \item
-      There are units in $M_k(\Z_n)$ that perform so-called `row and
-      column operations' on elements of $M_k(\Z_n)$ by left or right
-      multiplication:
-      multiply a row/column by unit in $\Z_n$, interchange two rows/two columns,
-      add/subtract one row/column to/from another.
-      This is basically what all respectable mathematicians know from linear
-      algebra, for the same reasons.
+\begin{lemma}
+  \thlabel{lem:XpUnique}
+  Let $p$ be a prime divisor of $n$. Then $X_p$ is the unique standard diagonal
+  form matrix in $J_{X_p}$.
+\end{lemma}
 
-    \item
-      We can multiply by these units to `diagonalise' our matrices
-      into a standard form.
-      We can do some kind of Euclidean algorithm-like process to transform
-      a matrix into the kind described in the lemma. Iteratively, for each $i$
-      where the $i$\textsuperscript{th} row or column has a non-zero element,
-      we replace the $i$\textsuperscript{th} row and column as follows: put the
-      gcd (in $\Z$) of $\{n$ and the non-zero entries in the row and column$\}$
-      onto the diagonal, and put $0$ elsewhere.  Then rearrange rows and
-      columns so that the diagonal is in the order shown.
+\begin{cor}
+  \thlabel{cor:XpDistinct}
+  Let $p_1$ and $p_2$ be distinct prime divisors of $n$. Then $X_{p_1}$
+  and $X_{p_2}$ are not $\J$-related.
+\end{cor}
 
-    \item
-      Multiplying by units preserves Green's $\J$-relation, and therefore
-      row spaces
-      (Proposition~\ref{prop:RowSpacesJRelation}).
-      \qedhere
-
-  \end{itemize}
-\end{proof}
-
-%\emph{Note that~\cite[Theorem~3.3]{Wilding2013aa} gives us that
-%$R(A) \cong C(A)^{*}$ in $M_k(\Z_n)$, but this lemma can also get us there.}
-
-What do row and column spaces of matrices in $M_k(\Z_n)$ look like?
-They are essentially subgroups of the direct product of cyclic groups
-$\Z_n^k$, which are themselves (isomorphic to) direct products of subgroups of
-$\Z_n$.
-In this sense, the row and column spaces of the matrix $X$ given in
-Lemma~\ref{lem:Wilf2} `are' `isomorphic' to $\Z_{n/d_1} \times \cdots \times
-\Z_{n/d_m}$.
-
-This should make it clear that the $\J$-classes $J_{X_{p}}$ are distinct.
-
-% Is this needed?
-%Note that multiplication by units preserves Green's $\J$-relation, and therefore
-%by Proposition~\ref{prop:RowSpacesJRelation}, multiplication by units preserves
-%row spaces and column spaces up to isomorphism.
+TODO: some words here
 
 \begin{lemma}
   \thlabel{lem:Wilf2}
   Let $p$ be a prime divisor of $n$.
-  Then
-  $J_{X_p} \subseteq \genset{GL_k(\Z_n) \cup \{Y\}}$ for all $Y \in J_{X_p}$.
-  %In particular, $J_{X_p} \subseteq \genset{GL_k(\Z_n) \cup \{X_p\}}$.
+  Then $J_{X_p} \subseteq \genset{GL_k(\Z_n) \cup \{Y\}}$ for all $Y \in
+  J_{X_p}$.
 \end{lemma}
 
 \begin{proof}
     Certainly $\set{AX_{p}B}{A,B \in GL_k(\Z_n)} \subseteq J_{X_p}$.
-    To show the reverse inclusion,
-    let $Y \in J_{X_p}$.
+    To show the reverse inclusion, let $Y \in J_{X_p}$.
     By Proposition~\ref{prop:RowSpacesJRelation}, $R(Y) \cong R(X_p)$.
-    It is clear that $X_p$ is the unique matrix of the form in
-    Lemma~\ref{lem:Wilf1} with row space isomorphic to $R(X_p)$.
-    % ($R(X_p) \cong \Z_n^{k - 1}$ if $p = n$,
-    % and $R(X_p) \cong \Z_{n/p} \times \Z_n^{k - 1}$ otherwise.)
-    It follows by Lemma~\ref{lem:Wilf1} that $Y = EX_{p}F$ for some $E,F \in
-    GL_k(\Z_n)$.
-
-    Hence $J_{X_p} = \set{AX_{p}B}{A,B \in GL_k(\Z_n)}
-                   = \set{A(E^{-1}YF^{-1})B}{A,B \in GL_k(\Z_n)}
-           \subseteq \genset{GL_k(\Z_n) \cup \{Y\}}$.
+    Since, by \thref{lem:XpUnique}, $X_p$ is the unique matrix in standard
+    diagonal form with row space isomorphic to $R(X_p)$,
+    it follows by Lemma~\ref{lem:Wilf1} that $Y = EX_{p}F$ for some $E,F \in
+    GL_k(\Z_n)$. Hence 
+    \begin{align*}
+      J_{X_p} &= \set{AX_{p}B}{A,B \in GL_k(\Z_n)} \\
+              &= \set{A(E^{-1}YF^{-1})B}{A,B \in GL_k(\Z_n)} \\
+              &\subseteq \genset{GL_k(\Z_n) \cup \{Y\}}.
+    \end{align*}
 \end{proof}
 
-
-\begin{lemma}\label{lem:ZnGenSet}
-  For each prime divisor $p$ of $n$ in $\N$, choose $Y_p \in J_{X_p}$.
-  Then $M_k(\Z_n) = \genset{GL_k(\Z_n) \cup \set{Y_p}{p}}$.
+\begin{lemma}\thlabel{lem:ZnGenSet}
+  Let $\mathcal{Y} \subseteq M_k(\Z_n)$ be a set of representatives
+  \[\mathcal{Y} = \set{Y_p}{p \text{ is a prime divisor of } n \text{ and } Y_p
+      \in J_{X_p}}.\]
+  Then $M_k(\Z_n) = \genset{GL_k(\Z_n) \cup \mathcal{Y}}$.
 \end{lemma}
 
 \begin{proof}
-  By Lemma~\ref{lem:Wilf2}, we generate the matrices $X_p$.
-  For each $p$, it is clear that some power of $X_p$ is equal to
-  $$
+  By Lemma~\ref{lem:Wilf2}, $J_{X_p} \subseteq \genset{GL_k(\Z_n) \cup
+    \mathcal{Y}}$ for each prime divisor $p$ of $n$.
+  Since the matrix
+  \[
   \begin{pmatrix}
       0       & 0      & \cdots & 0      \\
       0       & 1      &        & \vdots \\
       \vdots  &        & \ddots & 0      \\
       0       & \cdots & 0      & 1      \\
-  \end{pmatrix}.$$
-  We can use row operations (i.e.\ multiplying by appropriate units) to
-  rearrange
-  the entries on the diagonal of this matrix or the $X_p$.
-  Therefore, we generate every diagonal matrix that differs from the identity
-  matrix by having a $0$ or a prime divisor of $n$ in exactly one place its
-  leading diagonal.
-  It is clear how to multiply such matrices together to obtain each of the
-  diagonal matrices of the kind described in Lemma~\ref{lem:Wilf1}.  Given this,
-  the result follows by Lemma~\ref{lem:Wilf1}.
+  \end{pmatrix}
+\]
+  is a product of matrices in $\mathcal{X}$, and row- and column-permutations
+  are represented by left and right multiplication by units, $\genset{GL_k(\Z_n)
+    \cup \mathcal{Y}}$ contains every every diagonal matrix that differs from
+  the identity matrix by having a $0$ or a prime divisor of $n$ in exactly one
+  place on the main diagonal. It is straightforward to see that any matrix in
+  standard diagonal form may be expressed as a product of such matrices. The
+  result now follows by \thref{lem:Wilf1}.
 \end{proof}
+
+In order to complete the proof, it remains to show that the $\J$-classes
+$J_{X_p}$ lie immediately below the group of units for all $X_p \in
+\mathcal{X}$. Observe that as an additive group, $R(X_p)$ is a maximal subgroup
+of $R(I)$, where $I$ is the identity matrix. Let $J$ be a $\J$-class with
+$J_{X_p} \leq J \leq GL_k(\Z_n)$; we wish to show that $J = J_{X_p}$ or $J =
+GL_k(\Z_n)$. By \thref{lem:ZnGenSet} $J \in \set{J_{X_q}}{X_q \in \mathcal{X}_n}
+\cup \{GL_k(\Z_n)\}$ as otherwise $J$ would not be generated by $\mathcal{X}_n
+\cup GL_k(\Z_n)$. Assume that $J = J_{X_q}$ for some prime divisor $q \neq p$ of
+$n$; otherwise we are done. Then
 
 \begin{lemma}
   \label{lem:ZnImmediatelyBelow}
