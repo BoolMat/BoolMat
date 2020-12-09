@@ -128,21 +128,25 @@ example,~\cite{Branco2019aa, Colarte2020aa, DallaVolta1995aa, Dimitrova2020aa,
   Gelander2020aa, Holt2013aa, Moori1993aa, Rosenberger1988aa}.  In this
 paper we are principally concerned with monoids of matrices over the boolean
 semiring $\B$; we also present some results about monoids of min-plus and
-max-plus matrices of dimension $2$, and matrices of arbitrary dimension over the rings $\Z / n\Z$, $n\in \N$.
+max-plus matrices of dimension $2$, and matrices of arbitrary dimension over the
+rings $\Z / n\Z$, $n\in \Np$.
 
 If $S$ is a semigroup, then the least cardinality of a generating set for $S$ is
 often called the \defn{rank} of $S$ and is denoted by $\mathbf{d}(S)$. 
 A \defn{semiring} is a set $\mathbb{S}$ with two operations, $\oplus$ and $\otimes$,
 such that $(\mathbb{S}, \oplus)$ forms a commutative monoid with identity $e$,
 $(\mathbb{S}, \otimes)$ forms a monoid, $e\otimes x = x\otimes e = e$ for all $x
-\in \mathbb{S}$, and multiplication distributes over addition.
-The \defn{boolean semiring} $\B$ is the set $\{0, 1\}$ with addition defined by 
+\in \mathbb{S}$, and multiplication distributes over addition. One natural
+example of a semiring is the natural numbers $\N$; note that in this paper $0
+\in \N$ and we write $\Np$ for the set of positive natural numbers.
+Another well-known example is the \defn{boolean semiring} $\B$. This is the set
+$\{0, 1\}$ with addition defined by 
 \begin{align*}
   0 \oplus 1 = 1 \oplus 0 = 1 \oplus 1 = 1 \AND
   0 \oplus 0 = 0
 \end{align*}
 and multiplication defined as usual for the real numbers $0$ and $1$. If $n\in
-\N$, then we denote by $\Bn$ the monoid consisting of all $n\times n$ matrices
+\Np$, then we denote by $\Bn$ the monoid consisting of all $n\times n$ matrices
 with entries in $\B$.
 The semiring $\B$ is one of the simplest examples of a semiring, and the matrix
 monoids $\Bn$ for $n \in \N$ have been widely studied in the literature since
@@ -233,7 +237,7 @@ semirings $\Kmax$ and $\Kmin$ in this paper. Another reason we consider this
 unorthodox definition is that the results in this paper concerning monoids of
 matrices over $\Kmax$ and $\Kmin$ arose initially from computational experiments
 in a reimplementation of the Froidure-Pin Algorithm~\cite{Froidure1997aa,
-  Semigroupe} in \cite{libsemigroups}, and the original implementation by
+  Semigroupe} in \cite{Libsemigroups}, and the original implementation by
 Jean-Eric Pin in \cite{Semigroupe} included support for the monoids
 we consider here. 
 Note that under the standard
@@ -248,7 +252,8 @@ sets; indeed descriptions of the Green's relations were only published
 relatively recently (see \cite{Hollings2012aa, Johnson2013aa}). This may simply
 be because the monoids are rather complex and difficult to work with.  
 
-The final semiring that we are concerned with is $\Z_n$, the integers modulo $n$.
+The final semiring that we are concerned with is $\Z / n\Z$, the ring of
+integers modulo $n$. For brevity we will use $\Z_n$ to denote this ring.
 The monoid of matrices over $\Z_n$ has received relatively little attention as a
 semigroup. As an example of an \defn{exact semiring} as defined in
 \cite{Wilding2013aa}, there is a characterisation of Green's relations on
@@ -429,10 +434,10 @@ Further background on Green's relations can be found in~\cite{Howie1995aa}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Matrix semigroups}
 \label{sec:matsemigp}
-Given a semiring $\mathbb{S}$ and $m, n \in \N$, we may study the set of $m
+Given a semiring $\mathbb{S}$ and $m, n \in \Np$, we may study the set of $m
 \times n$ matrices over $\mathbb{S}$; we will denote this by $M_{m,
   n}(\mathbb{S})$. In particular, we are interested in the multiplicative monoid
-of square matrices of dimension $n \in \N$ over $\mathbb{S}$, denoted by
+of square matrices of dimension $n \in \Np$ over $\mathbb{S}$, denoted by
 $M_n(\mathbb{S})$.  There are a number of common features of such matrix
 monoids. As usual, we let $0$ denote the additive identity of $\mathbb{S}$ and
 $1$ denote the multiplicative identity. The following definitions are entirely
@@ -707,7 +712,7 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
 \end{table}
 There are several obvious relationships between columns in
 Table~\ref{tab:BMatResults}; we prove that these relationships hold for all $n
-\in \N$.
+\in \Np$.
 
 Another submonoid of $\Bn$, which has attracted recent attention, is the Gossip
 monoid $G_n$; see~\cite{Brouwer2015aa, Fenner2018aa} for some recent results and
@@ -1187,7 +1192,7 @@ Computing canonical forms for graphs is a well-studied problem; for a recent
 article see~\cite{McKay2013aa} and the references within. 
 and we use the software bliss\footnote{In fact, a slightly-modified version of
   bliss which avoids repeated memory allocation was used; this is available at
-  \cite{https://github.com/digraphs/bliss}}~\cite{Junttila2007aa, Bliss} to obtain such functions $\psi_n$. 
+  \url{https://github.com/digraphs/bliss}}~\cite{Junttila2007aa, Bliss} to obtain such functions $\psi_n$. 
 \begin{lemma}
   \thlabel{lem:GraphCanonicalForms}
   The functions $\Phi_n = \Gamma^{-1}\psi_n\Gamma$ are canonical forms when
@@ -2219,10 +2224,6 @@ provide explicit generators but rather would require the computation of those
 $\J$-classes immediately below the group of units as in
 Section~\ref{sec:FullBoolMat}.
 
-% TODO: this prompts further questions. Aren't the results in that paper just
-% Devadze's theorem for a different semiring? And isn't the integers mod n
-% result also just Devadze's theorem???
-
 \subsection{Min-plus matrices}
 
 \begin{thm}[{\cite[Theorem 1.1]{East2020aa}}]\thlabel{thm:MinPlusGenSet}
@@ -2616,8 +2617,6 @@ also consists of $\J$-non-equivalent elements.
 
 \section{Matrices over $\mathbb{Z}_n$}
 \label{sec:IntegersModN}
-% TODO: define relative generation/rank
-% TODO: Do we need to require k >= 2?
 
 Perhaps surprisingly, there appears to be no known general characterisation of a
 minimal generating set of the multiplicative group $U_n$ of integers coprime to
@@ -2633,7 +2632,7 @@ following analogues to Devadze's Theorem (see \thref{thm:Devadzefull}).
 
 \begin{thm}
   \thlabel{thm:ZnGenSet}
-    Let $k,n \in \N$.
+    Let $k,n \in \Np$.
     The monoid $M_k(\Z_n)$ is generated by any set consisting of $GL_k(\Z_n)$
     and one element from each of the $\J$-classes
     immediately below $GL_k(\Z_n)$ in the $\J$-order of $M_k(\Z_n)$.
@@ -2674,7 +2673,7 @@ elements are irredundant. By \thref{prop:Wilf}, this proves the following
 theorem:
 \begin{thm}
   \thlabel{thm:ZnMinimal}
-  Let $k,n \in \N$, let $G$ be a generating set of minimal cardinality for
+  Let $k,n \in \Np$, let $G$ be a generating set of minimal cardinality for
   $GL_k(\Z_n)$, and let $P$ be a set of representatives of the
   $\J$-classes immediately below $GL_k(\Z_n)$ in the $\J$-order of
   $M_k(\Z_n)$. Then $G \cup P$ is a minimal generating set for $M_k(\Z_n)$.
@@ -2871,9 +2870,6 @@ follows that $R(X_p) = R(X_qB)$. Right multiplication by $B$ is therefore a
 surjective homomorphism from $R(X_q)$ to $R(X_p)$, but by Lagrange's Theorem no
 such homomorphism exists for $p \neq q$; hence $J = J_p$.
 \end{proof}
-
-% TODO: Make sure that the case (n is prime) is either excluded, or included
-% correctly.
 
 \printbibliography
 \end{document} 
