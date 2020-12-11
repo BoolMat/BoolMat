@@ -763,7 +763,7 @@ transformation matrix.
   \end{pmatrix}.
   \end{align*}
 \end{conj}
-\noindent This conjecture has been verified computatationally up to $n = 5$.
+\noindent This conjecture has been verified computationally up to $n = 5$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1028,7 +1028,7 @@ We may now prove a slightly stronger form of Devadze's Theorem.
 \end{thm}
 \begin{proof}
   The converse follows immediately from \thref{thm:DevadzeKon}, noting that $A
-  \in \genset{\{A', T', U'\}}$ for any similar matrices $A, A' \in \Bn$.
+  \in \genset{A', T', U'}$ for any similar matrices $A, A' \in \Bn$.
 
   Let $X$ be a minimal generating set for $\Bn$. Since $\mathbf{d}(S_n) = 2$,
   and $X$ must contain generators of the group of units $S_n$, it follows that
@@ -1187,7 +1187,7 @@ Computing canonical forms for graphs is a well-studied problem; for a recent
 article see~\cite{McKay2013aa} and the references within. 
 and we use the software bliss\footnote{In fact, a slightly-modified version of
   bliss which avoids repeated memory allocation was used; this is available at
-  \cite{https://github.com/james-d-mitchell/bliss}}~\cite{Junttila2007aa, Bliss} to obtain such functions $\psi_n$. 
+  \cite{https://github.com/digraphs/bliss}}~\cite{Junttila2007aa, Bliss} to obtain such functions $\psi_n$. 
 \begin{lemma}
   \thlabel{lem:GraphCanonicalForms}
   The functions $\Phi_n = \Gamma^{-1}\psi_n\Gamma$ are canonical forms when
@@ -1199,7 +1199,7 @@ and we use the software bliss\footnote{In fact, a slightly-modified version of
   $\Gamma(B)$ if and only if $A \J B$. Denote the vertices of $\Gamma(A)$ by
   $\{1, \ldots, 2 n\}$ and the vertices of $\Gamma(B)$ by $\{1', \ldots, 2n'\}$,
   as above.
-  Suppose that there is a colour-preserving isomomorphism $\Psi: \Gamma(A) \to
+  Suppose that there is a colour-preserving isomorphism $\Psi: \Gamma(A) \to
   \Gamma(B)$. Since $\Psi$ preserves colours, $\Psi$ maps $\{1, \ldots, n\} \to
   \{1', \ldots, n'\}$ and $\{n + 1, \ldots, 2n\} \to \{(n + 1)', \ldots, 2n'\}$.
   Define permutations $\alpha, \beta$ on $\{1,\ldots, n\}$ by 
@@ -2114,7 +2114,7 @@ $0$-deficient and therefore belongs to $\Halln$.
 \begin{cor}
   \thlabel{cor:HallDecomposition}
   Let $A$ be a matrix belonging to $\Halln$ which is not prime, elementary,
-  or a permutation matrix. Then $A$ can be be decomposed as a product $A = CB$
+  or a permutation matrix. Then $A$ can be decomposed as a product $A = CB$
   of matrices $B, C \in \Halln$, such that neither $B$ nor $C$ is $\J$-related
   to $A$ in $\Halln$.
 \end{cor}
@@ -2837,7 +2837,7 @@ given in \thref{thm:ZnGenSet} does generate $M_k(\Z_n)$.
 \]
   is a product of matrices in $\mathcal{X}$, and row- and column-permutations
   are represented by left and right multiplication by units, $\genset{GL_k(\Z_n)
-    \cup \mathcal{Y}}$ contains every every diagonal matrix that differs from
+    \cup \mathcal{Y}}$ contains every diagonal matrix that differs from
   the identity matrix by having a $0$ or a prime divisor of $n$ in exactly one
   place on the main diagonal. It is straightforward to see that any matrix in
   standard diagonal form may be expressed as a product of such matrices. The
