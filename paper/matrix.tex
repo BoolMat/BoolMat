@@ -14,7 +14,7 @@ tabu, enumitem, hyperref}
 \newtheorem{defi}[thm]{Definition}
 \newtheorem{exa}[thm]{Example}
 \newtheorem{algo}[thm]{Algorithm}
-\newtheorem{conj}[thm]{Conjecture}
+\newtheorem*{conj}{Conjecture}
 \newenvironment{de}[1][]{\begin{defi}[#1]\rm}{\end{defi}}
 \newenvironment{ex}{\begin{exa}\rm}{\end{exa}}
 \newenvironment{alg}{\begin{algo}\rm}{\end{algo}}
@@ -36,7 +36,6 @@ tabu, enumitem, hyperref}
 
 \newcommand{\num}{\mathbf{num}}
 \newcommand{\vect}{\mathbf{vec}}
-
 
 % For Algorithms
 \SetKwProg{Fn}{Function}{}{}
@@ -88,7 +87,7 @@ tabu, enumitem, hyperref}
 \newcommand{\tmat}[4]{\left(\begin{smallmatrix}#1&#2\\#3&#4\end{smallmatrix}\right)}
 \newcommand{\COMMA}{,\quad}
 
-\usepackage[backend=biber, bibencoding=utf8]{biblatex}
+\usepackage[backend=biber, bibencoding=utf8, giveninits=true]{biblatex}
 \bibliography{matrix}
 
 
@@ -189,23 +188,29 @@ monoids: $\Refln$ consisting of the \defn{reflexive boolean
 consisting of all \defn{Hall matrices} (matrices containing a permutation); and
 $\UTn$ of \defn{upper triangular boolean matrices}. Each of these submonoids has
 been extensively studied in their own right; see, for example,
-\cite{Butler1974aa, Cho1993ab, Kim1977aa, Li2011aa, Pin1985aa, Schwarz1973aa,
-  Tan2000aa, Zhang2020aa}. Unlike $\Bn$, $\Refln$ is $\J$-trivial, and so has
-precisely $|\Refln| = 2 ^ {n ^ 2 - n}$ $\J$-classes. Similarly,
-$A, B\in \Halln$ are $\J$-related if and only if one can be obtained from the
-other by permuting the rows and columns. However, the size of $\Halln$ is not
-known for $n\geq 8$; see \cite{OEISHall}. In contrast, the
-upper-triangular boolean matrix monoid $\UTn$ is easily seen to have size
+\cite{Butler1974aa, Cho1993ab, Gaysin2020aa, Kim1977aa, Li2011aa, Pin1985aa,
+  Schwarz1973aa, Straubing1980aa, Tan2000aa, Zhang2020aa}. Unlike $\Bn$,
+$\Refln$ is $\J$-trivial, and so has precisely $|\Refln| = 2 ^ {n ^ 2 - n}$
+$\J$-classes. Similarly, $A, B\in \Halln$ are $\J$-related if and only if one
+can be obtained from the other by permuting the rows and columns. However, the
+size of $\Halln$ is not known for $n\geq 8$. This question was raised by Kim Ki
+Hang~\cite[Problem 13]{Kim1982aa} in 1982 and recently raised again
+in~\cite{Gaysin2020aa}; see \cite{OEISHall} for the known values. In contrast,
+the upper-triangular boolean matrix monoid $\UTn$ is easily seen to have size
 $2^{\frac{n(n+1)}{2}}$.
 The monoid $\UTn$ appears to have been primarily studied in the context of
-varieties; see for instance, \cite{Li2011aa, Zhang2020aa}. It is somewhat surprising that there appears to be no description of the unique minimal generating set of $\UTn$ in the literature, in particular, because this minimal generating set is more straightforward to determine than that of the other submonoids of $\Bn$ we consider (see
-Section~\ref{sec:TriBoolMat}).
+varieties; see for instance, \cite{Li2011aa, Zhang2020aa}. It is somewhat
+surprising that there appears to be no description of the unique minimal
+generating set of $\UTn$ in the literature, in particular because this minimal
+generating set is more straightforward to determine than that of the other
+submonoids of $\Bn$ we consider (see Section~\ref{sec:TriBoolMat}).
 
 We also consider monoids of matrices over certain \defn{tropical} semirings. 
 The \defn{min-plus semiring} $\Kmin$ is the set $\N \cup \{\infty\}$, with
 $\oplus = \min$ and $\otimes$ extending the usual addition on $\N$ so that
-$x\otimes\infty = \infty\otimes x = \infty$ for all $x \in \Kmin$. For our
-purposes, $0 \in \N$. The multiplicative identity of $\Kmin$ is $0$, and the additive identity is $\infty$.
+$x\otimes\infty = \infty\otimes x = \infty$ for all $x \in \Kmin$. The
+multiplicative identity of $\Kmin$ is $0$, and the additive identity is
+$\infty$.
 
 The \defn{max-plus semiring} $\Kmax$ is the set $\N \cup \{-\infty\}$ with
 $\oplus = \max$ and $\otimes$ extending the usual addition on $\N$ so that
@@ -347,7 +352,8 @@ generating sets are minimal.
 \subsection{Green's relations}
 On any semigroup $S$, there are some key equivalence relations. These are known
 as Green's relations, and are defined in terms of principal ideals as follows.
-Let $S$ be any semigroup and let $s, t \in S$. Then
+Let $S$ be any semigroup and let $s, t \in S$. We denote by $S^1$ the monoid
+obtained by adjoining an identity to $S$. Then
 \begin{align*}
   s \L t &\text{ if and only if } S^1 s = S^1 t \\
   s \R t &\text{ if and only if } s S^1 = t S^1 \\
@@ -706,7 +712,7 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
 
   \caption{The ranks of certain matrix monoids over $\B$; a * denotes that the
     rank was already known or is computable by brute force, and a ? indicates
-    that the value is unknown. See \thref{conj:TransGenSet} and the preceding
+    that the value is unknown. See the conjecture below with preceding
     discussion for $\MTn$. Note that the ranks given are to generate the monoids
     as semigroups.}
   \label{tab:BMatResults}
@@ -1993,10 +1999,10 @@ This motivates the following definition. Given a row-trim matrix $A \in \Bn$,
 define the \defn{core} $A^\circ$ of $A$ to be the submatrix of $A$ consisting of
 those rows containing at least $2$ ones. We say that a subset of rows of $A$
 violating the Hall condition is a \defn{maximal violator of $A$} if it has
-largest cardinality amongst such subsets, and that a matrix is $k$-deficient if
-$k$ is the cardinality of a maximal violator of $A^\circ$. The following lemma
-shows that we are justified in considering maximal violators of $A^\circ$ rather
-than $A$. 
+largest cardinality amongst such subsets, and that a matrix is
+\defn{$k$-deficient} if $k$ is the cardinality of a maximal violator of
+$A^\circ$. The following lemma shows that we are justified in considering
+maximal violators of $A^\circ$ rather than $A$. 
 
 \begin{lemma}
   \thlabel{MaximalViolatorsCore}
@@ -2127,8 +2133,9 @@ $0$-deficient and therefore belongs to $\Halln$.
   to $A$ in $\Halln$.
 \end{cor}
 \begin{proof}
-  We may assume that $A$ contains the identity permutation, since If $A$ is not
-  trim then this follows directly from \thref{lem:NonTrimDecomposable}.
+  We may assume that $A$ contains the identity permutation, since the lemma
+  holds for $A$ if and only if it holds for all matrices similar to $A$. If $A$
+  is not trim then this follows directly from \thref{lem:NonTrimDecomposable}.
   Otherwise, $A$ is trim and by \thref{lem:HallAssumptions} there exist $B \in
   \Halln$ and $C \in \Bn$ such that $A = CB$, neither $B$ nor $C$ is
   $\J$-related to $A$ in $\Halln$, and $C$ contains a $1$ in every column. If
@@ -2587,7 +2594,7 @@ element, which is an isomorphism invariant:
     multiples;
   \item
     $R(X(i))$, for any $i \in \Kmaxt$, has unique basis
-    $\{(i~0),~(0~-\infty)\}$, with $t + 2$ distinct scalar multiples each.
+    $\{(i~0),~(0~-\infty)\}$, with $t + 2$ distinct scalar multiples each;
   \item $R(W(j, k))$, for $1 \leq j \leq k \leq t$, has unique basis
     $\{(0~j),~(k~0)\}$, with $t + 2$ distinct scalar multiples each.
 \end{itemize}
@@ -2620,6 +2627,7 @@ also consists of $\J$-non-equivalent elements.
 
 \section{Matrices over $\mathbb{Z}_n$}
 \label{sec:IntegersModN}
+\setcounter{subsection}{1}
 
 Perhaps surprisingly, there appears to be no known general characterisation of a
 minimal generating set of the multiplicative group $U_n$ of integers coprime to
