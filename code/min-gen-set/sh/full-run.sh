@@ -60,6 +60,8 @@ finish() {
     QUIT;
 GAP_COMMANDS
   xbold $((nr+3)) "min. gen. set written to:    build/output/bmat-int-gens-$1.txt *******"
+  rm build/output/max_digraphs_$1_*.d6.gz
+  rm build/output/bmat-gens-$1-*.d6.gz
 }
 
 if [[ $# -gt 2 || $# -lt 1 ]]; then

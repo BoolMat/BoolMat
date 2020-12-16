@@ -10,11 +10,15 @@ Other valid inputs are:
 - full-4, -5, -6, -7, and -8, although this last one will take a long time to run; and
 - ref-3, -4, -5, -6, and -7, for generators of the reflexive boolean matrices.
 
-The generators will be output in pickled GAP matrix format, readable using the
-Semigroups package, as well as in integer format, where the values are packed
-into 64 bits and output as an integer.
+The full boolean matrix monoid generators will be output in pickled GAP matrix
+format, readable using the Semigroups package, as well as in integer format,
+where the values are packed into 64 bits and output as an integer. The reflexive
+generators will only be output as integers. These integers may be read in GAP
+using the function FileOfIntsToListOfBMats in src/gap.g.
 
 To utilise more threads in the computation:
 - for the full monoid, in Makefile change the second value passed to
   sh/full-run.sh to the desired number of cores
 - for the reflexive monoid, set the environment variable OMP_NUM_THREADS
+
+Precomputed generators may be found in gens.tar.gz.
