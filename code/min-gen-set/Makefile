@@ -20,7 +20,7 @@ full-7:
 	@sh/full-run.sh 7 8
 
 full-8: 
-	@sh/full-run.sh 8 
+	@sh/full-run.sh 8 8 
 
 ref-3: 
 	build/libsemigroups/test_bmat8_enum "[ref-3]"

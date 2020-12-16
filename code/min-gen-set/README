@@ -1,10 +1,20 @@
-This directory contains everything required to compute a minimal generating
-set for the monoid of n x n boolean matrices. An internet connection is
-required (since several resources are downloaded), but it should be as simple
-as typing:
+This directory contains everything required to compute a minimal generating set
+for the monoid of n x n boolean matrices and the monoid of reflexive n x n
+boolean matrices. An internet connection is required (since several resources
+are downloaded), but it should be as simple as typing:
 
-  make 4 
+  make full-3 
 
-which will compute a minimal generating set for the 4 x 4 boolean matrices.
-Other valid inputs are 3, 4, 5, 6, 7, and 8, although this last one will take a
-long time to run. 
+which will compute a minimal generating set for the monoid of 3 x 3 boolean matrices.
+Other valid inputs are:
+- full-4, -5, -6, -7, and -8, although this last one will take a long time to run; and
+- ref-3, -4, -5, -6, and -7, for generators of the reflexive boolean matrices.
+
+The generators will be output in pickled GAP matrix format, readable using the
+Semigroups package, as well as in integer format, where the values are packed
+into 64 bits and output as an integer.
+
+To utilise more threads in the computation:
+- for the full monoid, in Makefile change the second value passed to
+  sh/full-run.sh to the desired number of cores
+- for the reflexive monoid, set the environment variable OMP_NUM_THREADS

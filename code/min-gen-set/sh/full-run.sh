@@ -21,7 +21,7 @@ filter() {
   LoadPackage("semigroups", false);;
   Read("src/gap.g");;
   WriteAugmentedDigraphs("build/output/row_space_numbers_$1_prefiltered.txt",
-                         "build/output/digraphs_$1_prefiltered.d6.gz",
+                         "build/output/digraphs_$1.d6.gz",
                          $1);;
   QUIT;
 GAP_COMMANDS
@@ -33,7 +33,7 @@ GAP_COMMANDS
       LoadPackage("semigroups");;
       Read("src/gap.g");;
       FilterByHomomorphisms($1,
-                            "build/output/digraphs_$1_prefiltered.d6.gz",
+                            "build/output/digraphs_$1.d6.gz",
                             "build/output/max_digraphs_$1_$rem.d6.gz",
                             $2,
                             $rem);;
