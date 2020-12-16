@@ -1442,7 +1442,8 @@ significant improvement can be obtained by using Zaretskii's Theorem.
   the extended row spaces. Each algorithm was executed on a cluster of 60 2.3GHz
   AMD Opteron 6376 cores with 512GB of ram. \thref{alg:filter2} involves
   launching GAP multiple times, which took approximately 6s in each run. For
-  $n=8$, \thref{alg:filter1} with prefiltering was run on TODO}
+  $n=8$, \thref{alg:filter1} with prefiltering was run on a machine with 32 AMD
+  Opteron 6276 cores and 192GB of RAM}
 \label{tab:runtimestats}
 \end{table}
 
@@ -1785,25 +1786,7 @@ $\Refln$:
 \end{enumerate}
 \end{alg}
 Using this algorithm, we can calculate the sizes of minimal generating sets up
-to $n = 6$; these are contained in Table~\ref{tab:BMatResults}. The time taken
-to compute the minimal generating sets is given in
-Table~\ref{tab:ReflexiveRuntimeStats}.
-
-\begin{table}
-  \centering
-  \begin{tabular}{r|r|r|r|r|r|r}
-    $n$ & 3 & 4 & 5 & 6 & 7 & 8 \\
-    \hline
-     Runtime & 75ms & 85ms & 730ms & 12m47s & ? & - 
-  \end{tabular}
-
-\vspace{1cm}
-\caption{Time taken to compute the minimal generating set of $\Refln$ ($3 \leq n
-  \leq 7)$ using \thref{alg:ReflexiveGenSet} and a brute-force approach for the
-  hardest matrices. The algorithm was executed on a cluster of 60 2.3GHz AMD
-  Opteron 6376 cores with 512GB of ram.}
-\label{tab:ReflexiveRuntimeStats}
-\end{table}
+to $n = 6$; these are contained in Table~\ref{tab:BMatResults}.
 
 There are a small number of matrices in $\Refl{7}$ for which the approach based on
 \thref{lem:decomposeintersection} is too inefficient; we chose to use a
