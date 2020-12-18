@@ -1,11 +1,14 @@
 \documentclass[11pt]{article}
-
+\pdfoutput=1
 \usepackage{amsmath, amsfonts, amsthm, amssymb, latexsym, mathrsfs, pifont,
-tabu, enumitem, hyperref}
+tabu, enumitem}
 \usepackage[cm]{fullpage}
 \usepackage{theoremref}
 \usepackage[ruled, linesnumbered]{algorithm2e}
 \usepackage{makecell}
+
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-}
 
 \newtheorem{thm}{Theorem}[subsection]
 \newtheorem{prop}[thm]{Proposition}
@@ -88,6 +91,7 @@ tabu, enumitem, hyperref}
 \newcommand{\COMMA}{,\quad}
 
 \usepackage[backend=biber, bibencoding=utf8, giveninits=true]{biblatex}
+
 \bibliography{matrix}
 
 
@@ -901,7 +905,8 @@ cardinality $3$.
 
 It is significantly more difficult to determine the $\J$-relation in $\Bn$ than
 the $\L$- or $\R$-relation. Indeed, the problem of determining whether two
-matrices are $\J$-related in $\Bn$ is NP-hard~\cite[Theorem 2.7]{Fenner2018aa}.
+matrices are $\J$-related in $\Bn$ is NP-hard; see~\cite[Theorem 2.7]{Fenner2018ab}
+and ~\cite{Markowsky1992aa}.
 The $\J$-relation on $\Bn$ is characterised by row space embeddings in the
 following theorem; a function $f: R(A) \to R(B)$ is a \defn{row space embedding}
 if it respects containment and non-containment, i.e.\ $f(v) \leq f(w)$ if and
