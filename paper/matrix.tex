@@ -1262,10 +1262,11 @@ n$) and leaves $n \times n$ matrices.
         \item $\vect(x)$ does not contain $A_{l*}$ for any $1 \leq l \leq m$,
           and
         \item $\vect(x)$ has at least as many ones as $A_{f*}$,
+          and
         \item for all column indices $1 \leq i < j \leq m$ such that $A_{*i} =
-          A_{*j}$, if $\vect(x)_i = 1$ then $\vect(x)_j = 1$.
+          A_{*j}$, if $\vect(x)_i = 1$ then $\vect(x)_j = 1$,
       \end{enumerate}
-      set the current node to be the matrix obtained from $A$ by adjoining
+      then set the current node to be the matrix obtained from $A$ by adjoining
       $\vect(x)$ as the last row, and return to step 1.
     \item after every $x$ has been processed, return to the previous node (if
       any) and carry out step $3$ for the next $x$ at that node (if any).
