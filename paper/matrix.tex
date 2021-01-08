@@ -1932,7 +1932,9 @@ vector of length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
 \begin{proof}
   As in \thref{lem:NonTrimDecomposable}, we may assume that $A$ contains the
   identity permutation. Since $A$ is not prime, elementary, or a permutation
-  matrix, it has non-maximal row space in $\beta_n$. Let $B$ be a maximal
+  matrix, it has non-maximal row space in
+  $\beta_n = \set{R(A)}{A\in \Bn\setminus S_n}$.
+  Let $B$ be a maximal
   non-permutation matrix in $\Bn$ whose row space contains the row space of $A$.
 
   Letting $C \in \Bn$ be the greedy left multiplier of $(A, B)$, we have $A = CB$ by
