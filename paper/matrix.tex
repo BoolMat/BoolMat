@@ -1568,13 +1568,13 @@ We now prove several results relating to decomposability of elements in $\Refln$
 \begin{proof}
   Let $A \in \Refln$ be neither trim nor elementary.
   Since $A$ is not trim, it is either not row-trim or not column-trim (or both).
-  Suppose that $A$ is not row-trim; then there exist some $1 \leq i, j
+  Suppose that $A$ is not row-trim; then there exist some distinct $1 \leq i, j
   \leq n$ such that the $i$th row $A_{i*}$ is contained in the $j$th row
   $A_{j*}$.
   Let $B$ be the matrix obtained by setting entry $i$ of row $j$ of $A$ to be
   equal to $0$, that is
   \[B_{kl} = \begin{cases} 
-                0 \quad& k = i \text{ and } l = j \\ 
+                0 \quad& k = j \text{ and } l = i \\ 
                 A_{kl} \quad& \text{otherwise.} 
               \end{cases} \]
   Since $i \neq j$ and $A$ is reflexive, so too is $B$. Now $B_{j*} \cup A_{i*}
