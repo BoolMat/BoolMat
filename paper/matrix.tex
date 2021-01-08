@@ -1987,7 +1987,7 @@ require in order to use \thref{lem:GenSetDecomposition}, it provides a
 decomposition into two matrices that are close to having the correct properties.
 This motivates the following definition. Given a row-trim matrix $A \in \Bn$,
 define the \defn{core} $A^\circ$ of $A$ to be the submatrix of $A$ consisting of
-those rows containing at least $2$ ones. We say that a subset of rows of $A$
+those rows containing at least two $1$s. We say that a subset of rows of $A$
 violating the Hall condition is a \defn{maximal violator of $A$} if it has
 largest cardinality amongst such subsets, and that a matrix is
 \defn{$k$-deficient} if $k$ is the cardinality of a maximal violator of
@@ -2003,7 +2003,7 @@ maximal violators of $A^\circ$ rather than $A$.
 \begin{proof}
   Suppose $A$ has rows $X = \{r_1, r_2, \ldots, r_k\}$ containing a single $1$.
   Since $A$ is row-trim, no other row may contain a $1$ in the columns in which
-  the rows $X$ have a $1$; hence we may permute the rows and columns of $A$ so
+  the rows in $X$ have a $1$; hence we may permute the rows and columns of $A$ so
   that the rows containing a single $1$ form a identity matrix $I_k$ as the $k
   \times k$ bottom-right block. Now $A^\circ$ forms the first $n-k$ rows, and it
   is clear that the union of a maximal violator of $A^\circ$ with the last $k$
