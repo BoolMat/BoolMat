@@ -2802,17 +2802,14 @@ given in \thref{thm:ZnGenSet} indeed generates $M_k(\Z_n)$.
 \end{lemma}
 
 \begin{proof}
-    Certainly $\set{AX_{p}B}{A,B \in GL_k(\Z_n)} \subseteq J_{X_p}$.
-    To show the reverse inclusion, let $Y \in J_{X_p}$.
-    By Proposition~\ref{prop:RowSpacesJRelation}, $R(Y) \cong R(X_p)$.
-    Since, by \thref{lem:XpUnique}, $X_p$ is the unique matrix in standard
-    diagonal form with row space isomorphic to $R(X_p)$,
-    it follows by Lemma~\ref{lem:Wilf1} that $Y = EX_{p}F$ for some $E,F \in
+    Let $Y \in J_{X_{p}}$.
+    By \thref{lem:Wilf1,lem:XpUnique},
+    $J_{X_{p}} = \set{AX_{p}B}{A,B \in GL_k(\Z_n)}$;
+    in particular, $Y = EX_{p}F$ for some $E,F \in
     GL_k(\Z_n)$. Hence 
     \begin{align*}
-      J_{X_p} &= \set{AX_{p}B}{A,B \in GL_k(\Z_n)} \\
-              &= \set{A(E^{-1}YF^{-1})B}{A,B \in GL_k(\Z_n)} \\
-              &\subseteq \genset{GL_k(\Z_n) \cup \{Y\}}.
+      J_{X_p} &= \set{A(E^{-1}YF^{-1})B}{A,B \in GL_k(\Z_n)} \\
+              &\subseteq \genset{GL_k(\Z_n) \cup \{Y\}}. \qedhere
     \end{align*}
 \end{proof}
 
