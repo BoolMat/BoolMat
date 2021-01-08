@@ -1357,7 +1357,7 @@ $Q_{\Phi_n}$ is prime. We present two algorithms for doing so, in
 \end{lemma}
 \begin{proof}
   Since the $\J$-class of a prime matrix consists only of similar matrices, the
-  set $\set{R(A\alpha)}{A \in P_{\Phi_n}} \subset X$ contains all row spaces of
+  set $\set{R(A\alpha)}{A \in P_{\Phi_n}, \alpha \in S_n} \subset X$ contains all row spaces of
   prime matrices in $\Bn$, and hence so does $X$. Similarly, $X$ contains the
   row space of every elementary matrix. Hence, the elements that are maximal in
   $X$ are precisely the maximal elements of $\beta_n$ and thus by
@@ -1395,7 +1395,8 @@ generating sets for $n \leq 7$ may be obtained.
 For $n=8$ this algorithm is no longer sufficient, and it is necessary to use
 heuristics to reduce the size of $Q$. The simplest way to do this is to select a
 small subset $X \subset Q$ of matrices with large row spaces, generate the row
-spaces $Y = \{R(A\alpha) :\: A \in X\} \subset R$, and check whether $R(B)$ is
+spaces $Y = \set{R(A\alpha)}{A \in X, \alpha \in S_n} \subset R$,
+and check whether $R(B)$ is
 contained in any element of $Y$ for each element $B \in Q$.  It is also
 worthwhile to filter $R$ by checking containment in the row spaces of all the
 column permutations of a known set of prime matrices, such as those described in
