@@ -477,23 +477,17 @@ well-known results:
   \thlabel{prop:rowsandideals}
   Let $A, B \in M_n(\mathbb{S})$. Then the following hold:
   \begin{enumerate}[label={\rm (\roman*)}]
-    \item
-      If $R(A) \subseteq R(B)$, then $A \in M_n(\mathbb{S}) B$.  Similarly, if $C(A)
-      \subseteq C(B)$, then $A$ belongs to the right ideal $BM_n(\mathbb{S})$.
-
     \item 
       $R(AB) \subseteq R(B)$ and $C(AB) \subseteq C(A)$.
+    \item
+      $L_A \leq L_B$ if and only if $R(A) \subseteq R(B)$ and $R_A \leq R_B$ if
+      and only if $C(A) \subseteq C(B)$.
   \end{enumerate}
 \end{prop}
 \begin{proof}
+  We will only prove the statements related to row spaces and $\L$-classes; the
+  other statements may be proved in a dual fashion.
   \noindent \textbf{(i).}
-  If $R(A) \subseteq R(B)$, then every row of $A$ can be expressed as a linear
-  combination of rows of $B$. For $1 \leq i \leq n$ of $A$, let $A_{i*} =
-  \sum_{j = 1}^{n}x_{ij}B_{j*}$, and define $X = [x_{ij}]$. Then $A = XB \in
-  M_n(\mathbb{S})B$. The other case is dual.
-  \bigskip
-
-  \noindent \textbf{(ii).}
   Suppose that $A = [\alpha_{ij}]$ and $B = [\beta_{ij}]$. If 
   $AB = [\gamma_{ij}]$, then 
   \[
@@ -529,24 +523,26 @@ well-known results:
     \alpha_{ik}B_{k*}.
   \]
   Thus the $i$th row of $AB$ is a sum of rows of $B$, and so $R(AB) \subseteq
-  R(B)$. 
+  R(B)$.
+
+  \bigskip
+  
+  \noindent \textbf{(ii).}
+  If $L_A \leq L_B$, then there exists $X \in M_n(\mathbb{S})$ such that $A =
+  XB$; hence $R(A) = R(XB) \subseteq R(B)$ by (i).  Conversely, if $R(A)
+  \subseteq R(B)$, then every row of $A$ can be expressed as a linear
+  combination of rows of $B$. For $1 \leq i \leq n$ of $A$, let $A_{i*} =
+  \sum_{j = 1}^{n}x_{ij}B_{j*}$, and define $X = [x_{ij}]$. Then $A = XB$, and
+  hence $L_A \leq L_B$. 
 \end{proof}
 
-\begin{prop} 
+The following corollary now follows immediately from \thref{prop:rowsandideals}.
+
+\begin{cor} 
   \thlabel{lem:GreensRowColumnSpaces}
   Let $A, B \in M_n(\mathbb{S})$. Then $A \L B$ if and only if $R(A) = R(B)$,
   and $A \R B$ if and only if $C(A) = C(B)$. 
-\end{prop}
-\begin{proof}
-  \textbf{(i) $\Rightarrow$ (ii).} 
-  If $A \L B$, then there are $X, Y \in M_n(\mathbb{S})$ such that $XA = B$ and
-  $YB = A$. Then $R(B) = R(XA) \subseteq R(A)$ and $R(A) = R(YB) \subseteq R(B)$
-  by Proposition~\ref{prop:rowsandideals}(ii).
-  \bigskip
-
-  \textbf{(ii) $\Rightarrow$ (i).} Follows immediately by
-  Proposition~\ref{prop:rowsandideals}(i). 
-\end{proof}
+\end{cor}
 
 The following lemma provides a useful connection between the $\J$-relation and row
 spaces; see \thref{thm:Zaretskii} for a strengthening in the case of $\Bn$.
