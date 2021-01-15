@@ -916,7 +916,7 @@ only if $v \leq w$ for all $v, w
 \in R(A)$.
 \begin{thm}[Zaretskii's Theorem~\cite{Zaretskii1963aa}]
   \thlabel{thm:Zaretskii}
-  Let $A, B \in \Bn$. Then $A \leq_{\J} B$ if and only if there exists a row
+  Let $A, B \in \Bn$. Then $J_A \leq J_B$ if and only if there exists a row
   space embedding $f: R(A) \to R(B)$.
 \end{thm}
 Zaretskii's Theorem reduces the problem of determining the $\J$-order of $\Bn$ to the
@@ -966,7 +966,7 @@ following lemma:
   following are equivalent:
   \begin{enumerate}[label={\rm (\roman*)}]
     \item $A = CB$
-    \item $A \leq_\L B$
+    \item $L_A \leq L_B$
     \item $R(A) \subseteq R(B)$.
   \end{enumerate}
   The dual statement holds for greedy right multipliers, Greens $\R$-order, and
@@ -1462,7 +1462,7 @@ Let $A \in \Bn$. The \defn{graph} of $R(A)$ is the directed graph with vertices
 $R(A)$ and an edge from $v$ to $w$ if and only if $v \leq w$.
 The graph of $C(A)$ is defined analogously.
 
-It is an immediate corollary of Zaretskii's Theorem that $A \leq_{\J} B$ if and
+It is an immediate corollary of Zaretskii's Theorem that $J_A \leq J_B$ if and
 only if there exists a homomorphic embedding of the graph of $R(A)$ into the
 graph of $R(B)$ which respects non-edges. An efficient and optimised search for
 such embeddings is implemented in~\cite{Digraphs2020aa}.
