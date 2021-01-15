@@ -365,9 +365,10 @@ obtained by adjoining an identity to $S$. Then
   s \J t &\text{ if and only if } S^1 s S^1 = S^1 t S^1.
 \end{align*}
 Finally, we define Green's $\H$-relation as the intersection of $\L$ and $\R$.
-We write $X_s$ for the Green's $\mathcal{X}$-class of $s$, where
-$\mathcal{X} \in \{\L, \R, \J, \H\}$.
-There is a natural partial order on certain Green's classes
+We write $X_s$ for the Green's $\mathcal{X}$-class of $s$, and $S/\mathcal{X}$
+for the set of Green's $\mathcal{X}$-classes of $S$, where $\mathcal{X} \in
+\{\L, \R, \J, \H\}$.
+There is a natural partial order on certain Green's classes given by
 \begin{align*}
   R_s \leq R_t &\text{ if and only if } sS^1 \subseteq tS^1 \\
   L_s \leq L_t &\text{ if and only if } S^1s \subseteq S^1t \\
@@ -891,7 +892,7 @@ $\R$-structure only requires computation of one of the relations.
   \begin{tabular}{r|r|r|r|r|r|r|r}
     $n$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
     \hline
-     & 2 & 7 & 55 & 1\ 324& 120\ 633& 42\ 299\ 663& ?  
+    $|\Bn / \L|$ & 2 & 7 & 55 & 1\ 324& 120\ 633& 42\ 299\ 663& ?
   \end{tabular}
 \vspace{1cm}
 
@@ -1161,7 +1162,7 @@ matrices.
   \centering
   \begin{tabular}{l|r|r|r|r|r}
     $n$ & $|\Bn|$ & $|\mathcal{B}_n|$ & $|\mathcal{TB}_n|$ & $|\phi(\mathcal{TB}_n)|$ &
-    $|J(\Bn)|$~\cite{Breen2001aa, Breen1997aa} \\
+    $|\Bn / \J|$~\cite{Breen2001aa, Breen1997aa} \\
       \hline
     $1$ & 2 & 2 & 2 & 2 & 2\\
     $2$ & 16 & 4 & 3 & 3 & 3\\
@@ -1178,8 +1179,8 @@ matrices.
   \caption{The sizes of: the monoid $\Bn$, the set $\mathcal{B}_n$ of matrices
     in $\Bn$ in Breen form; the set $\mathcal{TB}_n$ of trim matrices in Breen
     form in $\Bn$; the image $\phi(\mathcal{TB}_n)$ of the trim matrices in Breen form
-    under any canonical form $\phi$; and the set $J(\Bn)$ of
-    $\J$-classes of $\Bn$.}
+    under any canonical form $\phi$; and the set $\Bn / \J$ of $\J$-classes of
+    $\Bn$.}
   \label{tab:BreenFormMatrices}
 \end{table}
 
