@@ -6,6 +6,7 @@ tabu, enumitem}
 \usepackage{theoremref}
 \usepackage[ruled, linesnumbered]{algorithm2e}
 \usepackage{makecell}
+\usepackage{adjustbox}
 
 \usepackage{url}
 \def\UrlBreaks{\do\/\do-}
@@ -1433,6 +1434,7 @@ significant improvement can be obtained by using Zaretskii's Theorem.
 
 \begin{table}
   \centering
+\begin{adjustbox}{width=1\textwidth}
   \begin{tabular}{l|r|r|r|r|r|r}
     $n$ & \thref{alg:canonicalbacktrack} & \thref{alg:filter1} &
     \thref{alg:filter2} & prefiltering & \thead{\thref{alg:filter1} with \\
@@ -1442,9 +1444,10 @@ significant improvement can be obtained by using Zaretskii's Theorem.
     4 &5.6ms  & 13ms & 7.0s & 25ms & 11ms & 6.7s \\
     5 &9.2ms  & 16ms & 7.2s & 33ms & 16ms & 7.3s \\
     6 &150ms  & 216ms & 8.6s & 80ms & 171ms & 8.7s \\
-    7 &55s    & 1h20m & 1m11s & 28s & 1h9m & 1m8s \\
-    8 &30h52m & - & - & 5h30m & approx. 30 days & 3.9 days  
+    7 &55s    & 1h\ 20m & 1m\ 11s & 28s & 1h\ 9m & 1m\ 8s \\
+    8 &30h\ 52m & - & - & 5h\ 30m & approx. 30 days & 3.9 days
   \end{tabular}
+\end{adjustbox}
 
 \caption{Runtimes of the algorithms described in this section, for $3 \leq n
   \leq 8$. Runtimes for $n = 1,2$ were excluded as they are essentially
