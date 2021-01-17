@@ -1355,8 +1355,8 @@ $Q_{\Phi_n}$ is prime. We present two algorithms for doing so, in
     $R(A) \subsetneq R(B\beta)$ then discard $R(A\alpha)$ from $X$ for all
     $\alpha \in S_n$.
   \item
-    Output $T\subset Q_{\Phi_n}$, the set of non-elementary elements $A$ such that $R(A)$
-    remains in $X$ after the previous step.
+    Output the set of non-elementary elements $A$ such that $R(A)$ remains in
+    $X$ after the previous step.
   \end{enumerate}
 \end{alg}
 
@@ -1402,13 +1402,13 @@ Table~\ref{tab:filter1numbers}, and so this algorithm is only suitable for small
 Using \thref{alg:canonicalbacktrack} and \thref{alg:filter1}, minimal
 generating sets for $n \leq 7$ may be obtained.
 
-For $n=8$ this algorithm is no longer sufficient, and it is necessary to use
-heuristics to reduce the size of $Q$. The simplest way to do this is to select a
-small subset $X \subset Q$ of matrices with large row spaces, generate the row
-spaces $Y = \set{R(A\alpha)}{A \in X, \alpha \in S_n} \subset R$,
-and check whether $R(B)$ is
-contained in any element of $Y$ for each element $B \in Q$.  It is also
-worthwhile to filter $R$ by checking containment in the row spaces of all the
+For $n=8$ \thref{alg:filter1} is no longer sufficient, and it is necessary to use
+heuristics to reduce the size of the input set $Q_{\Phi_n}$. The simplest way to
+do this is to select a small subset $Y \subset Q_{\Phi_n}$ of matrices with
+large row spaces, generate the row spaces $Z = \set{R(A\alpha)}{A \in Y, \alpha
+  \in S_n} \subset X$, and check whether $R(B)$ is
+contained in any element of $Z$ for each element $B \in Q$.  It is also
+worthwhile to filter $Z$ by checking containment in the row spaces of all the
 column permutations of a known set of prime matrices, such as those described in
 the following lemma.
 
