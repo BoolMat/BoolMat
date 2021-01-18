@@ -607,11 +607,16 @@ set of cardinality $\mathbf{d}(S)$ is irredundant and hence minimal; this does
 not hold when $\mathbf{d}(S)$ is infinite. We will also say that a generator $x
 \in X$ is irredundant if $X \setminus \{x\}$ does not generate $S$.
 
-\begin{de}
-  An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if $x$
-  may be written as a product of elements not belonging to $\{e, x\}$, and
-  \defn{indecomposable} otherwise.
-\end{de}
+
+An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if $x$
+may be written as a product of elements in $M\setminus\{e, x\}$, and
+\defn{indecomposable} otherwise. Note that a different definition of
+indecomposable elements exists in the literature. Under that definition, an
+element $x$ of a semigroup $S$ is decomposable if $x \in S^2 = \set{st}{s, t \in
+  S}$, and indecomposable otherwise. These definitions are closely related but
+not equivalent, and our definition will be more useful for the purposes of this
+paper.
+
 Note that every indecomposable element of a monoid $M$ must be contained in
 every generating set for $M$; hence the minimal generating set of a monoid is a
 superset of the indecomposable elements.
