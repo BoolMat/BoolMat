@@ -2406,10 +2406,27 @@ case of $\Kmin$.
   to the rows of $A(j)$, but there are $j + 1$ such rows for one of the rows of
   $A(j)$, there is no such isomorphism.
 \end{proof}
-This completes the proof of \thref{cor:FiniteMinPlusGenSet}. We remark that by
-considering a finite quotient of $M_2(\Kmin)$ to which both elements belong, the
-previous lemma shows that the generating set given in \thref{thm:MinPlusGenSet}
-also consists of $\J$-non-equivalent elements.
+This completes the proof of \thref{cor:FiniteMinPlusGenSet}.
+
+
+For any $t \in \Np$, there is a quotient map $\phi_t: \Kmin \to \Kmint$ under
+which $\phi_t(x) = \min(x, t)$ for all $x \in \Kmin\setminus\{\infty\}$ and
+$\phi_t(\infty) = \infty$; this is a semiring homomorphism. It is routine to
+verify that the map $\psi_t: M_n(\Kmin) \to M_n(\Kmint)$ defined by
+entrywise application of $\phi_t$ is a semigroup homomorphism.
+Let $A, B$ be two elements in the generating set of \thref{thm:MinPlusGenSet}.
+Consider a finite quotient $\Kmint$ of $\Kmin$ to which all entries of
+both $A$ and $B$ belong. The previous lemma shows that $A$ is not
+$\J$-equivalent to $B$ in $M_n(\Kmint)$. But $\psi_t(A) = A$ and $\psi_t(B) = B$
+and so $\psi_t(A)$ is not $\J$-equivalent to $\psi_t(B)$ in $M_n(\Kmint)$. It
+follows that $A$ and $B$ are not $\J$-equivalent in $M_n(\Kmin)$. This
+proves the following corollary.
+
+\begin{cor}
+  \thlabel{cor:InfiniteMinPlusGensNonRelated}
+  The generating set given in \thref{thm:MinPlusGenSet} consists of
+  $\J$-non-equivalent elements.
+\end{cor}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
