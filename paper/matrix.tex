@@ -1631,38 +1631,40 @@ We now prove several results relating to decomposability of elements in $\Refln$
 
 We now discuss how we may compute minimal generating sets for $\Refln$. Since it
 is easy to enumerate the reflexive elementary matrices, the problem is
-determining the set of indecomposable trim matrices in $\Refln$. The next two
-lemmas give a method for testing indecomposability.
+determining the set of indecomposable trim matrices in $\Refln$. The following
+lemma gives a method for testing indecomposability.
 
 \begin{lemma}
-  \thlabel{lem:decomposeintersection}
-  Let $A \in \Refln$ be a trim matrix. Then $A$ can be decomposed as $A = BC$,
-  where $B, C \in \Refln\setminus\{I, A\}$, if and only if $A = B'C'$ where $B'$
-  is the greedy multiplier of $(C', A)$, $C'$ is the matrix whose $i$th row
-  $C_{i*}$ is the intersection 
-  \[\bigcap_{j \in K_i} A_{j*} \]
-  and $K_i$ is the set of positions of the $1$s in the $i$th column. If $A$
-  admits a decomposition $A = BC$ where $B, C \in
-  \Refln\setminus\{I, A\}$, then the corresponding matrices  $B', C'$ belong to
-  $\Refln \setminus\{I, A\}$.
+  \thlabel{lem:DecomposeIntersection}
+  A trim matrix $A \in \Refln$ is decomposable if and only if it may be written
+  as a product $A = BC$ of matrices $B, C \in \Refln\setminus\{I, A\}$ where the
+  rows of $C$ are intersections of rows of $A$, and $B$ is the greedy left
+  multiplier of $(C, A)$.
 \end{lemma}
 \begin{proof}
-  ($\Rightarrow$)
-  For each $1 \leq i \leq n$, consider the $i$th row $C_{i*}'$. By the
-  definition of $K_i$, for each $j \in K_i$ we have $C_{i*} \leq A_{j*}$. Hence
-  $C_{i*} \leq C'_{i*} = \bigcap_{K_i} A_{j*} \leq A_{j*}$. This implies that $A
-  = BC'$, since $A = BC \leq BC' \leq A$. By \thref{lem:GreedyMultipliers}, $A =
-  B'C'$.  Observe that since $A = BC'$, by the definition of the greedy left
-  multiplier we must have $B \leq B'$. Hence $B' \in \Refln$. Since $C_{i*} \leq
-  C'_{i*}$ for all $i$, $C'$ is also in $\Refln$. It remains to show that neither
-  $B'$ nor $C'$ belongs to $\{I, A\}$. Note that since $B \leq B'$ and $C \leq
-  C'$, $B', C'$ are not the identity matrix. Since $A$ is trim, if $B'$ or $C'$
-  were equal to $A$ the product $B'C'$ would have more ones than $A$ does, but
-  $A = B'C'$.\\
-  ($\Leftarrow$) Immediate.
+  The reverse direction is immediate. For the forward direction, suppose that
+  $A$ is decomposable; that is, there exist matrices $Y, Z \in
+  \Refln\setminus\{I, A\}$ such that $A = YZ$. For $1 \leq i \leq n$, define
+  $K_i$ to be the set of positions of $1$s in the $i$-th column of $Y$, and
+  define $C$ to be the matrix with rows $C_{i*} = \cap_{j \in K_i} A_{j*}$.
+  Now since $A = YZ$, for all $j \in K_i$ we have $Z_{i*} \leq A_{j*}$. It
+  follows that $Z_{i*} \leq C_{i*} \leq A_{j*}$ for all $j \in K_i$. The row
+  $(YC)_{i*}$ consists of the union of those rows $C_{j*}$ such that $Y_{ij} =
+  1$. The condition that $Y_{ij} = 1$ is equivalent to $i \in K_j$; note the
+  change in indices from previous uses of $K$. For each such $j$, we have
+  $C_{j*} \leq A_{i*}$ by the inequality above. It follows that $YC \leq A$. But
+  from the same inequality above, we then have $A = YZ \leq YC \leq A$; hence $A
+  = YC$. By \thref{lem:GreedyMultipliers}, $A = BC$ where $B$ is the greedy left
+  multiplier of $(C, A)$. It remains to show that $B, C \in \Refln\setminus\{I,
+    A\}$. Since the greedy left multiplier $B$ is the maximal (by containment)
+  matrix whose product with $C$ is $A$, we have $Y \leq B$ and hence $B$ is not
+  the identity matrix. Similarly, $Z \leq C$ and so $C$ is not the identity
+  matrix. Since $A$ is trim, if either $B$ or $C$ were equal to $A$ then the
+  product $BC$ would have more $1$s than $A$ does, but $A = BC$.
 \end{proof}
-It follows from \thref{lem:decomposeintersection} that in order to determine
-whether a trim matrix $A$ is decomposable it suffices to:
+
+In order to determine whether a trim matrix $A$ is decomposable it therefore
+suffices to:
 \begin{enumerate}
   \item generate all matrices $C$ whose rows are intersections of rows of $A$,
     and for each $C$
@@ -1674,7 +1676,7 @@ avoids computing unnecessary products, but still quickly becomes infeasible to
 use for all trim matrices in $\Refln$.\\
 
 In order to reduce the time spent checking matrices using
-\thref{lem:decomposeintersection}, we would like to only check the smallest
+\thref{lem:DecomposeIntersection}, we would like to only check the smallest
 necessary set of representatives of some equivalence relation. The most obvious
 choice is to take canonical representatives in $\Bn$. However, the following
 example illustrates that two reduced reflexive matrices can belong to the same
@@ -1797,7 +1799,7 @@ $\Refln$:
     representatives under a row and column permutation in a set $S$.
   \item 
     Filter out the decomposable matrices in $S$ using
-    \thref{lem:decomposeintersection}, leaving a set $T$ of trim matrices that
+    \thref{lem:DecomposeIntersection}, leaving a set $T$ of trim matrices that
     are not decomposable.
   \item
     Return $T$ together with the reflexive elementary matrices.
@@ -1807,7 +1809,7 @@ Using this algorithm, we can calculate the sizes of minimal generating sets up
 to $n = 6$; these are contained in Table~\ref{tab:BMatResults}.
 
 There are a small number of matrices in $\Refl{7}$ for which the approach based on
-\thref{lem:decomposeintersection} is too inefficient; we chose to use a
+\thref{lem:DecomposeIntersection} is too inefficient; we chose to use a
 different method to test $12$ matrices in total. Observe that a matrix $A$ is
 decomposable into a product of generators $X_1 X_2 \ldots X_k$ from some minimal
 generating set if and only if $\alpha A \alpha^{-1} = \alpha (X_1 X_2 \ldots
@@ -1818,9 +1820,9 @@ testing whether $\alpha A \alpha^{-1} = CB$ for any $\alpha \in S_n$, $B \in S$
 and with $C$ the greedy left multiplier of $(\alpha A \alpha^{-1}, B)$. A brute
 force approach based on this observation is sufficient to filter the $12$
 difficult matrices for $n = 7$. Although this suggests that the brute-force
-method is superior to that of \thref{lem:decomposeintersection}, this is not in
+method is superior to that of \thref{lem:DecomposeIntersection}, this is not in
 practice the case; for most matrices the approach based on
-\thref{lem:decomposeintersection} is far more efficient. The $12$ matrices that
+\thref{lem:DecomposeIntersection} is far more efficient. The $12$ matrices that
 are particularly non-susceptible to this method for $n = 7$ have many more
 combinations of intersections of rows than the other matrices (on average,
 roughly $10\ 000$ times more).
