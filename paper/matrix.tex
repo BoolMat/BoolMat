@@ -290,8 +290,8 @@ this method to compute $\d(\Refln)$ for $n \leq 7$. In
 Section~\ref{sec:HallBoolMat}, we describe how minimal generating sets for
 $\Halln$ arise from minimal generating sets for $\Bn$. Finally, in
 Section~\ref{sec:TriBoolMat} we describe the unique minimal generating sets for
-$\UTn$ and show that $\d(\UTn) = n(n+1)/2$, the $n$-th triangular number, for all
-$n \geq 2$.
+$\UTn$ and show that $\d(\UTn) = n(n+1)/2 + 1$, one greater than the $n$th
+triangular number, for all $n \in \Np$.
 
 In Section~\ref{sec:Tropical} we show that the generating sets for the dimension
 $2$ tropical matrix monoids given in~\cite{East2020aa} are minimal, and so, in
@@ -596,13 +596,16 @@ below the group of units in the $\J$-order.
 
 Given a semigroup $S$, we may ask what the minimum cardinality is of a
 generating set for $S$. This is known as the \defn{rank} of $S$ and is denoted
-by $\mathbf{d}(S)$. A generating set $X$ for $S$ is \defn{irredundant} if no
-subset of $X$ generates $S$, and we say that any irredundant generating set of
-cardinality $\mathbf{d}(S)$ is a \defn{minimal generating set}. If
-$\mathbf{d}(S) \in \N$, then every generating set of cardinality $\mathbf{d}(S)$
-is irredundant and hence minimal; this does not hold when $\mathbf{d}(S)$ is
-infinite. We will also say that a generator $x \in X$ is irredundant if $X
-\setminus \{x\}$ does not generate $S$.
+by $\mathbf{d}(S)$. The same notion exists for monoid generating sets; the rank
+of a monoid as a monoid is either one less than the rank as a semigroup (if
+the group of units is trivial), or the same otherwise. We therefore consider
+only the rank of monoids as semigroups in this paper. A generating
+set $X$ for $S$ is \defn{irredundant} if no subset of $X$ generates $S$, and we
+say that any irredundant generating set of cardinality $\mathbf{d}(S)$ is a
+\defn{minimal generating set}. If $\mathbf{d}(S) \in \N$, then every generating
+set of cardinality $\mathbf{d}(S)$ is irredundant and hence minimal; this does
+not hold when $\mathbf{d}(S)$ is infinite. We will also say that a generator $x
+\in X$ is irredundant if $X \setminus \{x\}$ does not generate $S$.
 
 \begin{de}
   An element $x$ of a monoid $M$ with identity $e$ is \defn{decomposable} if $x$
@@ -691,7 +694,7 @@ permutation matrix.
 We compute the largest known ranks of these monoids, which are presented in
 Table~\ref{tab:BMatResults} along with whether that rank was previously known or
 is practically computable by brute force. The rank of $\UTn$ is given by the
-triangular numbers for $n \geq 2$; this may have already been known but we
+triangular numbers plus $1$; this may have already been known but we
 were unable to find a reference in the literature. Note that since $\UTn$ and
 $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
 \mathbf{d}(\LTn)$ for all $n$. None of the other ranks are known beyond $n = 8$. 
@@ -702,14 +705,14 @@ $\LTn$ are anti-isomorphic via the transposition map, $\mathbf{d}(\UTn) =
     $n$ & $\mathbf{d}(\Bn)$ & $\mathbf{d}(\Refln)$ & $\mathbf{d}(\Halln)$ &
     $\mathbf{d}(\MTn)$ & $\mathbf{d}(\UTn)$ \\ 
     \hline
-    1 & *2         & *1& *1& *1& *2\\
-    2 & *3         & *2& *2& *3& *3\\
-    3 & *5         & *9& *4& *5& *6\\
-    4 & *7         & *39& *6& *7& *10\\
-    5 & *13        & *1\ 415& *12& 13& *15\\
-    6 & 68         & 482\ 430& 67& ?& *21\\
-    7 & 2\ 142     & 1\ 034\ 972\ 230& 2\ 141& ?& 28\\
-    8 & 459\ 153   & ?& 459 152& ?& 36\\
+    1 & *2         & *1& *1& *1& *3\\
+    2 & *3         & *2& *2& *3& *4\\
+    3 & *5         & *9& *4& *5& *7\\
+    4 & *7         & *39& *6& *7& *11\\
+    5 & *13        & *1\ 415& *12& 13& *16\\
+    6 & 68         & 482\ 430& 67& ?& *22\\
+    7 & 2\ 142     & 1\ 034\ 972\ 230& 2\ 141& ?& 29\\
+    8 & 459\ 153   & ?& 459 152& ?& 37\\
     9 & ?   & ?& ?& ? & 45
   \end{tabular}
   \vspace{1cm}
@@ -2175,9 +2178,9 @@ particularly simple minimal generating set:
 
 \begin{lemma}
   \thlabel{lem:mingeneratingsetfortriangular}
-  The unique minimal monoid generating set $G_U$ for $\UTn$ consists of those
-  elementary matrices and matrices similar to $F$ which are upper triangular.
-  The dual statement holds for $\LTn$.
+  The unique minimal generating set $G_U$ for $\UTn$ consists of those
+  elementary matrices and matrices similar to $F$ which are upper triangular,
+  together with the identity matrix. The dual statement holds for $\LTn$.
 \end{lemma}
 
 \begin{proof}
@@ -2202,15 +2205,15 @@ particularly simple minimal generating set:
 
 \begin{cor}
   \thlabel{cor:RankTriBoolMat}
-  For $n \geq 2$, the ranks of $\UTn$ and $\LTn$ are the $n$-th triangular number
-  $T_n = n(n+1)/2$.
+  For $n \geq 2$, the ranks of $\UTn$ and $\LTn$ are $T_n + 1$, where $T_n$ is
+  the $n$-th triangular number $T_n = n(n+1)/2$.
 \end{cor}
 \begin{proof}
   Elementary matrices in $\UTn$ are precisely those in the form of an identity
   matrix together with an additional $1$ in some position above the main
   diagonal; hence there are $T_{n - 1}$ elementary matrices in $\UTn$. There are
   $n$ matrices similar to $F$ in $\UTn$, and hence $T_{n - 1} + n =  T_n$
-  elements of the minimal monoid generating set.
+  non-identity elements of the minimal generating set.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
