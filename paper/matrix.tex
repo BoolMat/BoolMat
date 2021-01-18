@@ -1796,9 +1796,9 @@ $\Refln$:
     the analogue of \thref{alg:canonicalbacktrack}, storing canonical
     representatives under a row and column permutation in a set $S$.
   \item 
-    Filter out the properly decomposable matrices in $S$ using
+    Filter out the decomposable matrices in $S$ using
     \thref{lem:decomposeintersection}, leaving a set $T$ of trim matrices that
-    are not properly decomposable.
+    are not decomposable.
   \item
     Return $T$ together with the reflexive elementary matrices.
 \end{enumerate}
@@ -1813,13 +1813,13 @@ decomposable into a product of generators $X_1 X_2 \ldots X_k$ from some minimal
 generating set if and only if $\alpha A \alpha^{-1} = \alpha (X_1 X_2 \ldots
 X_{k-1})\alpha^{-1}\alpha X_k \alpha^{-1}$ for all permutations $\alpha$. Since
 the set $S$ of \thref{alg:ReflexiveGenSet} contains $\alpha X_k
-\alpha^{-1}$ for some $\alpha \in S_n$, we can detect if $A$ is properly
-decomposable by testing whether $\alpha A \alpha^{-1} = CB$ for any $\alpha \in
-S_n$, $B \in S$ and with $C$ the greedy left multiplier of $(\alpha A \alpha^{-1},
-B)$. A brute force approach based on this observation is sufficient to filter
-the $12$ difficult matrices for $n = 7$. Although this suggests that the
-brute-force method is superior to that of \thref{lem:decomposeintersection},
-this is not in practice the case; for most matrices the approach based on
+\alpha^{-1}$ for some $\alpha \in S_n$, we can detect if $A$ is decomposable by
+testing whether $\alpha A \alpha^{-1} = CB$ for any $\alpha \in S_n$, $B \in S$
+and with $C$ the greedy left multiplier of $(\alpha A \alpha^{-1}, B)$. A brute
+force approach based on this observation is sufficient to filter the $12$
+difficult matrices for $n = 7$. Although this suggests that the brute-force
+method is superior to that of \thref{lem:decomposeintersection}, this is not in
+practice the case; for most matrices the approach based on
 \thref{lem:decomposeintersection} is far more efficient. The $12$ matrices that
 are particularly non-susceptible to this method for $n = 7$ have many more
 combinations of intersections of rows than the other matrices (on average,
