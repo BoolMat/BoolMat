@@ -1427,10 +1427,11 @@ For $n=8$ \thref{alg:filter1} is no longer sufficient, and it is necessary to us
 heuristics to reduce the size of the input set $Q_{\Phi_n}$. The simplest way to
 do this is to select a small subset $Y \subset Q_{\Phi_n}$ of matrices with
 large row spaces, generate the row spaces $Z = \set{\RowS(A\alpha)}{A \in Y,
-  \alpha \in S_n} \subset X$, and check whether $\RowS(B)$ is contained in any
-element of $Z$ for each element $B \in Q$.  It is also worthwhile to filter $Z$
-by checking containment in the row spaces of all the column permutations of a
-known set of prime matrices, such as those described in the following lemma.
+  \alpha \in S_n} \subset X$, and check whether $\RowS(B)$ is properly contained
+in any element of $Z$ for each element $B \in Q_{\Phi_n}$.  It is also
+worthwhile to filter $Z$ by checking containment in the row spaces of all the
+column permutations of a known set of prime matrices, such as those described in
+the following lemma.
 
 \begin{lemma}
   \thlabel{lem:ExtendingPrimeMatrices}
