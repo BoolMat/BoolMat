@@ -91,6 +91,11 @@ tabu, enumitem}
 \newcommand{\tmat}[4]{\left(\begin{smallmatrix}#1&#2\\#3&#4\end{smallmatrix}\right)}
 \newcommand{\COMMA}{,\quad}
 
+\newcommand{\RowS}{\Lambda}
+\newcommand{\RowB}{\lambda}
+\newcommand{\ColS}{P}
+\newcommand{\ColB}{\rho}
+
 \usepackage[backend=biber, bibencoding=utf8, giveninits=true]{biblatex}
 
 \bibliography{matrix}
@@ -463,28 +468,32 @@ Let $A \in M_n(\mathbb{S})$. We write $A_{i*}$ to denote the $i$th row of $A$,
 $A_{*i}$ to denote the $i$th column, and $A_{ij}$ to denote the $j$th entry of
 the $i$th row. A \defn{linear combination} of rows is a sum of scalar multiples
 of the rows, where both operations are defined componentwise in the usual way.
-The \defn{row space} $R(A)$ of $A$ is the set of all linear combinations of the
-rows of $A$. An \defn{isomorphism} of row spaces is a linear bijection; that is,
-a bijection $T: R(A) \to R(B)$ such that $T(\alpha x + \beta y) = \alpha T(x) +
-\beta T(y)$ for all $x, y \in R(A)$ and for all $\alpha, \beta \in \mathbb{S}$.
-A set of rows is \defn{linearly independent} if no row can be written as a
-linear combination of other rows; this coincides with the usual definition when
-$\mathbb{S}$ is a field. A \defn{spanning set} for a row space is a set of rows
-which every element of the row space may be written as a linear combination of.
-A \defn{row basis} of $A$ is then a linearly independent spanning set for the
-row space of $A$. \defn{Column spaces} and \defn{column bases} are defined
-dually. The importance of row and column bases arises from the following
-well-known results:
+The \defn{row space} $\RowS(A)$ of $A$ is the set of all linear combinations of
+the rows of $A$. An \defn{isomorphism} of row spaces is a linear bijection; that
+is, a bijection $T: \RowS(A) \to \RowS(B)$ such that $T(\alpha x + \beta y) =
+\alpha T(x) + \beta T(y)$ for all $x, y \in \RowS(A)$ and for all $\alpha, \beta
+\in \mathbb{S}$.  A set of rows is \defn{linearly independent} if no row can be
+written as a linear combination of other rows; this coincides with the usual
+definition when $\mathbb{S}$ is a field. A \defn{spanning set} for a row space
+is a set of rows which every element of the row space may be written as a linear
+combination of.  A \defn{row basis} of $A$ is then a linearly independent
+spanning set for the row space of $A$. \defn{Column spaces} $\ColS(A)$ and
+\defn{column bases} $\ColB(A)$ are defined dually.\footnote{This notation for
+  row and column spaces and bases arises from their application in acting
+  semigroup algorithms; see~\cite{East2019aa} for some details although not in
+  the particular context of matrix semigroups.}
+The importance of row and column bases arises from the following well-known
+results:
 
 \begin{prop}
   \thlabel{prop:rowsandideals}
   Let $A, B \in M_n(\mathbb{S})$. Then the following hold:
   \begin{enumerate}[label={\rm (\roman*)}]
     \item 
-      $R(AB) \subseteq R(B)$ and $C(AB) \subseteq C(A)$.
+      $\RowS(AB) \subseteq \RowS(B)$ and $\ColS(AB) \subseteq \ColS(A)$.
     \item
-      $L_A \leq L_B$ if and only if $R(A) \subseteq R(B)$ and $R_A \leq R_B$ if
-      and only if $C(A) \subseteq C(B)$.
+      $L_A \leq L_B$ if and only if $\RowS(A) \subseteq \RowS(B)$ and $R_A \leq
+      R_B$ if and only if $\ColS(A) \subseteq \ColS(B)$.
   \end{enumerate}
 \end{prop}
 \begin{proof}
@@ -525,16 +534,16 @@ well-known results:
     \sum_{k = 1} ^ {n} 
     \alpha_{ik}B_{k*}.
   \]
-  Thus the $i$th row of $AB$ is a sum of rows of $B$, and so $R(AB) \subseteq
-  R(B)$.
+  Thus the $i$th row of $AB$ is a sum of rows of $B$, and so $\RowS(AB)
+  \subseteq \RowS(B)$.
 
   \bigskip
   
   \noindent \textbf{(ii).}
   If $L_A \leq L_B$, then there exists $X \in M_n(\mathbb{S})$ such that $A =
-  XB$; hence $R(A) = R(XB) \subseteq R(B)$ by (i).  Conversely, if $R(A)
-  \subseteq R(B)$, then every row of $A$ can be expressed as a linear
-  combination of rows of $B$. For $1 \leq i \leq n$ of $A$, let $A_{i*} =
+  XB$; hence $\RowS(A) = \RowS(XB) \subseteq \RowS(B)$ by (i).  Conversely, if
+  $\RowS(A) \subseteq \RowS(B)$, then every row of $A$ can be expressed as a
+  linear combination of rows of $B$. For $1 \leq i \leq n$ of $A$, let $A_{i*} =
   \sum_{j = 1}^{n}x_{ij}B_{j*}$, and define $X = [x_{ij}]$. Then $A = XB$, and
   hence $L_A \leq L_B$. 
 \end{proof}
@@ -543,8 +552,8 @@ The following corollary now follows immediately from \thref{prop:rowsandideals}.
 
 \begin{cor} 
   \thlabel{lem:GreensRowColumnSpaces}
-  Let $A, B \in M_n(\mathbb{S})$. Then $A \L B$ if and only if $R(A) = R(B)$,
-  and $A \R B$ if and only if $C(A) = C(B)$. 
+  Let $A, B \in M_n(\mathbb{S})$. Then $A \L B$ if and only if $\RowS(A) =
+  \RowS(B)$, and $A \R B$ if and only if $\ColS(A) = \ColS(B)$. 
 \end{cor}
 
 The following lemma provides a useful connection between the $\J$-relation and row
@@ -874,16 +883,16 @@ coincide. Given $v, w \in \B^n$, we also say that $v$ is \defn{contained} in
 $w$, and write that $v \leq w$, if $s(v) \subseteq s(w)$.
 
 It is straightforward to verify that if $A \in \Bn$, then there is a unique row
-basis $r(A)$, which is the unique minimal generating set for $R(A)$ under union,
-consisting of the non-zero $\leq$-minimal rows. The dual statement for column
-spaces also holds. This yields the following more practical counterpart to
-\thref{lem:GreensRowColumnSpaces}, as an immediate consequence of that
-corollary.
+basis $\RowB(A)$, which is the unique minimal generating set for $\RowS(A)$
+under union, consisting of the non-zero $\leq$-minimal rows. The dual statement
+for column spaces also holds. This yields the following more practical
+counterpart to \thref{lem:GreensRowColumnSpaces}, as an immediate consequence of
+that corollary.
 
 \begin{prop} 
   \thlabel{lem:BMatGreensRowColumnBases}
-  Let $A, B \in \Bn$. Then $A \L B$ in $\Bn$ if and only if $r(A) = r(B)$,
-  and $A \R B$ in $\Bn$ if and only if $c(A) = c(B)$.
+  Let $A, B \in \Bn$. Then $A \L B$ in $\Bn$ if and only if $\RowB(A) =
+  \RowB(B)$, and $A \R B$ in $\Bn$ if and only if $\ColB(A) = \ColB(B)$.
 \end{prop}
 There is a simple algorithm to compute the row and column bases of matrices in
 $\Bn$ in time and space cubic in $n$, and hence the previous proposition gives
@@ -922,20 +931,20 @@ the $\L$- or $\R$-relation. Indeed, the problem of determining whether two
 matrices are $\J$-related in $\Bn$ is NP-hard; see~\cite[Theorem 2.7]{Fenner2018ab}
 and ~\cite{Markowsky1992aa}.
 The $\J$-relation on $\Bn$ is characterised by row space embeddings in the
-following theorem; a function $f: R(A) \to R(B)$ is a \defn{row space embedding}
-if it respects containment and non-containment, i.e.\ $f(v) \leq f(w)$ if and
-only if $v \leq w$ for all $v, w
-\in R(A)$.
+following theorem; a function $f: \RowS(A) \to \RowS(B)$ is a \defn{row space
+  embedding} if it respects containment and non-containment, i.e.\ $f(v) \leq
+f(w)$ if and only if $v \leq w$ for all $v, w \in \RowS(A)$.
 \begin{thm}[Zaretskii's Theorem~\cite{Zaretskii1963aa}]
   \thlabel{thm:Zaretskii}
   Let $A, B \in \Bn$. Then $J_A \leq J_B$ if and only if there exists a row
-  space embedding $f: R(A) \to R(B)$.
+  space embedding $f: \RowS(A) \to \RowS(B)$.
 \end{thm}
-Zaretskii's Theorem reduces the problem of determining the $\J$-order of $\Bn$ to the
-problem of digraph embedding, but it should be noted that the size of $R(A)$ is
-bounded above by $2^n$, and equality is possible. Computing the $\J$-structure of
-$\Bn$ is challenging; see~\cite{Breen1997aa}. The largest $n$ for which the
-number of $\J$-classes of $\Bn$ is known is $8$; see~\cite{Breen2001aa}.
+Zaretskii's Theorem reduces the problem of determining the $\J$-order of $\Bn$
+to the problem of digraph embedding, but it should be noted that the size of
+$\RowS(A)$ is bounded above by $2^n$, and equality is possible. Computing the
+$\J$-structure of $\Bn$ is challenging; see~\cite{Breen1997aa}. The largest $n$
+for which the number of $\J$-classes of $\Bn$ is known is $8$;
+see~\cite{Breen2001aa}.
 
 Considering rows as subsets of $\{1, \ldots, n\}$, it is natural to consider
 when rows of a matrix $A \in \Bn$ are contained in other rows of $A$. We will
@@ -967,11 +976,11 @@ $A, B \in \Bn$, we say that the \defn{greedy left multiplier} of $(A, B)$ is the
 matrix $C$ containing a $1$ in position $j$ of row $i$ if and only if $A_{j*}
 \leq B_{i*}$. The \defn{greedy right multiplier} of $(A, B)$ is the matrix $D$
 containing a $1$ in position $j$ of row $i$ if and only if $A_{*i} \leq B_{*j}$.
-Observe that if $r(A)$ is contained in $R(B)$, then every row $v$ of $A$ may be
-written as the linear combination of those rows of $B$ which are contained in
-$v$; hence $A = CB$ where $C$ is the greedy left multiplier of $(A, B$).
-Combining this observation with \thref{lem:GreensRowColumnSpaces} yields the
-following lemma:
+Observe that if $\RowB(A)$ is contained in $\RowS(B)$, then every row $v$ of $A$
+may be written as the linear combination of those rows of $B$ which are
+contained in $v$; hence $A = CB$ where $C$ is the greedy left multiplier of $(A,
+B)$. Combining this observation with \thref{lem:GreensRowColumnSpaces} yields
+the following lemma:
 \begin{lemma}
   \thlabel{lem:GreedyMultipliers}
   For any $A, B \in \Bn$ and $C$ the greedy left multiplier of $(A, B)$, the
@@ -979,7 +988,7 @@ following lemma:
   \begin{enumerate}[label={\rm (\roman*)}]
     \item $A = CB$
     \item $L_A \leq L_B$
-    \item $R(A) \subseteq R(B)$.
+    \item $\RowS(A) \subseteq \RowS(B)$.
   \end{enumerate}
   The dual statement holds for greedy right multipliers, Greens $\R$-order, and
   column spaces.
@@ -1038,14 +1047,14 @@ $\J$-class $J_E$ of the elementary matrix $E$ from \eqref{eq:RegularGens}. The
 next result shows that in fact these are all of the $\J$-classes immediately
 below $S_n$.
 
-Let $\beta_n$ denote the set $\set{R(A)}{A\in \Bn\setminus S_n}$ of all
+Let $\beta_n$ denote the set $\set{\RowS(A)}{A\in \Bn\setminus S_n}$ of all
 possible proper row subspaces of elements of $\Bn$, and let $\B^n$ denote
 the space of all boolean vectors of length $n$. Note that the matrices in $\Bn$ with row
 space equal to $\B^n$ are the permutation matrices.
 
 \begin{thm}[cf.\ Theorem 5.1 in~\cite{Caen1981aa}]
   \thlabel{thm:MaximalRowSpaces}
-  Let $A \in \Bn\setminus S_n$. Then $R(A)$ is maximal with respect to
+  Let $A \in \Bn\setminus S_n$. Then $\RowS(A)$ is maximal with respect to
   containment in $\beta_n$ if and only if $A$ is prime or elementary.  
 \end{thm}
 
@@ -1359,14 +1368,15 @@ $Q_{\Phi_n}$ is prime. We present two algorithms for doing so, in
   \textbf{Output}: The set $P_{\Phi_n}$.
   \begin{enumerate}
   \item 
-    Compute $X = \set{R(A\alpha)}{A \in Q_{\Phi_n} \cup \{E\}, \alpha \in S_n}$
+    Compute $X = \set{\RowS(A\alpha)}{A \in Q_{\Phi_n} \cup \{E\}, \alpha \in
+      S_n}$
   \item
-    For every $A \in Q_{\Phi_n}$, and for every $R(B\beta) \in X$, if $A \neq B$ and
-    $R(A) \subsetneq R(B\beta)$ then discard $R(A\alpha)$ from $X$ for all
-    $\alpha \in S_n$.
+    For every $A \in Q_{\Phi_n}$, and for every $\RowS(B\beta) \in X$, if $A
+    \neq B$ and $\RowS(A) \subsetneq \RowS(B\beta)$ then discard
+    $\RowS(A\alpha)$ from $X$ for all $\alpha \in S_n$.
   \item
-    Output the set of non-elementary elements $A$ such that $R(A)$ remains in
-    $X$ after the previous step.
+    Output the set of non-elementary elements $A$ such that $\RowS(A)$ remains
+    in $X$ after the previous step.
   \end{enumerate}
 \end{alg}
 
@@ -1376,14 +1386,14 @@ $Q_{\Phi_n}$ is prime. We present two algorithms for doing so, in
 \end{lemma}
 \begin{proof}
   Since the $\J$-class of a prime matrix consists only of similar matrices, the
-  set $\set{R(A\alpha)}{A \in P_{\Phi_n}, \alpha \in S_n} \subset X$ contains all row spaces of
-  prime matrices in $\Bn$, and hence so does $X$. Similarly, $X$ contains the
-  row space of every elementary matrix. Hence, the elements that are maximal in
-  $X$ are precisely the maximal elements of
-  $\beta_n = \set{R(A)}{A\in \Bn\setminus S_n}$ and thus by
+  set $\set{\RowS(A\alpha)}{A \in P_{\Phi_n}, \alpha \in S_n} \subset X$
+  contains all row spaces of prime matrices in $\Bn$, and hence so does $X$.
+  Similarly, $X$ contains the row space of every elementary matrix. Hence, the
+  elements that are maximal in $X$ are precisely the maximal elements of
+  $\beta_n = \set{\RowS(A)}{A\in \Bn\setminus S_n}$ and thus by
   \thref{thm:MaximalRowSpaces} correspond to primes and elementary matrices.
-  Since $R(A)$ remains in $X$ after step 2 precisely when $R(A)$ (and
-  $R(A\alpha)$, for all $\alpha \in S_n$) is maximal in $X$, the output is
+  Since $\RowS(A)$ remains in $X$ after step 2 precisely when $\RowS(A)$ (and
+  $\RowS(A\alpha)$, for all $\alpha \in S_n$) is maximal in $X$, the output is
   $P_{\Phi_n}$.
 \end{proof} 
 
@@ -1415,12 +1425,11 @@ generating sets for $n \leq 7$ may be obtained.
 For $n=8$ \thref{alg:filter1} is no longer sufficient, and it is necessary to use
 heuristics to reduce the size of the input set $Q_{\Phi_n}$. The simplest way to
 do this is to select a small subset $Y \subset Q_{\Phi_n}$ of matrices with
-large row spaces, generate the row spaces $Z = \set{R(A\alpha)}{A \in Y, \alpha
-  \in S_n} \subset X$, and check whether $R(B)$ is
-contained in any element of $Z$ for each element $B \in Q$.  It is also
-worthwhile to filter $Z$ by checking containment in the row spaces of all the
-column permutations of a known set of prime matrices, such as those described in
-the following lemma.
+large row spaces, generate the row spaces $Z = \set{\RowS(A\alpha)}{A \in Y,
+  \alpha \in S_n} \subset X$, and check whether $\RowS(B)$ is contained in any
+element of $Z$ for each element $B \in Q$.  It is also worthwhile to filter $Z$
+by checking containment in the row spaces of all the column permutations of a
+known set of prime matrices, such as those described in the following lemma.
 
 \begin{lemma}
   \thlabel{lem:ExtendingPrimeMatrices}
@@ -1429,11 +1438,11 @@ the following lemma.
   then setting $B_{n,n} = 1$. Then $B$ is prime in $\Bn$.
 \end{lemma}
 \begin{proof}
-  Let $C$ be a matrix with row space maximal in $\beta_n$, such that $R(B)
-  \subseteq R(B)$.  The last row of $B$ must also be in $C$ since it is a
-  minimal in $\B^{n}$. Now $R(A)$ has a unique basis of $n-1$ rows which must be
-  contained in both $B$ and $C$, so we have $r(B) = r(C)$; hence $R(B)$ is
-  maximal in $\beta_n$. Since $B$ is not elementary, it is prime.
+  Let $C$ be a matrix with row space maximal in $\beta_n$, such that $\RowS(B)
+  \subseteq \RowS(B)$.  The last row of $B$ must also be in $C$ since it is a
+  minimal in $\B^{n}$. Now $\RowS(A)$ has a unique basis of $n-1$ rows which
+  must be contained in both $B$ and $C$, so we have $\RowB(B) = \RowB(C)$; hence
+  $\RowS(B)$ is maximal in $\beta_n$. Since $B$ is not elementary, it is prime.
 \end{proof}
 
 For $n=8$ prefiltering by some of the large row spaces and extended prime
@@ -1472,43 +1481,42 @@ significant improvement can be obtained by using Zaretskii's Theorem.
 \label{tab:runtimestats}
 \end{table}
 
-Let $A \in \Bn$. The \defn{graph} of $R(A)$ is the directed graph with vertices
-$R(A)$ and an edge from $v$ to $w$ if and only if $v \leq w$.
-The graph of $C(A)$ is defined analogously.
+Let $A \in \Bn$. The \defn{graph} of $\RowS(A)$ is the directed graph with
+vertices $\RowS(A)$ and an edge from $v$ to $w$ if and only if $v \leq w$.
 
 It is an immediate corollary of Zaretskii's Theorem that $J_A \leq J_B$ if and
-only if there exists a homomorphic embedding of the graph of $R(A)$ into the
-graph of $R(B)$ which respects non-edges. An efficient and optimised search for
-such embeddings is implemented in~\cite{Digraphs2020aa}.
+only if there exists a homomorphic embedding of the graph of $\RowS(A)$ into the
+graph of $\RowS(B)$ which respects non-edges. An efficient and optimised search
+for such embeddings is implemented in~\cite{Digraphs2020aa}.
 
 For practical computational purposes, it is useful to add extra structure to the
 row space graphs to guide searches for embeddings. The \emph{augmented graph of
-  $R(A)$} is the disjoint union of the graph of $R(A)$ with the empty graph on
-the vertices $C = \{c_i \: : \: 1 \leq i \leq n\}$, with an edge from $v \in R(A)$
-to $c_i$ if and only if $v_i = 1$.
+  $\RowS(A)$} is the disjoint union of the graph of $\RowS(A)$ with the empty
+graph on the vertices $C = \{c_i \: : \: 1 \leq i \leq n\}$, with an edge from
+$v \in \RowS(A)$ to $c_i$ if and only if $v_i = 1$.
 
 \begin{lemma}
   \thlabel{lem:EmbeddingGraphs}
   Let $Q$ be a superset of a canonical set of prime matrices $P$ which does not
   contain a permutation matrix, and let $A \in
   Q$. Then $A$ is not prime or elementary if and only if for some $B \in
-  (Q\cup\{E\})\setminus\{A\}$ there exists a digraph embedding
-  $\phi$ from the augmented graph of $R(A)$ into the augmented graph of $R(B)$
-  which permutes $\{ c_i : 1 \leq i \leq n \}$ and respects non-adjacency.
+  (Q\cup\{E\})\setminus\{A\}$ there exists a digraph embedding $\phi$ from the
+  augmented graph of $\RowS(A)$ into the augmented graph of $\RowS(B)$ which
+  permutes $\{ c_i : 1 \leq i \leq n \}$ and respects non-adjacency.
 \end{lemma}
 \begin{proof}
-  Let $A$ not be prime or elementary; then $R(A)$ is contained in the row space
-  of some column permutation $\alpha$ of some $B \in Q \setminus \{A\}$.
+  Let $A$ not be prime or elementary; then $\RowS(A)$ is contained in the row
+  space of some column permutation $\alpha$ of some $B \in Q \setminus \{A\}$.
   Then the embedding that extends the map $c_i \to c_{\alpha^{-1}i}$ has the
   properties required. Conversely, if such a map $\phi$ exists, the permutation
   $\alpha$ induced by the restriction to $C$ has the property that
-  $R(B\alpha^{-1})$ contains $R(A)$, and hence by \thref{thm:MaximalRowSpaces}
-  $A$ is not prime or elementary. 
+  $\RowS(B\alpha^{-1})$ contains $\RowS(A)$, and hence by
+  \thref{thm:MaximalRowSpaces} $A$ is not prime or elementary. 
 \end{proof}
 
 Note that such an embedding $\phi$ must also map a vector containing $i$ ones to
-another containing $i$ ones in order to preserve adjacency and non-adjacency with the set
-$C$.
+another containing $i$ ones in order to preserve adjacency and non-adjacency
+with the set $C$.
 
 We can therefore use the following improved algorithm to filter canonical
 supersets of prime matrices.
@@ -1957,18 +1965,18 @@ vector of length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
   As in \thref{lem:NonTrimDecomposable}, we may assume that $A$ contains the
   identity permutation. Since $A$ is not prime, elementary, or a permutation
   matrix, it has non-maximal row space in
-  $\beta_n = \set{R(A)}{A\in \Bn\setminus S_n}$.
+  $\beta_n = \set{\RowS(A)}{A\in \Bn\setminus S_n}$.
   Let $B$ be a maximal
   non-permutation matrix in $\Bn$ whose row space contains the row space of $A$.
 
-  Letting $C \in \Bn$ be the greedy left multiplier of $(A, B)$, we have $A = CB$ by
-  \thref{lem:GreedyMultipliers}. Suppose that $C$ is $\J$-related to $A$; then
-  by \thref{lem:HallJRelation} $C$ is similar to $A$. Then since $A$ is trim, so
-  too is $C$. Since $B$ was chosen to be a non-permutation matrix, the product
-  $CB$ contains more $1$s than $C$. But $A = CB$, and $C$ is similar to $A$, a
-  contradiction. Hence $C$ is not $\J$-related to $A$. Since $R(A) \subsetneq
-  R(B)$, $B$ is not $\J$-related to $A$ in $\Bn$ and thus is not $\J$-related to
-  $A$ in $\Halln$.
+  Letting $C \in \Bn$ be the greedy left multiplier of $(A, B)$, we have $A =
+  CB$ by \thref{lem:GreedyMultipliers}. Suppose that $C$ is $\J$-related to $A$;
+  then by \thref{lem:HallJRelation} $C$ is similar to $A$. Then since $A$ is
+  trim, so too is $C$. Since $B$ was chosen to be a non-permutation matrix, the
+  product $CB$ contains more $1$s than $C$. But $A = CB$, and $C$ is similar to
+  $A$, a contradiction. Hence $C$ is not $\J$-related to $A$. Since $\RowS(A)
+  \subsetneq \RowS(B)$, $B$ is not $\J$-related to $A$ in $\Bn$ and thus is not
+  $\J$-related to $A$ in $\Halln$.
 
   If $C$ contains a $1$ in every column, we are done. However, there is no
   reason that this must be the case.
@@ -1979,13 +1987,13 @@ vector of length $n$ with a single $1$ in position $i$, for $1 \leq i \leq n$.
   $B'$ to be the corresponding rows of $B$. Then $B'$ contains $\alpha$. Let
   $C'$ be the greedy left multiplier of $(A, B')$; then for all $1 \leq i \leq
   k$, $C'_{\alpha(c_i)c_i} = 1$ since $A_{\alpha(c_i)\alpha(c_i)} = 1$. Note
-  that since the columns indexed by $X$ of $C$ did not contain a $1$, $R(A)$ is
-  in fact a subset of the subspace of $R(B)$ generated by the rows indexed by
-  $\{1, \ldots, n\}\setminus X$; hence $R(A) \subsetneq R(B')$ and thus by
-  \thref{lem:GreedyMultipliers}, $A = C'B'$. Hence we have found $B', C' \in \Bn$
-  such that $A = C'B'$, $B' \in \Halln$, and every column of $C'$ contains a
-  $1$. We must finally prove that $B'$ and $C'$ are not $\J$-related to $A$ in
-  $\Halln$. 
+  that since the columns indexed by $X$ of $C$ did not contain a $1$, $\RowS(A)$
+  is in fact a subset of the subspace of $\RowS(B)$ generated by the rows
+  indexed by $\{1, \ldots, n\}\setminus X$; hence $\RowS(A) \subsetneq
+  \RowS(B')$ and thus by \thref{lem:GreedyMultipliers}, $A = C'B'$. Hence we
+  have found $B', C' \in \Bn$ such that $A = C'B'$, $B' \in \Halln$, and every
+  column of $C'$ contains a $1$. We must finally prove that $B'$ and $C'$ are
+  not $\J$-related to $A$ in $\Halln$. 
   
   Suppose that $A \J B'$; then $B'$ is similar to $A$, and hence $B'$
   is trim. Since $C$ contains a $1$ in every row, and $C'$ contains all $1$s of
@@ -2370,27 +2378,25 @@ case of $\Kmin$.
   $(0~\infty)$ are indecomposable, in the sense that every linear combination of
   rows equal to one of these rows must contain a non-zero scalar multiple of
   that row. It follows that $(\infty~0)$ is contained in any spanning set for
-  $R(C)$ and so $\{(\infty~0)\}$ is the unique minimal spanning set for $R(C)$.
-  Similarly, $(\infty~0)$ and $(1~\infty)$ are contained in any spanning set for
-  $R(B)$, making $\{(\infty~0), (1~\infty)\}$ the unique minimal spanning set
-  for $R(B)$.
+  $\RowS(C)$ and so $\{(\infty~0)\}$ is the unique minimal spanning set for
+  $\RowS(C)$.  Similarly, $(\infty~0)$ and $(1~\infty)$ are contained in any
+  spanning set for $\RowS(B)$, making $\{(\infty~0), (1~\infty)\}$ the unique
+  minimal spanning set for $\RowS(B)$.
 
-  To determine that $R(A(i))$ has a unique minimal spanning set, we note that if
-  $(x~0) \in R(A(i))$, then we can write 
-  \[(x~0) = a(i~0) \oplus b(0~\infty) \]
-  for some $a, b \in \Kmint$. From the second column, we have $a = 0$;
-  hence $x \leq i$. If $(i~0)$ is written as a sum of rows in $R(A(i))$,
-  \[(i~0) = (c, d) \oplus (e~f),\]
-  then one of $d$ or $f$ is $0$; without loss of generality we can assume $d = 0$.
-  By the previous observation, we have $c \leq i$, and by assumption $\min(c, e)
-  = i$; hence $c = i$. It follows that $(i~0)$ is contained in any spanning
-  set for $R(A(i))$; hence the rows of $A$ form the unique minimal spanning 
-  set of $R(A(i))$.
-  Since $R(C)$ is spanned by the single row $(\infty~0)$ while $R(A(i))$ and
-  $R(B)$ cannot be spanned by a single element, $R(C)$ is not isomorphic
-  to $R(A(i))$ or $R(B)$. Any isomorphism from $R(A(i))$ to $R(B)$ must map the
-  rows of $A(i)$ to the rows of $B$ as these form unique minimal spanning sets,
-  but since the sets
+  To determine that $\RowS(A(i))$ has a unique minimal spanning set, we note
+  that if $(x~0) \in \RowS(A(i))$, then we can write \[(x~0) = a(i~0) \oplus
+    b(0~\infty) \] for some $a, b \in \Kmint$. From the second column, we have
+  $a = 0$; hence $x \leq i$. If $(i~0)$ is written as a sum of rows in
+  $\RowS(A(i))$, \[(i~0) = (c, d) \oplus (e~f),\] then one of $d$ or $f$ is $0$;
+  without loss of generality we can assume $d = 0$.  By the previous
+  observation, we have $c \leq i$, and by assumption $\min(c, e) = i$; hence $c
+  = i$. It follows that $(i~0)$ is contained in any spanning set for
+  $\RowS(A(i))$; hence the rows of $A$ form the unique minimal spanning set of
+  $\RowS(A(i))$.  Since $\RowS(C)$ is spanned by the single row $(\infty~0)$
+  while $\RowS(A(i))$ and $\RowS(B)$ cannot be spanned by a single element,
+  $\RowS(C)$ is not isomorphic to $\RowS(A(i))$ or $\RowS(B)$. Any isomorphism
+  from $\RowS(A(i))$ to $\RowS(B)$ must map the rows of $A(i)$ to the rows of
+  $B$ as these form unique minimal spanning sets, but since the sets
   \[\set{a(i~0)}{a \in \Kmint} \COMMA
     \set{a(0~\infty)}{a \in \Kmint}
   \]
@@ -2400,17 +2406,17 @@ case of $\Kmin$.
     \set{a(\infty~0)}{a \in \Kmint}
   \]
   contain $t - 1$ and $t$ rows respectively, no such isomorphism exists.
-  It remains to show that $R(A(i))$ and $R(A(j))$ are non-isomorphic for $i \neq
-  j$. Since
-  \[(a~0) = 0(i~0) + a(0~\infty)\]
-  for $a \in \Kmint$ such that $a \leq i$, together with the observation
-  above we have $(a, 0) \in R(A(i))$ if and only if $a \leq i$. It follows that
-  there are precisely $i + 1$ rows $y \in R(A(i))$ such that there exists $a \in
-  \Kmint$ with $ay = (i~0)$. Similarly there is precisely one row $z
-  \in R(A(i))$ such that there exists $b \in \Kmint$ with $bz = (0~\infty)$.
-  Since any isomorphism from $R(A(i))$ to $R(A(j))$ must map the rows of $A(i)$
-  to the rows of $A(j)$, but there are $j + 1$ such rows for one of the rows of
-  $A(j)$, there is no such isomorphism.
+
+  It remains to show that $\RowS(A(i))$ and $\RowS(A(j))$ are non-isomorphic for
+  $i \neq j$. Since \[(a~0) = 0(i~0) + a(0~\infty)\] for $a \in \Kmint$ such
+  that $a \leq i$, together with the observation above we have $(a, 0) \in
+  \RowS(A(i))$ if and only if $a \leq i$. It follows that there are precisely $i
+  + 1$ rows $y \in \RowS(A(i))$ such that there exists $a \in \Kmint$ with $ay =
+  (i~0)$. Similarly there is precisely one row $z \in \RowS(A(i))$ such that
+  there exists $b \in \Kmint$ with $bz = (0~\infty)$.  Since any isomorphism
+  from $\RowS(A(i))$ to $\RowS(A(j))$ must map the rows of $A(i)$ to the rows of
+  $A(j)$, but there are $j + 1$ such rows for one of the rows of $A(j)$, there
+  is no such isomorphism.
 \end{proof}
 This completes the proof of \thref{cor:FiniteMinPlusGenSet}.
 
@@ -2570,19 +2576,20 @@ the following strong result on row bases of max-plus matrices.
 \end{lemma}
 \begin{proof}
 We first note that $\oplus$ and $\otimes$ by an element in
-$R\setminus\{-\infty\}$ preserves or increases the order of any element in
-$\S$. It follows that if $aA_{i*}$ is a term in some linear combination
-equal to a row $x$, for some $a \in \S\setminus\{-\infty\}$, then $x_j \geq A_{ij}$
-for $1 \leq j \leq n$. Let $W$ be those rows of $A$ distinct from $A_{i*}$, and
-let $\genset{W}$ denote the row space spanned by these rows. Suppose that
-$A_{i*} \not\in \genset{W}$. Then for any row $x \in R(A)\setminus \genset{W}$,
-$x$ can be expressed as a linear combination with a non-trivial term involving
+$R\setminus\{-\infty\}$ preserves or increases the order of any element in $\S$.
+It follows that if $aA_{i*}$ is a term in some linear combination equal to a row
+$x$, for some $a \in \S\setminus\{-\infty\}$, then $x_j \geq A_{ij}$ for $1 \leq
+j \leq n$. Let $W$ be those rows of $A$ distinct from $A_{i*}$, and let
+$\genset{W}$ denote the row space spanned by these rows. Suppose that $A_{i*}
+\not\in \genset{W}$. Then for any row $x \in \RowS(A)\setminus \genset{W}$, $x$
+can be expressed as a linear combination with a non-trivial term involving
 $A_{i*}$; hence $A_{ij} \leq x_j$ for $1 \leq j \leq n$. It follows that
 $A_{i*}$ cannot be written as a linear combination involving $x$ in a
-non-trivial way unless $x = A_{i*}$. Thus $A_{i*} \not\in \genset{R(A) \setminus
-  \{ A_{i*} \}}$. It follows that any row $A_{i*}$ which cannot be written as a
-linear combination of distinct other rows of $A$ must be included in any
-spanning set for $R(A)$. We must also show that such rows do span $R(A)$.
+non-trivial way unless $x = A_{i*}$. Thus $A_{i*} \not\in \genset{\RowS(A)
+  \setminus \{ A_{i*} \}}$. It follows that any row $A_{i*}$ which cannot be
+written as a linear combination of distinct other rows of $A$ must be included
+in any spanning set for $\RowS(A)$. We must also show that such rows do span
+$\RowS(A)$.
 
 If $X$ is any set of rows of $A$ and $A_{x*} \in X$ is such that $A_{x*} \in
 \genset{X \setminus\{A_{x*}\}}$, then as usual $\genset{X} = \genset{X \setminus
@@ -2618,35 +2625,35 @@ element, which is an isomorphism invariant:
 
 \begin{itemize}
   \item 
-    $R(Y)$ has unique basis $\{(1~\infty), (-\infty~0)\}$, with $t + 1$ and $t
-    + 2$ distinct scalar multiples (including themselves) respectively;
+    $\RowS(Y)$ has unique basis $\{(1~\infty), (-\infty~0)\}$, with $t + 1$ and
+    $t + 2$ distinct scalar multiples (including themselves) respectively;
   \item
-    $R(Z)$ has unique basis $\{(-\infty~0)\}$, with $t + 2$ distinct scalar
+    $\RowS(Z)$ has unique basis $\{(-\infty~0)\}$, with $t + 2$ distinct scalar
     multiples;
   \item
-    $R(X(i))$, for any $i \in \Kmaxt$, has unique basis
+    $\RowS(X(i))$, for any $i \in \Kmaxt$, has unique basis
     $\{(i~0),~(0~-\infty)\}$, with $t + 2$ distinct scalar multiples each;
-  \item $R(W(j, k))$, for $1 \leq j \leq k \leq t$, has unique basis
+  \item $\RowS(W(j, k))$, for $1 \leq j \leq k \leq t$, has unique basis
     $\{(0~j),~(k~0)\}$, with $t + 2$ distinct scalar multiples each.
 \end{itemize}
 It follows that the only possible isomorphisms between row spaces of distinct
-generators are between $R(W(j, k))$, $R(W(p, q))$, $R(X(i))$, and $R(X(l))$ for
-some $(p, q) \neq (j, k)$ and $l \neq i$. We note that in $R(X(i)$ the sum of
-the two basis rows is equal to one of the basis rows, while the same is not true
-in $R(W(j, k))$; hence there can be no isomorphism between row spaces of these
-types of generators. Furthermore, $R(X(i))$ is non-isomorphic to $R(X(j))$ for
-$i \neq j$ since $i$ is the largest value such that for some choice of $g_1$ and
-$g_2$ being distinct basis rows, $ig_1 \oplus g_2 = g_2$, and this is an
-isomorphism invariant.
+generators are between $\RowS(W(j, k))$, $\RowS(W(p, q))$, $\RowS(X(i))$, and
+$\RowS(X(l))$ for some $(p, q) \neq (j, k)$ and $l \neq i$. We note that in
+$\RowS(X(i)$ the sum of the two basis rows is equal to one of the basis rows,
+while the same is not true in $\RowS(W(j, k))$; hence there can be no
+isomorphism between row spaces of these types of generators. Furthermore,
+$\RowS(X(i))$ is non-isomorphic to $\RowS(X(j))$ for $i \neq j$ since $i$ is the
+largest value such that for some choice of $g_1$ and $g_2$ being distinct basis
+rows, $ig_1 \oplus g_2 = g_2$, and this is an isomorphism invariant.
 
-We show that $R(W(j, k))$ is not isomorphic to $R(W(p, q))$ in a similar
+We show that $\RowS(W(j, k))$ is not isomorphic to $\RowS(W(p, q))$ in a similar
 way. Let $x_1, x_2$ be distinct basis rows of $W(j, k)$. Then there exist least
 elements $a, b \in \{1, \ldots, t\}$ such that $ax_1 \oplus x_2 = ax_1$ and
 $bx_2 \oplus x_1 = bx_2$. By examination of the basis given above, the lesser of
 $a$ and $b$ (if there is one) is equal to $j$ and the greater is equal to $k$
 (or all of the values are equal). Since $\{a, b\}$ is an isomorphism invariant,
-there is no isomorphism between $R(W(j, k))$ and $R(W(p, q))$ for $(j, k) \neq
-(p, q)$.
+there is no isomorphism between $\RowS(W(j, k))$ and $\RowS(W(p, q))$ for $(j,
+k) \neq (p, q)$.
 \end{proof}
 By \thref{prop:Wilf}, this completes the proof of
 \thref{cor:FiniteMinPlusGenSet}. As in the previous section, a corollary of the
@@ -2816,16 +2823,16 @@ originality.
   obtained.
 \end{proof}
 
-We say that matrices in the form of \thref{lem:Wilf1} are in ``standard
-diagonal form''.  The row space $R(X)$ of such a standard diagonal form matrix
-can easily be seen to be isomorphic (as an additive group) to the direct product
+We say that matrices in the form of \thref{lem:Wilf1} are in ``standard diagonal
+form''.  The row space $\RowS(X)$ of such a standard diagonal form matrix can
+easily be seen to be isomorphic (as an additive group) to the direct product
 $G(X) = \Z_{n/d_1} \times \cdots \times \Z_{n/d_m}$. Note that for any prime
 divisor $p$ of $n$, $X_p$ is in the form of \thref{lem:Wilf1}. Furthermore, by
 considering the prime power decomoposition of $G(X_p)$, it is straightforward to
 determine that there are no other matrices $X$ of the same form with $G(X) \cong
-G(X_p)$. Hence there are no other matrices $X$ of the same form with $R(X)
-\cong R(X_p)$. By \thref{prop:RowSpacesJRelation}, this observation yields the
-following lemma. 
+G(X_p)$. Hence there are no other matrices $X$ of the same form with $\RowS(X)
+\cong \RowS(X_p)$. By \thref{prop:RowSpacesJRelation}, this observation yields
+the following lemma. 
 
 \begin{lemma}
   \thlabel{lem:XpUnique}
@@ -2902,18 +2909,19 @@ $\mathcal{X}_n$ lie in such a maximal $\J$-class.
   the group of units in the $\J$-order on $M_k(\Z_n)$.
 \end{lemma}
 \begin{proof}
-Observe that as an additive group, $R(X_p)$ is a maximal subgroup
-of $R(I)$, where $I$ is the identity matrix. Let $J$ be a $\J$-class with
+Observe that as an additive group, $\RowS(X_p)$ is a maximal subgroup of
+$\RowS(I)$, where $I$ is the identity matrix. Let $J$ be a $\J$-class with
 $J_{X_p} \leq J \leq GL_k(\Z_n)$, and suppose that $J$ lies immediately below
 $GL_k(\Z_n)$. We wish to show that $J = J_{X_p}$. By \thref{lem:ZnGenSet} $J \in
 \set{J_{X_q}}{X_q \in \mathcal{X}_n}$ as otherwise $J$ would not be generated by
 $\mathcal{X}_n \cup GL_k(\Z_n)$. Let $q$ be the prime divisor of $n$ such that
 $J = J_{X_q}$. It follows that $X_p = AX_qB$ for some matrices $A, B \in
-M_k(\Z_n)$. The row space $R(AX_qB) = R(X_p)$ is an additive subgroup of
-$R(X_qB)$; since $R(X_p)$ is a maximal subgroup, and $|R(X_qB)| < R(I)$, it
-follows that $R(X_p) = R(X_qB)$. Right multiplication by $B$ is therefore a
-surjective homomorphism from $R(X_q)$ to $R(X_p)$, but by Lagrange's Theorem no
-such homomorphism exists for $p \neq q$; hence $J = J_p$.
+M_k(\Z_n)$. The row space $\RowS(AX_qB) = \RowS(X_p)$ is an additive subgroup of
+$\RowS(X_qB)$; since $\RowS(X_p)$ is a maximal subgroup, and $|\RowS(X_qB)| <
+\RowS(I)$, it follows that $\RowS(X_p) = \RowS(X_qB)$. Right multiplication by
+$B$ is therefore a surjective homomorphism from $\RowS(X_q)$ to $\RowS(X_p)$,
+but by Lagrange's Theorem no such homomorphism exists for $p \neq q$; hence $J =
+J_p$.
 \end{proof}
 
 \printbibliography
