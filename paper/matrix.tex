@@ -2201,15 +2201,15 @@ particularly simple minimal generating set:
   We will prove the lemma for $\UTn$; the result for $\LTn$ follows via the
   anti-isomorphism given by transposition.
   We will first construct any matrix $A \in \UTn$ as a product of matrices in
-  $G_U$. We iteratively define a product $A_i$, $0 \leq i \leq n$ where $A_0$ is
-  the identity and $n$ is the number of $1$s in $A$. For the $i$th $1$
-  contained in $A$ (ordered by row then column) with position $(x_i, y_i)$, we
-  obtain $A_i$ from $A_{i - 1}$ by left-multiplying by $E^{x_i, y_i}$. Let the
-  zero rows of $A$ have indices $\{z_1, \ldots, z_{k}\}$. Note that the matrices
-  in $\UTn$ similar to $F$ are precisely those matrices obtained by deleting a
-  single $1$ from an identity matrix. We define $A_{n + j}$ to be the matrix
-  obtained by left multiplying $A_{n + j - 1}$ by the element of $X$ with a zero
-  row in position $z_j$. Then $A_{n + k} = A$.  
+  $G_U$. We iteratively define a product $A(i)$, $0 \leq i \leq n$ where $A(0)$
+  is the identity and $n$ is the number of $1$s in $A$. For the $i$th $1$
+  contained in $A$ (ordered by row then column), in row number $x_i$ and column
+  number $y_i$, we obtain $A(i)$ from $A(i - 1)$ by left-multiplying by $E^{x_i,
+    y_i}$. Let the zero rows of $A$ have indices $\{z_1, \ldots, z_{k}\}$. Note
+  that the matrices in $\UTn$ similar to $F$ are precisely those matrices
+  obtained by deleting a single $1$ from an identity matrix. We define $A(n +
+  j)$ to be the matrix obtained by left multiplying $A(n + j - 1)$ by the
+  element of $X$ with a zero row in position $z_j$. Then $A(n + k) = A$.
   
   It is routine to show that for each matrix $A \in G_U$, if $A$ is written as
   a product $A = BC$ in $\UTn$ then one of $B$ or $C$ must be equal to $A$; it
