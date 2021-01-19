@@ -2726,6 +2726,12 @@ theorem:
   $$
 \end{thm}
 
+We note that \thref{thm:ZnGenSet} and \thref{thm:ZnMinimal} hold trivially for
+$n = 1$ as $1$ has no prime divisors and for any $k \in \Np$, $|M_k(\Z_1)| = 1$.
+The further results and proofs in this section may also be stated in such a way
+as to hold for $n=1$, but this is not necessary and results in slightly less
+tidy statements.
+
 In order to prove \thref{thm:ZnGenSet}, we will show that each $\J$-class of
 $M_k(\Z_n)$ contains a matrix in a certain standard form; we will then show how
 to generate these standard forms and hence generate the full matrix monoid.
@@ -2754,8 +2760,9 @@ originality.
 
 \begin{lemma}
   \thlabel{lem:Wilf1}
-  Every matrix $Y \in M_k(\Z_n)$ can be written as a product $AXB$, for two
-  matrices $A, B \in GL_k(\Z_n)$ and a diagonal matrix $X \in J_Y$ of the form 
+  For $n > 1$, every matrix $Y \in M_k(\Z_n)$ can be written as a product $AXB$,
+  for two matrices $A, B \in GL_k(\Z_n)$ and a diagonal matrix $X \in J_Y$ of
+  the form
   $$\begin{pmatrix}
       0      &        & \cdots &        &        & 0       \\
              & \ddots &        &        &        &         \\
@@ -2892,7 +2899,7 @@ $\mathcal{X}_n$ lie in such a maximal $\J$-class.
 \begin{lemma}
   \label{lem:ZnImmediatelyBelow}
   The $\J$-classes $J_{X_p}$ are precisely the $\J$-classes immediately below
-  the group of units in the $\J$-order.
+  the group of units in the $\J$-order on $M_k(\Z_n)$.
 \end{lemma}
 \begin{proof}
 Observe that as an additive group, $R(X_p)$ is a maximal subgroup
